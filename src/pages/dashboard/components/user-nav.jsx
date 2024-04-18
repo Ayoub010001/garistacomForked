@@ -15,8 +15,14 @@ import {
   AvatarImage,
 } from "./../../../components/ui/avatar";
 import { Button } from "./../../../components/ui/button";
+import { useLogin } from "../../../../actions/Authentification/LoginProvider";
+import { useNavigate } from "react-router-dom";
 
 function UserNav() {
+  const navigate = useNavigate();
+
+  const { isLoggedIn, login, logout } = useLogin();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -37,20 +43,20 @@ function UserNav() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
+        <DropdownMenuGroup className="cursor-pointer">
+          <DropdownMenuItem className="cursor-pointer">
             Profile
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
 
-          <DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
             Settings
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
 
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate("/login")} className="cursor-pointer">
           Log out
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>

@@ -43,7 +43,7 @@ import {
   } from "@/components/ui/dialog";
   import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
 export function DataTable({
-
+    categries,
     columns,
     data,
     SetisOpen,
@@ -116,7 +116,7 @@ export function DataTable({
 
 <Dialog  className=" p-8 shadow-lg h-[45rem] w-[65rem] rounded-xl">
 <DialogTrigger className="flex justify-center">
-                <Button variant="ghost" className="relative  rounded-md bg-black ">
+                <Button variant="ghost" className="relative  rounded-md bg-black text-white">
                Add Dishes
                 </Button>
                 </DialogTrigger>
@@ -199,16 +199,20 @@ export function DataTable({
                                 <Input type="text" placeholder="Title" className='mt-5 mb-5' />
                                 <Select>
                                     <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select a fruit" />
+                                        <SelectValue placeholder="Select a Category" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectLabel>Select Restaurant...</SelectLabel>
-                                            <SelectItem value="apple">whd</SelectItem>
+                                          {
+                                            categries.map((item, i) => (
+                                              <SelectItem key={i} value={item.id}>{item.name}</SelectItem>
+                                            ))
+                                          }
+                                            {/* <SelectLabel>Select Restaurant...</SelectLabel>
                                             <SelectItem value="banana">aweb</SelectItem>
                                             <SelectItem value="blueberry">Blueberry</SelectItem>
                                             <SelectItem value="grapes">Grapes</SelectItem>
-                                            <SelectItem value="pineapple">Pineapple</SelectItem>
+                                            <SelectItem value="pineapple">Pineapple</SelectItem> */}
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>

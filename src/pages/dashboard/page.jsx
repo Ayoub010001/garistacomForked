@@ -49,9 +49,32 @@ import {
   DialogFooter,
 } from "../../components/ui/dialog";
 import LineChartpage from "./components/lineChart";
+import { useEffect } from "react";
+import { getRoles } from "../../../actions/Role/getRoles";
 
 function DashboardPage() {
   const [qrValue, setQrValue] = useState();
+
+  useEffect(() => {
+    // const getUserData = () => {
+    //   const userData = localStorage.getItem('userData');
+    //   if (userData) {
+    //     // User data found, do something with it
+    //     console.log('User data:', JSON.parse(userData));
+    //   } else {
+    //     // No user data found
+    //     console.log('No user data found');
+    //   }
+    // };
+
+    const getRolesData = async() => {
+      const roles = await getRoles();
+      console.log("The rolles => ",roles);
+    }
+  
+    getRolesData();
+    // getUserData();
+  }, []);
 
   const defaultPageURL = "https://votre-domaine.com/page-par-defaut";
   return (

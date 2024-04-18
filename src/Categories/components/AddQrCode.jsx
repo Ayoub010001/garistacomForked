@@ -30,15 +30,42 @@ import UpdateForm from './updateForm';
 import DeleteForm from './deleteForm';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/card';
 import Uploader from './uploader';
+import { addCategorie } from '../../../actions/Categorie/CreateCategorie';
+import { axiosInstance } from '../../../axiosInstance';
+import { useEffect } from 'react';
+import { fetchCategorie } from '../../../actions/Categorie/getCategories';
+import CategorieCard from './CategorieCard';
+import { APIURL } from '../../../lib/ApiKey';
 
 
 
 function AddQrCode({props}) {
+   
+    const [Categories, setCategories] = useState([])
+    const [imageUrls, setImageUrls] = useState([]);
 
+    useEffect(() => {
+        const fetchCat = async () =>{
+            // const result = await fetchCategorie();
+            try {
+                const categorieData = await fetchCategorie(); // Call the fetchCategorie function to get the data
+                setCategories(categorieData)
+                const { Categories } = categorieData;
+                console.log("the cte => ", categorieData[0].image , "the name => ", categorieData[0].name);
+                const images = JSON.parse(categorieData[0].image); // Parse the JSON-encoded string to extract the array of image paths
+                setImageUrls(images);
+              } catch (error) {
+                console.error('Error fetching image URLs:', error);
+              }
+            // console.log("resulat => ", result);
+        }
 
+        fetchCat();
+
+    }, [])
     const [name,setName] = useState("");
     const [images,setImages] = useState([]); // État pour stocker le rôle sélectionné
-
+   
     const [usersList, setUsersList] = useState([]);
 
     const [position, setPosition] = useState("bottom")
@@ -48,21 +75,35 @@ function AddQrCode({props}) {
     const handleRoleChange = (selectedRole) => {
         setRole(selectedRole);
     };
-    const handleAddUser = () => {
-        const newUser = {
-            name : name,
-            images: images
-        };
+    const handleAddUser = async () => {
+        console.log("The Images => ", images);
+        const formData = new FormData();
+          // Append each selected image to the formData
+          for (let i = 0; i < images.length; i++) {
+            formData.append("image[]", images[i]);
+        }
+        formData.append("name", name);
+        formData.append("resto_id", 1);
+        try {
+            const response = await fetch("http://127.0.0.1:8000/api/categories", {
+                method: "POST",
+                body: formData,
+            });
 
-        setUsersList([...usersList, newUser]);
-        setName("");
-        setImages([""]);
-        console.log(usersList);
+            if (response.ok) {
+                console.log("Category added successfully");
+            } else {
+                console.error("Failed to add category");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
     };
 
+    console.log("cate ", Categories , " Images => ", imageUrls);
     return (
-        <div className='flex gap-5'>
-
+        <div className='grid grid-cols-5 lg:gap-8 max-w-[1400px]'>
+{/* 
             {usersList.map((user, index) => (
                 <div key={index}>
 
@@ -103,7 +144,21 @@ function AddQrCode({props}) {
             <UpdateForm updateFormState={updateFormState} setUpdateFormState={setUpdateFormState} />
                     <DeleteForm deleteFormState={deleteFormState} setDeleteFormState={setDeleteFormState} />
                 </div>
-            ))}
+            ))} */}
+
+            {
+             Categories.length == 0
+             ?
+             <></>
+             :
+             <>
+               {
+                Categories.map((item, i) => (
+                    <CategorieCard key={i} item={item} imageUrls={imageUrls}/>
+                ))
+               }
+             </>
+            }
 
             <Dialog >
                 <DialogTrigger>
@@ -143,15 +198,17 @@ function AddQrCode({props}) {
                                 <Input type="text" placeholder=" name" className="w-[37rem] p-2 border border-gray-300 rounded-md" value={name} onChange={(e) => setName(e.target.value)} />
                             </div>
                             <div className="flex gap-3">
-                            <Uploader />
+                            {/* <input type="file" name="file" className="mb-4" onChange={handleImageChange} multiple /> */}
+
+                            <Uploader setImages={setImages} />
                             </div>
                             <div className="flex gap-3 ">
                             <Label  style={{fontSize:"20px"}}>Visibilty</Label>
                             <Switch />
                             </div>
-                            <DialogClose>
-                                <Button variant="outline" className="justify-end items-end bg-black" onClick={handleAddUser}>Add Categories</Button>
-                            </DialogClose>
+                            {/* <DialogClose> */}
+                                <Button variant="outline" className="justify-end items-end bg-black text-white mt-5 hover:bg-black hover:text-white" onClick={handleAddUser}>Add Categories</Button>
+                            {/* </DialogClose> */}
                         </div>
                     </DialogHeader>
                 </DialogContent>

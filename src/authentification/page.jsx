@@ -4,6 +4,10 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { cn } from "@/lib/utils";
 import { Link, useNavigate } from "react-router-dom";
+import { useLogin } from "../../actions/Authentification/LoginProvider";
+import { useEffect } from "react";
+import axios from "axios";
+import { useForm } from 'react-hook-form';
 
 function Login({ onLogin, className, ...props }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -12,55 +16,57 @@ function Login({ onLogin, className, ...props }) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { isLoggedIn, login, logout } = useLogin();
+
+  const { register, handleSubmit, formState: { errors } } = useForm();
 
   // Function Handle navigation
   const handleNavigation = () => {
-    navigate("/Dashboard");
-  };
-  // Fonction pour gérer la soumission du formulaire
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Vérifier les identifiants
-    if (email === "admin@gmail.com" && password === "123456") {
-      // Authentification réussie, appeler la fonction onLogin fournie par le parent
-      onLogin();
-      console.log(tru);
-    } else {
-      setError("Email or password is incorrect");
+
+    const response = login('admin@gmail.com', 'password')
+    if(response)
+    {
+      console.log("Login Succesed", response);
     }
+    // navigate("/Dashboard");
   };
+  // // Fonction pour gérer la soumission du formulaire
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   // Vérifier les identifiants
+  //   if (email === "admin@gmail.com" && password === "123456") {
+  //     // Authentification réussie, appeler la fonction onLogin fournie par le parent
+  //     onLogin();
+  //     console.log(tru);
+  //   } else {
+  //     setError("Email or password is incorrect");
+  //   }
+  // };
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
-  const onSubmit = async (event) => {
-    event.preventDefault();
+  console.log("The logg =>", isLoggedIn);
+  const onSubmit = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      handleNavigation();
-      setIsLoading(false);
-    }, 2000);
+      const response = login(email, password, navigate)
+
+    
+    if(isLoggedIn == true)
+    {
+      console.log("Login Succesed", response);
+      // navigate("/Dashboard");
+      // setTimeout(() => {
+      //   // setIsLoading(false);
+      // }, 1000);
+    }
+    setIsLoading(false);
   };
 
   return (
     <>
-      {/* <div className="md:hidden">
-        <Image
-          src="/examples/authentication-light.png"
-          width={1280}
-          height={843}
-          alt="Authentication"
-          className="block dark:hidden"
-        />
-        <Image
-          src="/examples/authentication-dark.png"
-          width={1280}
-          height={843}
-          alt="Authentication"
-          className="hidden dark:block"
-        />
-      </div> */}
+
       <div className="container relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         {/* <Link
           href="/examples/authentication"
@@ -101,20 +107,20 @@ function Login({ onLogin, className, ...props }) {
               </p>
             </div>
             <div className={cn("grid gap-6", className)}>
-              <form onSubmit={onSubmit}>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid gap-2">
                   <div className="grid gap-1">
                     <Input
                       id="email"
                       placeholder="name@example.com"
-                      type="email"
-                      autoCapitalize="none"
-                      autoComplete="email"
+                      // type="email"
                       autoCorrect="off"
                       disabled={isLoading}
+                      {...register('email', { required: 'Email is required', pattern: { value: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/, message: 'Invalid email address' } })}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
+                    {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
                   </div>
                   <div className="grid gap-4 relative">
                     <Input

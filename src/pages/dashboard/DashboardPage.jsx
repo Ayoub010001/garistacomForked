@@ -31,9 +31,25 @@ import {
     DialogFooter
 } from "../../components/ui/dialog";
 import LineChartpage from "./components/lineChart";
+import { useEffect } from "react";
 
 export function DashboardPage() {
     const [qrValue, setQrValue] = useState();
+
+    useEffect(() => {
+        const getUserData = () => {
+          const userData = localStorage.getItem('userGarista');
+          if (userData) {
+            // User data found, do something with it
+            console.log('User data:', JSON.parse(userData));
+          } else {
+            // No user data found
+            console.log('No user data found');
+          }
+        };
+      
+        getUserData();
+      }, []);
 
     const defaultPageURL = "https://votre-domaine.com/page-par-defaut";
     return (

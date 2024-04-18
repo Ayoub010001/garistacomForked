@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from '@/components/ui/card'
 import React ,{useState} from 'react';
 import Header from '../pages/header';
+import { useEffect } from "react"
+import { fetchCategorie } from "../../actions/Categorie/getCategories"
 async function getData() {
   // Fetch data from your API here.
   return [
@@ -20,6 +22,16 @@ async function getData() {
 
 export default function DemoPage() {
 //   const data = getData()
+
+const [categorieData, setCategorieData] = useState([])
+useEffect(() => {
+  async function fetchCate(){
+     const response = await fetchCategorie();
+     setCategorieData(response)
+  }
+
+  fetchCate()
+}, [])
 
 const data= [
     {
@@ -133,7 +145,7 @@ const data= [
             </div>
 <div className="container mx-auto py-10">
 
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} categries={categorieData}/>
     </div>
     </>
 

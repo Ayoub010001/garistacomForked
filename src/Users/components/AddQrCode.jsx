@@ -3,6 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { MdAddBox } from 'react-icons/md';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
 import {
     Dialog,
     DialogContent,
@@ -38,12 +41,39 @@ import { FaUserCircle } from "react-icons/fa";
 import UpdateForm from './updateForm';
 import { MdErrorOutline } from "react-icons/md";
 import DeleteForm from './deleteForm';
+import { useEffect } from 'react';
+import { getRoles } from '../../../actions/Role/getRoles';
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+  } from "@/components/ui/form"
 
 export const UserContext = createContext();
 
+const FormSchema = z.object({
+    email: z
+      .string({
+        required_error: "Please select an email to display.",
+      })
+      .email(),
+  })
+
 function AddQrCode() {
     const { state } = useLocation();
+    const { handleSubmit } = useForm();
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+  })
 
+  function onSubmit(data) {
+   console.log("The data is: " + JSON.stringify(data));
+  }
+ 
     const { names } = state == null ? "tes" : state.value;
 
     console.log("qr",names)
@@ -54,6 +84,7 @@ function AddQrCode() {
     const [email,setEmail] = useState("");
     const [phone,setPhone] = useState("");
     const [role,setRole] = useState("");
+    const [rolesData, setRolesData] = useState([]);
     const [password,setPassword] = useState(""); // État pour stocker le rôle sélectionné
     const [modalOpen, setModalOpen] = useState(false);
     const [position, setPosition] = useState("bottom")
@@ -62,6 +93,7 @@ function AddQrCode() {
     const [updateFormState, setUpdateFormState] = useState(false);
     const [deleteFormState, setDeleteFormState] = useState(false);
     const handleRoleChange = (selectedRole) => {
+        console.log("The RoleSelected => ",selectedRole);
         setRole(selectedRole);
     };
 
@@ -84,6 +116,18 @@ function AddQrCode() {
         setModalOpen(false);
     };
 
+    useEffect(() => {
+        const getRolesData = async() => {
+        const rolesres = await getRoles();
+        console.log("The rolles => ",rolesres);
+        setRolesData(rolesres)
+        }
+    
+        getRolesData();
+    }, [])
+
+
+    console.log("ro => ", role);
     return (
         <div className='flex gap-5'>
             {usersList.map((user, index) => (
@@ -154,34 +198,44 @@ function AddQrCode() {
                 </DialogTrigger>
                 <DialogContent className="max-w-[50rem]">
                     <DialogHeader>
-                        <DialogTitle>Add a new User</DialogTitle>
-                        <DialogDescription >Create a new user Lorem ipsum dolor sit amet consectetur </DialogDescription>
-                        <div className="flex flex-col gap-3 items-center justify-center pt-4">
-                            <div className="flex gap-3">
-                                <Input type="text" placeholder="First name" className="w-72 p-2 border border-gray-300 rounded-md" value={firstname} onChange={(e) => setFirstname(e.target.value)} />
-                                <Input type="text" placeholder="Last name" className="w-72 p-2 border border-gray-300 rounded-md" value={lastname} onChange={(e) => setLastname(e.target.value)} />
-                            </div>
-                            <div className="flex gap-3">
-                                <Input type="text" placeholder="Email" className="w-72 p-2 border border-gray-300 rounded-md" value={email} onChange={(e) => setEmail(e.target.value)} />
-                                <Input type="text" placeholder="Phone" className="w-72 p-2 border border-gray-300 rounded-md" value={phone} onChange={(e) => setPhone(e.target.value)} />
-                            </div>
-                            <div className="flex gap-3">
-                                <Input type="password" placeholder="password" className="w-72 p-2 border border-gray-300 rounded-md" value={password} onChange={(e) => setPassword(e.target.value)} />
-                                <Select value={role} onChange={(e) => handleRoleChange(e.target.value)}>
-                                    <SelectTrigger className="w-72">
-                                        <SelectValue placeholder="Role" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="owner">Manager</SelectItem>
-                                        <SelectItem value="waiter">Waiter</SelectItem>
-                                        {/* Ajoutez d'autres rôles ici si nécessaire */}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <DialogClose>
-                                <Button variant="outline" className="justify-end items-end bg-black" onClick={handleAddUser}>Add User</Button>
-                            </DialogClose>
-                        </div>
+                        {
+                            rolesData.lenght <=0 
+                            ?
+                            <></>
+                            :
+                            <>
+                            <DialogTitle>Add a new User</DialogTitle>
+                            <DialogDescription >Create a new user Lorem ipsum dolor sit amet consectetur </DialogDescription>
+                             <div className="flex flex-col gap-3 items-center justify-center pt-4">
+                                <div className="flex gap-3">
+                                    <Input type="text" placeholder="First name" className="w-72 p-2 border border-gray-300 rounded-md" value={firstname} onChange={(e) => setFirstname(e.target.value)} />
+                                    <Input type="text" placeholder="Last name" className="w-72 p-2 border border-gray-300 rounded-md" value={lastname} onChange={(e) => setLastname(e.target.value)} />
+                                </div>
+                                <div className="flex gap-3">
+                                    <Input type="text" placeholder="Email" className="w-72 p-2 border border-gray-300 rounded-md" value={email} onChange={(e) => setEmail(e.target.value)} />
+                                    <Input type="text" placeholder="Phone" className="w-72 p-2 border border-gray-300 rounded-md" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                                </div>
+                                <div className="flex gap-3">
+                                    <Input type="password" placeholder="password" className="w-72 p-2 border border-gray-300 rounded-md" value={password} onChange={(e) => setPassword(e.target.value)} />
+                                    <Select onValueChange={(e) => handleRoleChange(e)}>
+                                        <SelectTrigger className="w-72">
+                                            <SelectValue placeholder="Role" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {
+                                                rolesData.map((obj, i) => (
+                                                    <SelectItem key={i} value={obj.id}>{obj.name}</SelectItem>
+                                                ))
+                                            }
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <DialogClose>
+                                    <Button variant="outline" className="justify-end items-end bg-black !text-[#fff] hover:bg-black mt-5" onClick={handleAddUser}>Add User</Button>
+                                </DialogClose>
+                            </div> 
+                            </>
+                        }
                     </DialogHeader>
                 </DialogContent>
             </Dialog>
