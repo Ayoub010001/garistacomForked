@@ -78,6 +78,9 @@ import {
   TooltipProvider
 } from "@/components/ui/tooltip"
 import { Separator } from '@radix-ui/react-dropdown-menu';
+import { useEffect } from 'react';
+import { useState } from 'react';
+import { getRolesById } from '../../actions/Role/getRoles';
 
 export const description =
   "A product edit page. The product edit page has a form to edit the product details, stock, product category, product status, and product images. The product edit page has a sidebar navigation and a main content area. The main content area has a form to edit the product details, stock, product category, product status, and product images. The sidebar navigation has links to product details, stock, product category, product status, and product images."
@@ -87,6 +90,56 @@ export const iframeHeight = "1200px"
 export const containerClassName = "w-full h-full"
 
 export default function DashboardProfile() {
+
+  const [userDat, setUserDat] = useState([])
+  const [roleName, setRoleName] = useState("")
+  useEffect(() => {
+    const getUserData = async () => {
+      const userDataString = sessionStorage.getItem('userSession');
+      if (userDataString) {
+        const userData = JSON.parse(userDataString);
+        setUserDat(userData)
+        const id = userData.role_id;
+        console.log("The role id:", id, "The User Data:", userData);
+        
+        if (id !== undefined) {
+          console.log("The role id is defined:", id);
+          const respons = await getRolesById(id);
+          if(respons){
+            console.log("The Role Data => ", respons);
+            setRoleName(respons[0].name)
+          }
+        } else {
+          console.log("The role id is undefined");
+        }
+        // Continue with your logic here...
+      } else {
+        console.log('No user data found');
+      }
+    };
+    // const fetchRoles = async () => {
+    //   // Access id from userData if userData is defined
+    //    const roles = await getRolesById(id);
+    //    if (roles) {
+    //      // User data found, do something with it
+    //      console.log('Rolle data:', JSON.parse(roles));
+    //    } else {
+    //      // No user data found
+    //      console.log('No Roles data found');
+    //    }
+    //  }
+    //  fetchRoles();
+    getUserData();
+  }, []);
+
+
+  // if(!userDat?.id){
+  //   return(
+  //     <div>
+  //       <h1>Hello</h1>
+  //     </div>
+  //   )
+  // }
   return (
 
     <TooltipProvider>
@@ -101,8 +154,8 @@ export default function DashboardProfile() {
               }}
             >
               <Button>Save</Button>
-</div>
             </div>
+        </div>
 
     <div className="flex gap-4 min-h-screen w-full flex-col bg-muted/40">
 
@@ -147,14 +200,14 @@ export default function DashboardProfile() {
                     <button className="btn btn-secondary  overflow-hidden bg-neutral-300 flex justify-center items-center">
                         <img src="/public/avatar.png" height="100" width="150" alt="Profile" />
                     </button>
-                    <span className="name mt-3">Eleanor Pena</span>
-                    <span className="idd">Admin</span>
+                    <span className="name mt-3">{userDat.first_name + ' ' + userDat.last_name}</span>
+                    <span className="idd">{roleName}</span>
 
                     <div className="flex flex-row mt-3">
-                        <span className="number">Email <span className="follow">Admin@gmail.com</span></span>
+                        <span className="number">Email <span className="follow">{userDat.email}</span></span>
                     </div>
                     <div className="flex flex-row mt-3">
-                        <span className="number">Tele <span className="follow">0675162919</span></span>
+                        <span className="number">Tele <span className="follow">{userDat.phone}</span></span>
                     </div>
 
                     <div className="text mt-3">
@@ -196,17 +249,17 @@ export default function DashboardProfile() {
 
                   <div className='w-full'>
                     <label >User name:</label>
-                    <Input  className='my-3' placeholder='username' disabled/>
+                    <Input value={userDat.username} className='my-3' placeholder='username' disabled/>
                 </div>
             <div className='w-full flex items-center gap-5 pt-4'>
 
                 <div className='w-full'>
                     <label >First name:</label>
-                    <Input  className='my-3' placeholder='first name...'/>
+                    <Input value={userDat.first_name} className='my-3' placeholder='first name...'/>
                 </div>
                 <div className='w-full'>
                     <label>Last name :</label>
-                    <Input className='my-3' placeholder="last name..."/>
+                    <Input value={userDat.last_name} className='my-3' placeholder="last name..."/>
                 </div>
 
 
@@ -214,17 +267,17 @@ export default function DashboardProfile() {
             <div className='w-full flex items-center gap-5 '>
                 <div className='w-full'>
                     <label >Email:</label>
-                    <Input  className='my-3' placeholder='example@gmail.com'/>
+                    <Input value={userDat.email} className='my-3' placeholder='example@gmail.com'/>
                 </div>
                 <div className='w-full'>
                     <label>Mobile:</label>
-                    <Input className='my-3' placeholder="0675162919"/>
+                    <Input value={userDat.phone} className='my-3' placeholder="0675162919"/>
                 </div>
             </div>
             <div className='w-full flex items-center gap-5 '>
             <div className='w-full'>
                     <label >Role:</label>
-                    <Input  className='my-3' placeholder='owner' disabled/>
+                    <Input value={roleName} className='my-3' placeholder='test' disabled/>
                 </div>
                 <div className='w-full md:w-full'>
             <label className='block mb-3'>Photo :</label>

@@ -51,21 +51,32 @@ import {
 import LineChartpage from "./components/lineChart";
 import { useEffect } from "react";
 import { getRoles } from "../../../actions/Role/getRoles";
-
+import { axiosInstance } from "../../../axiosInstance";
+import {  useNavigate } from "react-router-dom";
+import { useLogin } from "../../../actions/Authentification/LoginProvider";
 function DashboardPage() {
   const [qrValue, setQrValue] = useState();
+  const { isLoggedIn, getUser, isStill } = useLogin(); // Destructure isLoggedIn and getUser from useLogin
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // const getUserData = () => {
-    //   const userData = localStorage.getItem('userData');
-    //   if (userData) {
-    //     // User data found, do something with it
-    //     console.log('User data:', JSON.parse(userData));
-    //   } else {
-    //     // No user data found
-    //     console.log('No user data found');
-    //   }
-    // };
+    const getUserData = async () => {
+      const userDataString = localStorage.getItem('userSession');
+      if (userDataString) {
+        const userData = JSON.parse(userDataString);
+        const id = userData.role_id;
+        console.log("The role id:", id, "The User Data:", userData);
+        
+        if (id !== undefined) {
+          console.log("The role id is defined:", id);
+        } else {
+          console.log("The role id is undefined");
+        }
+        // Continue with your logic here...
+      } else {
+        console.log('No user data found');
+      }
+    };
 
     const getRolesData = async() => {
       const roles = await getRoles();
@@ -73,9 +84,10 @@ function DashboardPage() {
     }
   
     getRolesData();
-    // getUserData();
+    getUserData();
   }, []);
 
+   console.log("IsLoggin => ", isStill);
   const defaultPageURL = "https://votre-domaine.com/page-par-defaut";
   return (
     <div className="">

@@ -29,12 +29,13 @@ function Uploader({ setImage, setImages }) {
 
   const handleImageChange = (event) => {
     const selectedImages = Array.from(event.target.files);
+    console.log("The Selected Images => ", selectedImages[0].name);
     setImages(selectedImages);
     
 };
   return (
     <main className='w-[590px]'>
-      <Label className="text-md">Choose 1 image</Label>
+      <Label className="text-md">Choose 1 or 4 image</Label>
       <form className='form-drag' onClick={() => document.querySelector(".input-field").click()}>
         <input
           type="file"
@@ -54,7 +55,10 @@ function Uploader({ setImage, setImages }) {
         )}
 
       </form>
+      
+      {
 
+      }
       <section className='uploaded-row'>
         <AiFillFileImage color='black' />
         <span className='upload-content'>

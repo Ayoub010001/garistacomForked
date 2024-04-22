@@ -17,11 +17,41 @@ import {
 import { Button } from "./../../../components/ui/button";
 import { useLogin } from "../../../../actions/Authentification/LoginProvider";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useEffect } from "react";
 
 function UserNav() {
   const navigate = useNavigate();
+  const [userDat, setUserDat] = useState([])
+  const { getUser, logout } = useLogin()
+  useEffect(() => {
+    const getUserData = async () => {
+      // const userData = sessionStorage.getItem('userSession');
+      // if (userData) {
+      //   // User data found, do something with it
+      //   console.log('User data:', JSON.parse(userData));
+      //   setUserDat(JSON.parse(userData))
+      // } else {
+      //   // No user data found
+      //   console.log('No user data found');
+      // }
+      const userItem = await getUser();
+      console.log("The User Item => ", userItem.users);
+      // if(userItem)
+      // {
+        userItem.users.map(obj =>  {
+          console.log("The Items => ", obj);
+          setUserDat(obj)
+        })
+      // }
+    };
+  
+    getUserData();
+  }, []);
 
-  const { isLoggedIn, login, logout } = useLogin();
+
+
+  // const { isLoggedIn, login, logout } = useLogin();
 
   return (
     <DropdownMenu>
@@ -33,12 +63,13 @@ function UserNav() {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">shadcn</p>
+            <p className="text-sm font-medium leading-none">{userDat.first_name + ' ' + userDat.last_name}</p>
             <p className="text-xs leading-none text-muted-foreground">
-              m@example.com
+              {userDat.email}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -56,7 +87,7 @@ function UserNav() {
 
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigate("/login")} className="cursor-pointer">
+        <DropdownMenuItem onClick={() => logout(navigate)} className="cursor-pointer">
           Log out
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>

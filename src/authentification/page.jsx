@@ -11,15 +11,16 @@ import { useForm } from 'react-hook-form';
 
 function Login({ onLogin, className, ...props }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("admin@gmail.com");
+  const [password, setPassword] = useState("password");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { isLoggedIn, login, logout } = useLogin();
+  const { isLoggedIn, login, logout, ErrorMsg } = useLogin();
 
   const { register, handleSubmit, formState: { errors } } = useForm();
 
+  console.log("The Error => ", ErrorMsg);
   // Function Handle navigation
   const handleNavigation = () => {
 
@@ -53,13 +54,17 @@ function Login({ onLogin, className, ...props }) {
       const response = login(email, password, navigate)
 
     
-    if(isLoggedIn == true)
+    if(response)
     {
       console.log("Login Succesed", response);
       // navigate("/Dashboard");
       // setTimeout(() => {
       //   // setIsLoading(false);
       // }, 1000);
+    }
+    else{
+      console.log("Incoreect");
+      setError('Email or password is incorrect')
     }
     setIsLoading(false);
   };
@@ -111,6 +116,7 @@ function Login({ onLogin, className, ...props }) {
                 <div className="grid gap-2">
                   <div className="grid gap-1">
                     <Input
+                      className={"focus-visible:ring-white"}
                       id="email"
                       placeholder="name@example.com"
                       // type="email"
@@ -127,13 +133,17 @@ function Login({ onLogin, className, ...props }) {
                       id="password"
                       placeholder="Password"
                       type={showPassword ? "text" : "password"}
+                      // className={errors.password.message ? "outline-red-800 border-red-400 focus-visible:ring-white" : "bg-red-300"}
+                      className={"focus-visible:ring-white"}
                       autoCapitalize="none"
                       autoComplete="current-password"
                       autoCorrect="off"
                       disabled={isLoading}
+                      {...register('password', { required: 'Password is required' })}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
+                    {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
 
                     <button
                       type="button"
@@ -177,6 +187,8 @@ function Login({ onLogin, className, ...props }) {
                       "Login"
                     )}
                   </Button>
+                  {ErrorMsg && <p className="text-red-500 text-sm">{ErrorMsg}</p>}
+
                 </div>
               </form>
 

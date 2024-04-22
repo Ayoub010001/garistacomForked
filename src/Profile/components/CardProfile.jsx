@@ -4,7 +4,7 @@ import { RiInstagramFill } from "react-icons/ri";
 import { FaTiktok } from "react-icons/fa6";
 import "./CardProfile.css";
 
-const CardProfile = () => {
+const CardProfile = ({ data }) => {
     return (
         <div className=" mt-4 mb-4 flex justify-center bg-white">
             <div className="card p-4">
@@ -12,7 +12,7 @@ const CardProfile = () => {
                     <button className="btn btn-secondary border overflow-hidden bg-neutral-300 flex justify-center items-center">
                         <img src="https://i.imgur.com/wvxPV9S.png" height="100" width="100" alt="Profile" />
                     </button>
-                    <span className="name mt-3">Eleanor Pena</span>
+                    <span className="name mt-3">{data.first_name + ' ' + data.last_name}</span>
                     <span className="idd">Admin</span>
 
                     <div className="flex flex-row mt-3">

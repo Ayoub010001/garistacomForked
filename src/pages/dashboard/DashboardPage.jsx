@@ -35,6 +35,7 @@ import { useEffect } from "react";
 
 export function DashboardPage() {
     const [qrValue, setQrValue] = useState();
+    const [usersData, setUsersData] = useState({})
 
     useEffect(() => {
         const getUserData = () => {
@@ -42,6 +43,7 @@ export function DashboardPage() {
           if (userData) {
             // User data found, do something with it
             console.log('User data:', JSON.parse(userData));
+            setUsersData(userData)
           } else {
             // No user data found
             console.log('No user data found');
@@ -71,7 +73,7 @@ export function DashboardPage() {
                 <div className="border-b ">
                     <div className="flex h-16 items-center px-4">
                         <div className="ml-auto flex items-center space-x-8" dir="rtl">
-                            <UserNav />
+                            <UserNav data={usersData}/>
                             <div className="w-1"></div>
                             <Dialog>
                                 <DialogTrigger className="flex justify-center">
