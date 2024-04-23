@@ -10,6 +10,8 @@ import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
 
 const CategorieCard = ({item}) => {
     const [position, setPosition] = useState("bottom")
+    const [updateFormState, setUpdateFormState] = useState(false);
+    const [deleteFormState, setDeleteFormState] = useState(false);
     let imageUrls = [];
     imageUrls = JSON.parse(item.image);
   return (
@@ -53,8 +55,8 @@ const CategorieCard = ({item}) => {
         <div className='text-center text-xl font-light text-zinc-500 '>{item.name}</div>
 
         </Card>
-        {/* <UpdateForm updateFormState={updateFormState} setUpdateFormState={setUpdateFormState} />
-        <DeleteForm deleteFormState={deleteFormState} setDeleteFormState={setDeleteFormState} /> */}
+        <UpdateForm updateFormState={updateFormState} setUpdateFormState={setUpdateFormState} id={item.id}/>
+        <DeleteForm deleteFormState={deleteFormState} setDeleteFormState={setDeleteFormState} />
     </div>
   )
 }

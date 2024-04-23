@@ -81,6 +81,7 @@ import { Separator } from '@radix-ui/react-dropdown-menu';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { getRolesById } from '../../actions/Role/getRoles';
+import { getUserById } from '../../actions/User/CreateUser';
 
 export const description =
   "A product edit page. The product edit page has a form to edit the product details, stock, product category, product status, and product images. The product edit page has a sidebar navigation and a main content area. The main content area has a form to edit the product details, stock, product category, product status, and product images. The sidebar navigation has links to product details, stock, product category, product status, and product images."
@@ -93,42 +94,20 @@ export default function DashboardProfile() {
 
   const [userDat, setUserDat] = useState([])
   const [roleName, setRoleName] = useState("")
+  const idUser = sessionStorage.getItem('dataItem');
   useEffect(() => {
     const getUserData = async () => {
-      const userDataString = sessionStorage.getItem('userSession');
-      if (userDataString) {
-        const userData = JSON.parse(userDataString);
-        setUserDat(userData)
-        const id = userData.role_id;
-        console.log("The role id:", id, "The User Data:", userData);
-        
-        if (id !== undefined) {
-          console.log("The role id is defined:", id);
-          const respons = await getRolesById(id);
-          if(respons){
-            console.log("The Role Data => ", respons);
-            setRoleName(respons[0].name)
-          }
-        } else {
-          console.log("The role id is undefined");
-        }
-        // Continue with your logic here...
-      } else {
-        console.log('No user data found');
-      }
+      const userItem = await getUserById(idUser);
+      console.log("The User Item => ", userItem.users);
+      // if(userItem)
+      // {
+        userItem.map(obj =>  {
+          console.log("The Items => ", obj);
+          setUserDat(obj)
+        })
+      // }
     };
-    // const fetchRoles = async () => {
-    //   // Access id from userData if userData is defined
-    //    const roles = await getRolesById(id);
-    //    if (roles) {
-    //      // User data found, do something with it
-    //      console.log('Rolle data:', JSON.parse(roles));
-    //    } else {
-    //      // No user data found
-    //      console.log('No Roles data found');
-    //    }
-    //  }
-    //  fetchRoles();
+  
     getUserData();
   }, []);
 
@@ -197,11 +176,17 @@ export default function DashboardProfile() {
 
             <div className="card p-4">
                 <div className="image flex flex-col justify-center items-center">
-                    <button className="btn btn-secondary  overflow-hidden bg-neutral-300 flex justify-center items-center">
+                    <button className="btn btn-secondary overflow-hidden bg-neutral-300 flex justify-center items-center">
+                      {
+                        userDat.image == null
+                        ?
                         <img src="/public/avatar.png" height="100" width="150" alt="Profile" />
+                        :
+                        <h1>test</h1>
+                      }
                     </button>
                     <span className="name mt-3">{userDat.first_name + ' ' + userDat.last_name}</span>
-                    <span className="idd">{roleName}</span>
+                    <span className="idd">{userDat.role.name}</span>
 
                     <div className="flex flex-row mt-3">
                         <span className="number">Email <span className="follow">{userDat.email}</span></span>
@@ -277,7 +262,7 @@ export default function DashboardProfile() {
             <div className='w-full flex items-center gap-5 '>
             <div className='w-full'>
                     <label >Role:</label>
-                    <Input value={roleName} className='my-3' placeholder='test' disabled/>
+                    <Input value={userDat.role.name} className='my-3' placeholder='test' disabled/>
                 </div>
                 <div className='w-full md:w-full'>
             <label className='block mb-3'>Photo :</label>

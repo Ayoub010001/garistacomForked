@@ -20,10 +20,12 @@ import { AiFillFileImage } from 'react-icons/ai'
 import Uploader from "./uploader";
 import { Button } from "@/components/ui/button"
 
-export default function UpdateForm({updateFormState, setUpdateFormState}) {
+export default function UpdateForm({updateFormState, setUpdateFormState, id}) {
 
     const [images, setImages] = useState([]);
-    const [image, setImage] = useState(null)
+    const [image, setImage] = useState(null);
+
+    console.log("The Id => ", id); 
   const [fileName, setFileName] = useState("No selected file")
     const maxNumber = 3;
 

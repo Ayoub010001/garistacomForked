@@ -126,7 +126,6 @@ export function DataTable({
                             <div
                                 className="h-40 bg-slate-200 flex justify-center items-center rounded cursor-move"
                                 draggable="true"
-
                             >
                                 <h1>drag-image...</h1>
                             </div>

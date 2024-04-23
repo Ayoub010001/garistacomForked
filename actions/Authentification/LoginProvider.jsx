@@ -15,12 +15,13 @@ export const LoginProvider = ({ children }) => {
   const [ErrorMsg, setErrorMsg] = useState("");
   const [userData, setUserData] = useState([]);
   const [isStill, setIsStille] = useState('non');
+  const [users, setUsers] = useState([])
   // const navigate = useNavigate();
-  useEffect(() => {
+  // useEffect(() => {
 
-      console.log("userData => ", userData.length);
-      setIsStille("yes")
-      }, [isStill]);
+
+  //   localStorage.setItem('dataKey', users);
+  // }, [users]);
   
   const login = async (email, password, navigate) => {
     try {
@@ -36,32 +37,20 @@ export const LoginProvider = ({ children }) => {
   
       if (response.status === 200) {
         setIsLoggedIn(true);
-        console.log("The Response => ", response.data.user);
-        getUser(response.data.user.id)
+        // console.log("The Response => ", response.data.user);
         setUserData(response.data.user)
-        navigate("/Dashboard");
+        // navigate("/Dashboard");
       } else {
         setIsLoggedIn(false);
       }
+      return response.data;
     } catch (error) {
       console.error('Error during login:', error);
       setErrorMsg("Email or password are incorrect")
       setIsLoggedIn(false);
     }
   };
-  const getUser = async (id) => {
-    try {
-      const response = await axiosInstance.get(`${APIURL}/api/users/${id}`);
-  
-      if (response.status === 200) {
-        console.log("The Response of User => ", response.data.user);
-        console.log("The User Data Id => ",userData);
-      }
-      return response.data;
-    } catch (error) {
-      console.error('Error User:', error);
-    }
-  }
+
   const logout =async (navigate) => {
     try {
       const response = await axiosInstance.post(`${APIURL}/api/auth/logout`);
@@ -78,7 +67,7 @@ export const LoginProvider = ({ children }) => {
   };
 
   return (
-    <LoginContext.Provider value={{ isLoggedIn, login, logout, ErrorMsg, getUser, isStill }}>
+    <LoginContext.Provider value={{ isLoggedIn, login, logout, ErrorMsg, isStill, userData }}>
       {children}
     </LoginContext.Provider>
   );

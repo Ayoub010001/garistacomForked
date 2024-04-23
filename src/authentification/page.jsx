@@ -8,6 +8,8 @@ import { useLogin } from "../../actions/Authentification/LoginProvider";
 import { useEffect } from "react";
 import axios from "axios";
 import { useForm } from 'react-hook-form';
+import { axiosInstance } from "../../axiosInstance";
+import { APIURL } from "../../lib/ApiKey";
 
 function Login({ onLogin, className, ...props }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,12 +17,37 @@ function Login({ onLogin, className, ...props }) {
   const [password, setPassword] = useState("password");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [userId, setUserId] = useState("")
+  const [users, setUsers] = useState([])
   const navigate = useNavigate();
-  const { isLoggedIn, login, logout, ErrorMsg } = useLogin();
+  // const { isLoggedIn, login, logout, ErrorMsg } = useLogin();
 
   const { register, handleSubmit, formState: { errors } } = useForm();
 
-  console.log("The Error => ", ErrorMsg);
+  // useEffect(() => {
+  //   const  getUser = async () => {
+  //     try {
+  //       const response = await axiosInstance.get(`${APIURL}/api/users`);
+    
+  //       if (response.status === 200) {
+  //         setUsers(response.data.users);
+  //         console.log("The Response of User => ", response.data.users);
+  //       }
+  //       return response.data;
+  //     } catch (error) {
+  //       console.error('Error User:', error);
+  //     }
+  //   }
+
+  //   getUser()
+  // }, [])
+
+  // console.log("The Usere => ", users);
+  // useEffect(() => {
+  //   localStorage.setItem('dataKey', users);
+  // }, [users])
+
+  // console.log("The Error => ", ErrorMsg);
   // Function Handle navigation
   const handleNavigation = () => {
 
@@ -48,15 +75,46 @@ function Login({ onLogin, className, ...props }) {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
-  console.log("The logg =>", isLoggedIn);
+  const login = async (email, password, navigate) => {
+    try {
+      const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Fetch CSRF token from meta tag
+      const response = await axiosInstance.post(`${APIURL}/api/auth/login`, {
+        login: email,
+        password,
+      }, {
+        headers: {
+          'X-CSRF-TOKEN': csrfToken // Include CSRF token in the request headers
+        }
+      });
+  
+      if (response.status === 200) {
+        setIsLoading(true);
+        console.log("The Response => ", response.data.user.id);
+        if(response.data.user.id)
+        {
+          sessionStorage.setItem('dataItem', JSON.stringify(response.data.user.id));
+          sessionStorage.setItem('isLoggedIn', "loggin");
+          navigate("/Dashboard");
+        }
+      } else {
+        setIsLoading(false);
+      }
+      return response.data;
+    } catch (error) {
+      console.error('Error during login:', error);
+      setError("Email or password are incorrect")
+      setIsLoading(false);
+    }
+  };
   const onSubmit = async () => {
     setIsLoading(true);
-      const response = login(email, password, navigate)
+      const response = login(email, password, navigate);
 
     
     if(response)
     {
       console.log("Login Succesed", response);
+      setUserId(JSON.parse(response.id))
       // navigate("/Dashboard");
       // setTimeout(() => {
       //   // setIsLoading(false);
@@ -64,10 +122,11 @@ function Login({ onLogin, className, ...props }) {
     }
     else{
       console.log("Incoreect");
-      setError('Email or password is incorrect')
+      // setError('Email or password is incorrect')
     }
     setIsLoading(false);
   };
+  console.log("The logg Id =>", userId);
 
   return (
     <>
@@ -187,7 +246,7 @@ function Login({ onLogin, className, ...props }) {
                       "Login"
                     )}
                   </Button>
-                  {ErrorMsg && <p className="text-red-500 text-sm">{ErrorMsg}</p>}
+                  {/* {ErrorMsg && <p className="text-red-500 text-sm">{ErrorMsg}</p>} */}
 
                 </div>
               </form>

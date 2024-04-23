@@ -19,27 +19,20 @@ import { useLogin } from "../../../../actions/Authentification/LoginProvider";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
+import { getUserById } from "../../../../actions/User/CreateUser";
 
 function UserNav() {
   const navigate = useNavigate();
   const [userDat, setUserDat] = useState([])
-  const { getUser, logout } = useLogin()
+  const { getUser, logout } = useLogin();
+  const idUser = sessionStorage.getItem('dataItem');
   useEffect(() => {
     const getUserData = async () => {
-      // const userData = sessionStorage.getItem('userSession');
-      // if (userData) {
-      //   // User data found, do something with it
-      //   console.log('User data:', JSON.parse(userData));
-      //   setUserDat(JSON.parse(userData))
-      // } else {
-      //   // No user data found
-      //   console.log('No user data found');
-      // }
-      const userItem = await getUser();
+      const userItem = await getUserById(idUser);
       console.log("The User Item => ", userItem.users);
       // if(userItem)
       // {
-        userItem.users.map(obj =>  {
+        userItem.map(obj =>  {
           console.log("The Items => ", obj);
           setUserDat(obj)
         })
@@ -49,6 +42,10 @@ function UserNav() {
     getUserData();
   }, []);
 
+  const handleLogout = () => {
+    sessionStorage.setItem('isLoggedIn', "not loggin");
+    logout(navigate)
+  }
 
 
   // const { isLoggedIn, login, logout } = useLogin();
@@ -75,7 +72,7 @@ function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup className="cursor-pointer">
-          <DropdownMenuItem className="cursor-pointer">
+          <DropdownMenuItem className="cursor-pointer" onClick={() => navigate('/Profile')}>
             Profile
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
@@ -87,7 +84,7 @@ function UserNav() {
 
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => logout(navigate)} className="cursor-pointer">
+        <DropdownMenuItem onClick={() => handleLogout()} className="cursor-pointer">
           Log out
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>

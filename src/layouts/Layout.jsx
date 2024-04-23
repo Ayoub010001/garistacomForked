@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, createContext } from "react";
-import { Outlet, useNavigate ,Link} from "react-router-dom";
+import { Outlet, Link, useNavigate} from "react-router-dom";
 import Sidebar, {  SidebarItem } from "../pages/SideBar.jsx";
 import { BiDrink } from "react-icons/bi";
 import { BiDish } from "react-icons/bi";
@@ -26,25 +26,29 @@ function Layout() {
   const handleItemClick = (item) => {
     setSelectedItem(item === selectedItem ? null : item);
   };
+  const navigate = useNavigate();
 
   const [authenticated, setAuthenticated] = useState(false); // État d'authentification
-  const navigate = useNavigate(); // Utiliser la fonction de navigation
   // const { expanded } = useContext(SidebarContext);
-
+  const [userDat, setUserDat] = useState([])
+  const idUser = sessionStorage.getItem('dataItem');
   useEffect(() => {
     // Vérifiez si l'utilisateur est déjà authentifié lors du chargement de la page
     const isUserAuthenticated = localStorage.getItem("authenticated");
     if (isUserAuthenticated === "true") {
       setAuthenticated(true);
     }
+    const userLoggedIn = sessionStorage.getItem('isLoggedIn');
+    console.log("The User is logged in", userLoggedIn);
+    if(userLoggedIn != "loggin")
+    {
+      console.log("Trully");
+      navigate('/login') 
+    }
   }, []);
 
-  // Si l'utilisateur n'est pas authentifié, afficher la page de connexion
-//   if (!authenticated) {
-//     return <Login onLogin={() => setAuthenticated(true)} />;
-//   }
+ 
 
-  console.log(expanded);
   return (
     <>
       {/* <Login/> */}

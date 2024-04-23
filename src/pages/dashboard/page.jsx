@@ -56,38 +56,29 @@ import {  useNavigate } from "react-router-dom";
 import { useLogin } from "../../../actions/Authentification/LoginProvider";
 function DashboardPage() {
   const [qrValue, setQrValue] = useState();
-  const { isLoggedIn, getUser, isStill } = useLogin(); // Destructure isLoggedIn and getUser from useLogin
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const getUserData = async () => {
-      const userDataString = localStorage.getItem('userSession');
-      if (userDataString) {
-        const userData = JSON.parse(userDataString);
-        const id = userData.role_id;
-        console.log("The role id:", id, "The User Data:", userData);
-        
-        if (id !== undefined) {
-          console.log("The role id is defined:", id);
-        } else {
-          console.log("The role id is undefined");
-        }
-        // Continue with your logic here...
-      } else {
-        console.log('No user data found');
-      }
-    };
+  const [userDat, setUserDat] = useState([])
+  const idUser = sessionStorage.getItem('dataItem');
+  const [isLoggedIn, setIsLoggedIn] = useState("not login");
 
-    const getRolesData = async() => {
-      const roles = await getRoles();
-      console.log("The rolles => ",roles);
-    }
-  
-    getRolesData();
-    getUserData();
+  // Check if user is logged in by verifying session storage
+  // You may customize this based on how you handle authentication
+  const checkLoginStatus = () => {
+    const userLoggedIn = sessionStorage.getItem('isLoggedIn');
+    setIsLoggedIn(userLoggedIn);
+  };
+
+  // Call checkLoginStatus on initial render
+  useEffect(() => {
+    checkLoginStatus();
+ 
+
   }, []);
 
-   console.log("IsLoggin => ", isStill);
+
+
+
   const defaultPageURL = "https://votre-domaine.com/page-par-defaut";
   return (
     <div className="">
