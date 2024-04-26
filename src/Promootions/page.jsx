@@ -1,10 +1,11 @@
-import { TableHeader } from "../components/ui/table"
 import { columns } from "./columns"
 import { DataTable } from "./data-table"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from '@/components/ui/card'
 import React ,{useState} from 'react';
-import Header from '../pages/header';
+import { useEffect } from "react"
+import { axiosInstance } from "../../axiosInstance"
+import Spinner from 'react-spinner-material';
+
 async function getData() {
   // Fetch data from your API here.
   return [
@@ -21,46 +22,79 @@ async function getData() {
 export default function DemoPage() {
 //   const data = getData()
 
-const data= [
-    {
-        id: "1",
-        image:"https://i.pinimg.com/564x/c2/78/76/c2787689c506fb61999d8c9d88bccaab.jpg",
-        text: "offre de 25%",
-        available: true,
-        visible: false,
+    const data= [
+        {
+            id: "1",
+            image:"https://i.pinimg.com/564x/c2/78/76/c2787689c506fb61999d8c9d88bccaab.jpg",
+            text: "offre de 25%",
+            available: true,
+            visible: false,
+        },
+        {
+            id: "2",
+            image:"https://t4.ftcdn.net/jpg/02/74/99/01/360_F_274990113_ffVRBygLkLCZAATF9lWymzE6bItMVuH1.jpg",
+            text: "offre de 30%",
+            available: true,
+            visible: true
+        },
 
-    },
-    {
-        id: "2",
-        image:"https://t4.ftcdn.net/jpg/02/74/99/01/360_F_274990113_ffVRBygLkLCZAATF9lWymzE6bItMVuH1.jpg",
-        text: "offre de 30%",
+    ]
+    const [dataBanner, setDataBanner] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-        available: true,
-        visible: true
-    },
-
-]
+    useEffect(() => {
+      // Fetch data from the API when the component mounts
+      const fetchValue = async () => {
+        setLoading(true)
+        try{
+          
+          const respone = await axiosInstance.get("/api/banners")
+          if(respone)
+          {
+           
+            setDataBanner(respone.data)
+            setLoading(false)
+          }
+        }
+        catch(err)
+        {
+          console.log("The Error => ", err);
+        }
+      }
+      fetchValue()
+    }, []);
   console.log(data)
+  console.log("The Data Banner => ", dataBanner);
   const [isOpen, setIsOpen] = useState(true);
   return (
     <>
-     <div className="flex items-center justify-between space-y-2 p-4">
-            <h2 className="text-3xl font-bold tracking-tight">Promotions</h2>
-            <div
-              className="flex items-center space-x-2 "
-              style={{
-                backgroundColor: "black",
-                color: "white",
-                borderRadius: ".5rem",
-              }}
-            >
-              <Button>Download</Button>
-</div>
-            </div>
-<div className="container mx-auto py-10">
+    {
+        loading
+        ?
+        <div className='justify-center items-center flex  h-[50vh]'>
+        <Spinner size={100} spinnerColor={"#28509E"} spinnerWidth={1} visible={true} style={{borderColor: "#28509E", borderWidth: 2}}/>
+      </div>
+        :
+        <>
+        <div className="flex items-center justify-between space-y-2 p-4">
+                <h2 className="text-3xl font-bold tracking-tight">Promotions</h2>
+                <div
+                  className="flex items-center space-x-2 "
+                  style={{
+                    backgroundColor: "black",
+                    color: "white",
+                    borderRadius: ".5rem",
+                  }}
+                >
+                  <Button>Download</Button>
+              </div>
+                </div>
+            <div className="container mx-auto py-10">
 
-      <DataTable columns={columns} data={data} />
-    </div>
+          <DataTable columns={columns} data={dataBanner} />
+        </div>
+        </>
+    }
     </>
 
   )

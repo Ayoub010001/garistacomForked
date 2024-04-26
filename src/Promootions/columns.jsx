@@ -29,28 +29,30 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { IoCheckmarkOutline } from "react-icons/io5"
 import { Switch } from '@/components/ui/switch'
 import UpdateForm from "./updateForm";
+import DeletForm from "./DeletForm";
 export const columns = [
     {
         accessorKey: "image",
         header: () => <div className="ml-1">IMAGE</div>,
         cell: ({ row }) => (
-            <div className="capitalize ml-1 w-16">
-                <img className="h-16  rounded-full" src={row.getValue("image")}/>
+          <div className="capitalize ml-1 w-16">
+              {console.log("The Images => ",JSON.parse(row.original.images) )}
+                <img className="h-16  rounded-full" alt={row.getValue("title")} src={`http://localhost:8000/${row.original.images}`}/>
             </div>
         ),
     },
     {
-        accessorKey: "text",
-        header: "TEXT",
+        accessorKey: "title",
+        header: "Title",
       },
 
 
     {
-        accessorKey: "visible",
+        accessorKey: "visibility",
         header: "VISIBLE",
         cell: ({ row }) => {
 
-            const [isActive, setIsActive] = useState(row.getValue("visible"));
+            const [isActive, setIsActive] = useState(row.getValue("visibility"));
 
             const handleToggleChange = () => {
                 setIsActive(!isActive);
@@ -74,50 +76,14 @@ export const columns = [
 
       return (
         <>
-        {/* <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="center">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => setUpdateFormState(true)}>Update</DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
-
-          </DropdownMenuContent>
-        </DropdownMenu> */}
         <div className="flex gap-2">
         <Button onClick={() => setUpdateFormState(true)} >
             <BiSolidEdit size={20}/>
         </Button>
 
+        <DeletForm />
 
-            <Dialog className="items-center justify-center">
-      <DialogTrigger asChild>
-        <Button variant="outline" className="bg-black"><BiSolidTrash size={20}/></Button>
-      </DialogTrigger>
-
-  <DialogContent className="sm:max-w-[425px] items-center justify-center ">
-    <DialogHeader className="items-center justify-center ">
-    <MdErrorOutline size={80}/>
-      <DialogTitle className="flex items-center text-[1.7rem]"> Are you sure ?</DialogTitle>
-    </DialogHeader>
-    <div className="grid gap-4 py-4">
-      <div className="grid grid-cols-2 items-center gap-4">
-        <Button>Yes</Button>
-        <Button>No</Button>
-      </div>
-    </div>
-  </DialogContent>
-
-
-    </Dialog>
         </div>
-
-
 
         <UpdateForm updateFormState={updateFormState} setUpdateFormState={setUpdateFormState} />
         </>

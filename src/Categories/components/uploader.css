@@ -3,7 +3,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 2px dashed black;
+    border-width: 2px;
+    border-style: dashed;
     height: 250px;
     width: 100%;
     cursor: pointer;

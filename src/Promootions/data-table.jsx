@@ -42,6 +42,9 @@ import {
     DialogFooter,
   } from "@/components/ui/dialog";
   import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useEffect } from "react";
+import { da } from "date-fns/locale";
+import { axiosInstance } from "../../axiosInstance";
 export function DataTable({
 
     columns,
@@ -69,6 +72,9 @@ export function DataTable({
             columnFilters,
         },
     });
+  
+   
+
     const HandleOpen =()=>{
         SetisOpen(true)
 
@@ -81,11 +87,11 @@ export function DataTable({
                     <Input
                         placeholder="Filter Names..."
                         value={
-                            (table.getColumn("name")?.getFilterValue() ) ??
+                            (table.getColumn("title")?.getFilterValue() ) ??
                             ""
                         }
                         onChange={(event) =>
-                            table.getColumn("name")?.setFilterValue(
+                            table.getColumn("title")?.setFilterValue(
                                 event.target.value
                             )
                         }
@@ -93,30 +99,10 @@ export function DataTable({
                     />
                 </div>
                 <div className="flex justify-between gap-3">
-                {/* <div className="flex items-center space-x-2">
-  <p className="text-sm font-medium">Rows per page</p>
-  <Select
-    value={`${table.getState().pagination.pageSize}`}
-    onValueChange={(value) => {
-      table.setPageSize(Number(value))
-    }}
-  >
-    <SelectTrigger className="h-8 w-[70px]">
-      <SelectValue placeholder={table.getState().pagination.pageSize} />
-    </SelectTrigger>
-    <SelectContent side="top">
-      {[2, 5, 10, 15, 20].map((pageSize) => (
-        <SelectItem key={pageSize} value={`${pageSize}`}>
-          {pageSize}
-        </SelectItem>
-      ))}
-    </SelectContent>
-  </Select>
-</div> */}
 
 <Dialog  className=" p-8 shadow-lg h-[45rem] w-[65rem] rounded-xl">
 <DialogTrigger className="flex justify-center">
-                <Button variant="ghost" className="relative  rounded-md bg-black ">
+                <Button variant="ghost" className="relative  rounded-md bg-black text-white hover:bg-black hover:text-white">
                Add Promo
                 </Button>
                 </DialogTrigger>
@@ -125,75 +111,7 @@ export function DataTable({
                     <h2 className="text-2xl font-bold mb-4 text-center">Create Promotions</h2>
                     <div className='flex items-start gap-10 p-10 justify-center'>
                         <div className='w-full '>
-                            {/* <div
-                                className="h-40 bg-slate-200 flex justify-center items-center rounded cursor-move"
-                                draggable="true"
-
-                            >
-                                <h1>drag-image...</h1>
-                            </div> */}
                             <Uploader />
-      {/* <ImageUploading
-        multiple
-        value={images}
-        onChange={onChange}
-        maxNumber={maxNumber}
-        dataURLKey="data_url"
-      >
-        {({
-          imageList,
-          onImageUpload,
-          onImageRemoveAll,
-          onImageUpdate,
-          onImageRemove,
-          isDragging,
-          dragProps,
-        }) => (
-          // write your building UI
-          <div className="upload__image-wrapper">
-            <button
-              style={isDragging ? { color: 'red' } : undefined}
-              onClick={onImageUpload}
-              {...dragProps}
-            >
-                 <form
-      onClick={() => document.querySelector(".input-field").click()}
-      >
-        <input type="file" accept='image/*' className='input-field' hidden
-        onChange={({ target: {files}}) => {
-          files[0] && setFileName(files[0].name)
-          if(files){
-            setImage(URL.createObjectURL(files[0]))
-          }
-        }}
-         />
-
-        {image ?
-        <img src={image} width={150} height={150} alt={fileName} />
-        :
-        <>
-        <MdCloudUpload color='#1475cf' size={60} />
-        <p>Browse Files to upload</p>
-        </>
-      }
-
-      </form>
-
-            </button>
-            &nbsp;
-            <button onClick={onImageRemoveAll}>Remove all images</button>
-            {imageList.map((image, index) => (
-              <div key={index} className="image-item">
-                <img src={image['data_url']} alt="" width="100" />
-                <div className="image-item__btn-wrapper">
-                  <button onClick={() => onImageUpdate(index)}>Update</button>
-                  <button onClick={() => onImageRemove(index)}>Remove</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </ImageUploading> */}
 
                             <div className=''>
                                 <Input type="text" placeholder="Title" className='mt-5 mb-5' />
@@ -260,25 +178,25 @@ export function DataTable({
 
        <div className="flex items-center justify-between px-2">
        <div className="flex items-center space-x-2">
-  <p className="text-sm font-medium">Rows per page</p>
-  <Select
-    value={`${table.getState().pagination.pageSize}`}
-    onValueChange={(value) => {
-      table.setPageSize(Number(value))
-    }}
-  >
-    <SelectTrigger className="h-8 w-[70px]">
-      <SelectValue placeholder={table.getState().pagination.pageSize} />
-    </SelectTrigger>
-    <SelectContent side="top">
-      {[2, 5, 10, 15, 20].map((pageSize) => (
-        <SelectItem key={pageSize} value={`${pageSize}`}>
-          {pageSize}
-        </SelectItem>
-      ))}
-    </SelectContent>
-  </Select>
-</div>
+        <p className="text-sm font-medium">Rows per page</p>
+                  <Select
+                    value={`${table.getState().pagination.pageSize}`}
+                    onValueChange={(value) => {
+                      table.setPageSize(Number(value))
+                    }}
+                  >
+                    <SelectTrigger className="h-8 w-[70px]">
+                      <SelectValue placeholder={table.getState().pagination.pageSize} />
+                    </SelectTrigger>
+                    <SelectContent side="top">
+                      {[2, 5, 10, 15, 20].map((pageSize) => (
+                        <SelectItem key={pageSize} value={`${pageSize}`}>
+                          {pageSize}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+      </div>
       <div className="flex items-center space-x-6 lg:space-x-8">
 
         <div className="flex w-[100px] items-center justify-center text-sm font-medium">

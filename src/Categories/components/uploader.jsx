@@ -34,8 +34,7 @@ function Uploader({ setImage, setImages }) {
     
 };
   return (
-    <main className='w-[590px]'>
-      <Label className="text-md">Choose 1 or 4 image</Label>
+    <main className='w-[590px] mt-2'>
       <form className='form-drag' onClick={() => document.querySelector(".input-field").click()}>
         <input
           type="file"

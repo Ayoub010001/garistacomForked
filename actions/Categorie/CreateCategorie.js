@@ -24,3 +24,22 @@ export const addCategorie = async ({
         console.log("The Error");
     }
 }
+
+export const deleteCategorie = async (id) => {
+    try{
+        const response = await axiosInstance.delete("/api/categories/" + id,
+            {
+                headers: {
+                    "Accept": "application/json"
+                }
+            }
+           ).then((res) => console.log("The Response => ", res.data))
+           .catch(err => console.log(err))
+    
+           return response;
+    }
+    catch(err)
+    {
+        console.log("The Error => ", err);
+    }
+}
