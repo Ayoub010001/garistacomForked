@@ -97,6 +97,9 @@ export default function DashboardProfile() {
   const [userDat, setUserDat] = useState([])
   const [roleName, setRoleName] = useState("")
   const [name, setName] = useState("")
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const idUser = sessionStorage.getItem('dataItem');
   const [Loading, setLoading] = useState(false);
   console.log("The User Item => ", idUser);
@@ -116,6 +119,9 @@ export default function DashboardProfile() {
               setRoleName(JSON.parse(roleData))
               setUserDat(obj)
               setName(obj.first_name)
+              setLastName(obj.last_name)
+              setEmail(obj.email)
+              setPhone(obj.phone)
             })
           setLoading(false)
          }
@@ -135,7 +141,10 @@ export default function DashboardProfile() {
   async function handleUpdate () {
       try{
          const respone = await axiosInstance.put('/api/auth/edit/' + userDat.id, {
-          first_name: name
+          first_name: name,
+          last_name: lastName,
+          phone: phone,
+          email: email,
          }
          );
          if(respone)
@@ -208,14 +217,14 @@ export default function DashboardProfile() {
                                   <h1>test</h1>
                                 }
                               </button>
-                              <span className="name mt-3">{name + ' ' + userDat.last_name}</span>
+                              <span className="name mt-3">{name + ' ' + lastName}</span>
                               <span className="idd">{roleName.name}</span>
 
                               <div className="flex flex-row mt-3">
-                                  <span className="number">Email <span className="follow">{userDat.email}</span></span>
+                                  <span className="number">Email <span className="follow">{email}</span></span>
                               </div>
                               <div className="flex flex-row mt-3">
-                                  <span className="number">Tele <span className="follow">{userDat.phone}</span></span>
+                                  <span className="number">Tele <span className="follow">{phone}</span></span>
                               </div>
 
                               {/* <div className="text mt-3">
@@ -254,7 +263,7 @@ export default function DashboardProfile() {
                 </div>
                 <div className='w-full'>
                     <label>Last name :</label>
-                    <Input value={userDat.last_name} className='my-3' placeholder="last name..."/>
+                    <Input value={lastName} onChange={(e) => setLastName(e.target.value)} className='my-3' placeholder="last name..."/>
                 </div>
 
 
@@ -262,11 +271,11 @@ export default function DashboardProfile() {
             <div className='w-full flex items-center gap-5 '>
                 <div className='w-full'>
                     <label >Email:</label>
-                    <Input value={userDat.email} className='my-3' placeholder='example@gmail.com'/>
+                    <Input value={email} onChange={(e) => setEmail(e.target.value)}  className='my-3' placeholder='example@gmail.com'/>
                 </div>
                 <div className='w-full'>
                     <label>Mobile:</label>
-                    <Input value={userDat.phone} className='my-3' placeholder="0675162919"/>
+                    <Input value={phone} onChange={(e) => setPhone(e.target.value)} className='my-3' placeholder="0675162919"/>
                 </div>
             </div>
             <div className='w-full flex items-center gap-5 '>

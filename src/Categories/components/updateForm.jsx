@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button"
 import { fetchCategorieById } from "../../../actions/Categorie/getCategories";
 import { useForm } from "react-hook-form";
 import Spinner from 'react-spinner-material';
+import { updateCategorie } from "../../../actions/Categorie/CreateCategorie";
 
 export default function UpdateForm({updateFormState, setUpdateFormState, id}) {
 
@@ -32,6 +33,7 @@ export default function UpdateForm({updateFormState, setUpdateFormState, id}) {
     console.log("The Id => ", id); 
     const [fileName, setFileName] = useState("No selected file")
     const maxNumber = 3;
+    const [name, setName] = useState()
 
     const handleRoleChange = (selectedRole) => {
         setRole(selectedRole);
@@ -50,6 +52,7 @@ export default function UpdateForm({updateFormState, setUpdateFormState, id}) {
                     console.log("The Categories of Update => ",categorieDates);
                     categorieDates.map((item) => {
                         setCategories(item)
+                        setName(item.name)
                     })
                     setLoading(false)
                 }
@@ -70,6 +73,21 @@ export default function UpdateForm({updateFormState, setUpdateFormState, id}) {
 
     }, [])
 
+    const handleUpdate = async () => {
+       try{
+           const res = await updateCategorie({
+            id,
+            name,
+           })
+
+           if(res){
+            console.log("the Res => ",res);
+           }
+       }
+       catch(err){
+        console.log("The Error => ", err);
+       }
+    }
     const handleImageChange = (e) => {
         const selectedFile = e.target.files[0];
         // setFile(selectedFile);
@@ -95,7 +113,7 @@ export default function UpdateForm({updateFormState, setUpdateFormState, id}) {
                     <DialogDescription >Create a new Categories Lorem ipsum dolor sit amet consectetur </DialogDescription>
                     <div className="flex flex-col gap-3 items-center justify-center pt-4">
                         <div className="flex gap-3">
-                            <Input type="text" placeholder="name" className="w-[37rem] p-2 border border-gray-300 rounded-md" value={Categories.name} onChange={(e) => setName(e.target.value)} />
+                            <Input type="text" placeholder="name" className="w-[37rem] p-2 border border-gray-300 rounded-md" value={name} onChange={(e) => setName(e.target.value)} />
                         </div>
                         <div className="flex gap-3">
                         <div className="mt-2 mb-4 w-[590px]">
@@ -145,7 +163,7 @@ export default function UpdateForm({updateFormState, setUpdateFormState, id}) {
                         <Switch checked={isChecked} onCheckedChange={() => setIsChecked(!isChecked)}/>
                         </div>
                         <DialogClose>
-                            <Button variant="outline" className="justify-end items-end bg-black text-white hover:bg-black hover:text-white">Update Categories</Button>
+                            <Button onClick={handleUpdate} variant="outline" className="justify-end items-end bg-black text-white hover:bg-black hover:text-white">Update Categories</Button>
                         </DialogClose>
                     </div>
                 </DialogHeader>

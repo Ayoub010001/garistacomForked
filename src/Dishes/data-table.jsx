@@ -1,4 +1,4 @@
-import React,{useState} from "react"
+import React,{useEffect, useState} from "react"
 import Uploader from "./uploader";
 
 import {
@@ -52,16 +52,109 @@ import {
 import { axiosInstance } from "../../axiosInstance";
 import { useForm } from "react-hook-form";
 import AddDiche from "./AddDiche";
+import DeletForm from "./DeleteForm";
 export function DataTable({
-    categries,
-    columns,
-    data,
-    SetisOpen,
-  }) {
+  categries
+}) {
+    const columns = [
+      {
+          accessorKey: "image",
+          header: () => <div className="ml-1">IMAGE</div>,
+          cell: ({ row }) => (
+              <div className="capitalize ml-1 w-16">
+                  <img className="h-16  rounded-full" src={row.getValue("image")}/>
+              </div>
+          ),
+      },
+      {
+          accessorKey: "name",
+          header: "NAME",
+      },
+      {
+        accessorKey: "categories",
+        header: "CATEGORIES",
+      },
+      {
+        accessorKey: "price",
+        header: "PRICE",
+      },
+      {
+          accessorKey: "visible",
+          header: "VISIBLE",
+          cell: ({ row }) => {
+  
+              const [isActive, setIsActive] = useState(row.getValue("visible"));
+  
+              const handleToggleChange = () => {
+                  setIsActive(!isActive);
+              };
+              return (
+                  <div className="capitalize">
+                      <Switch onClick={handleToggleChange} checked={isActive} />
+                  </div>
+              );
+  
+  
+      }
+      },
+      {
+        id: "actions",
+        cell: ({ row }) => {
+          const payment = row.original
+    
+          const [updateFormState, setUpdateFormState] = useState(false);
+    
+          return (
+            <>
+            <div className="flex gap-2">
+            <Button onClick={() => setUpdateFormState(true)} >
+                <BiSolidEdit size={20}/>
+            </Button>
+    
+    
+              <DeletForm id={row.original.id} />
+            </div>
+    
+    
+    
+            <UpdateForm updateFormState={updateFormState} setUpdateFormState={setUpdateFormState} />
+            </>
+          )
+        },
+      },
+  ]
     // const [sorting, setSorting] = useState([]);
     const [columnFilters, setColumnFilters] = useState([]);
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(false);
 
+    const fetchValue = async () => {
+      setLoading(true)
+      try{
+        
+        const respone = await axiosInstance.get("/api/dishes")
+        console.log("The Response => ",respone.data);
+        if(respone)
+        {
+          setData(respone.data)
+          setLoading(false)
+        }
+      }
+      catch(err)
+      {
+        console.log("The Error => ", err.message);
+        if(err.message === "Request failed with status code 404")
+        {
+          setLoading(false)
+        }
+      }
+    }
+    
+    useEffect(() => {
+
+      fetchValue()
+    }, []);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
@@ -86,23 +179,6 @@ export function DataTable({
         },
     });
 
-    const postData = async () => {
-      // try{
-      //    const response = await axiosInstance.post('/api/dishes/', {
-      //     name: "Pizza Margarita",
-      //     desc: "this is a description",
-      //     price: "25",
-      //     resto_id: "1",
-      //     category_id: "12",
-      //    })
-      //    if(response){
-      //     console.log("The Data is completed successfully");
-      //    }
-      // }
-      // catch(error){
-      //   console.log("The Error => ", error);
-      // }
-    }
     const HandleOpen =()=>{
         SetisOpen(true)
 

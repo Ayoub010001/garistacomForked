@@ -145,7 +145,7 @@ const data= [
             </div>
 <div className="container mx-auto py-10">
 
-      <DataTable columns={columns} data={data} categries={categorieData}/>
+      <DataTable  categries={categorieData}/>
     </div>
     </>
 

@@ -36,8 +36,8 @@ export const columns = [
         header: () => <div className="ml-1">IMAGE</div>,
         cell: ({ row }) => (
           <div className="capitalize ml-1 w-16">
-              {console.log("The Images => ",JSON.parse(row.original.images) )}
-                <img className="h-16  rounded-full" alt={row.getValue("title")} src={`http://localhost:8000/${row.original.images}`}/>
+              {/* {console.log("The Images of Update => ",JSON.parse(row.original) )} */}
+                <img className="h-16  rounded-full" alt={row.getValue("title")} src={`http://localhost:8000/${row.original.image}`}/>
             </div>
         ),
     },
@@ -71,7 +71,7 @@ export const columns = [
     id: "actions",
     cell: ({ row }) => {
       const payment = row.original
-
+     
       const [updateFormState, setUpdateFormState] = useState(false);
 
       return (
@@ -81,8 +81,7 @@ export const columns = [
             <BiSolidEdit size={20}/>
         </Button>
 
-        <DeletForm />
-
+        <DeletForm id={row.original.id}/>
         </div>
 
         <UpdateForm updateFormState={updateFormState} setUpdateFormState={setUpdateFormState} />

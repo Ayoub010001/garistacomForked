@@ -80,6 +80,11 @@ import {
   TooltipProvider
 } from "@/components/ui/tooltip"
 import { Separator } from '@radix-ui/react-dropdown-menu';
+import { useEffect } from 'react';
+import { useState } from 'react';
+import { getCurrency } from '../../actions/Currency/CurrencyApi';
+import Spinner from 'react-spinner-material';
+import { getInfo } from '../../actions/Info/Info';
 
 export const description =
   "A product edit page. The product edit page has a form to edit the product details, stock, product category, product status, and product images. The product edit page has a sidebar navigation and a main content area. The main content area has a form to edit the product details, stock, product category, product status, and product images. The sidebar navigation has links to product details, stock, product category, product status, and product images."
@@ -89,6 +94,81 @@ export const iframeHeight = "1200px"
 export const containerClassName = "w-full h-full"
 
 export default function DashboardCompany() {
+
+    const [loading, setLoading] = useState(false)
+    const [currValue, setCurrValue] = useState('')
+    const [currData, setCurrData] = useState([])
+    const [name, setName] = useState('')
+    const [description, setDescription] = useState('')
+    const [address, setAddress] = useState('')
+    const [wifiPass, setWifiPass] = useState('')
+    const [website_url, setWebsite_url] = useState('')
+    const [facebook, setFacebook] = useState('')
+    const [instgram, setInstgram] = useState('')
+    const [tiktok, setTiktok] = useState('')
+    const [youtube, setYoutube] = useState('')
+    const [snapshat, setSnapshat] = useState('')
+    const [whatsapp, setWhatsapp] = useState('')
+    const [google_buss, setGoogle_buss] = useState('')
+    const [trustpilot_link, setTrustpilot_link] = useState('')
+    const [cover_image, setCover_image] = useState('')
+    const [facebook_pixel, setFacebook_pixel] = useState('')
+    const [tiktok_pixel, setTiktok_pixel] = useState('')
+    const [ads_pixel, setAds_pixel] = useState('')
+    const [anylytics, setAnylytics] = useState('')
+    useEffect(() => {
+       const fetchValue = async () => {
+        setLoading(true)
+        try {
+           const response = await getCurrency();
+           const resInfo = await getInfo();
+
+           if(response && resInfo)
+           {
+            console.log("the Response => ", resInfo);
+            setCurrData(response)
+            setCurrValue(response[2].type)
+            let Data = [];
+            Data = resInfo;
+            Data.map((item) => {
+                setDescription(item.description)
+                setName(item.resto.name)
+                setAddress(item.address)
+                setWifiPass(item.wifi_pass)
+                setWebsite_url(item.website_url)
+                setFacebook(item.facebook)
+                setInstgram(item.instgram)
+                setTiktok(item.tiktok)
+                setYoutube(item.youtube)
+                setSnapshat(item.snapshat)
+                setWhatsapp(item.whatsapp)
+                setGoogle_buss(item.google_buss)
+                setTrustpilot_link(item.trustpilot_link)
+                setCover_image(item.cover_image)
+                setFacebook_pixel(item.facebook_pixel)
+                setTiktok_pixel(item.tiktok_pixel)
+                setAds_pixel(item.ads_pixel)
+                setAnylytics(item.anylytics)
+            })
+            setLoading(false)
+           }
+        }
+        catch(err){
+            console.log("the error => ", err);
+        }
+       }
+
+       fetchValue();
+    }, [])
+
+    if(loading)
+    {
+        return(
+            <div className='justify-center items-center flex  h-[50vh]'>
+                <Spinner size={100} spinnerColor={"#28509E"} spinnerWidth={1} visible={true} style={{borderColor: "#28509E", borderWidth: 2}}/>
+            </div>
+        )
+    }
   return (
 
     // <TooltipProvider>
@@ -126,57 +206,61 @@ export default function DashboardCompany() {
             <div className='flex flex-col md:flex-row w-full py-5 gap-5 items-center'>
             <div className='w-full md:w-1/2'>
                 <label className=''>Name :</label>
-                <Input className='mt-3' placeholder='name' type="text"/>
+                <Input value={name} onChange={(e) => setName(e.target.value)} className='mt-3' placeholder='name' type="text"/>
             </div>
             <div className='w-full md:w-1/2'>
                 <label className='block mb-3'>Logo :</label>
-                <Input id="example1" type="file" class="block w-full text-sm file:mr-4 file:rounded-md file:border-0 file:bg-neutral-500 file:py-2.5 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-700 focus:outline-none disabled:pointer-events-none disabled:opacity-60" />
+                <Input  id="example1" type="file" class="block w-full text-sm file:mr-4 file:rounded-md file:border-0 file:bg-neutral-500 file:py-2.5 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-700 focus:outline-none disabled:pointer-events-none disabled:opacity-60" />
             </div>
             </div>
             <div className='flex flex-col md:flex-row w-full  gap-5 items-center'>
             <div className='w-full md:w-full'>
                 <label className='block mb-3'>Description :</label>
-                <Input className='mt-3' placeholder='description' type="text"/>
+                <Input value={description} onChange={(e) => setDescription(e.target.value)}  className='mt-3' placeholder='description' type="text"/>
             </div>
             </div>
-            <div className='w-full md:w-full'>
+            <div className='w-full md:w-full my-5'>
                 <label className='block mb-3'>Cover Photo :</label>
                 <Input id="example1" type="file" class="block w-full text-sm file:mr-4 file:rounded-md file:border-0 file:bg-neutral-500 file:py-2.5 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-700 focus:outline-none disabled:pointer-events-none disabled:opacity-60" />
 
             </div>
             <div className='w-full md:w-full'>
                 <label className='block mb-3'>Adress :</label>
-                <Input className='mt-3' placeholder='Adress' type="text"/>
+                <Input value={address} onChange={(e) => setAddress(e.target.value)} className='mt-3' placeholder='Adress' type="text"/>
             </div>
             <div className='flex flex-col md:flex-row w-full py-5 gap-5 items-center'>
             <div className='w-full md:w-1/2'>
                 <label className='block mb-3'>Currency :</label>
-                <Select>
+                <Select onValueChange={(e) => {setCurrValue(e); console.log("The Values Change => ",e);}}>
                 <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Méthode de paiement" />
+                    <SelectValue placeholder={currValue} />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className='cursor-pointer'>
                     <SelectGroup>
-                    <SelectLabel>Méthode de paiement</SelectLabel>
-                    <SelectItem value="card">Carte de crédit</SelectItem>
-                    <SelectItem value="paypal">PayPal</SelectItem>
+                    
+                    {
+                        currData.map((item)=> (
+                            <SelectItem className='cursor-pointer' value={item.type}>{item.type}</SelectItem>
+                        ))
+                    }
+                    {/* <SelectItem value="paypal">PayPal</SelectItem>
                     <SelectItem value="cash">Espèces</SelectItem>
                     <SelectItem value="transfer">Virement bancaire</SelectItem>
-                    <SelectItem value="crypto">Crypto-monnaie</SelectItem>
+                    <SelectItem value="crypto">Crypto-monnaie</SelectItem> */}
                     </SelectGroup>
                 </SelectContent>
                 </Select>
             </div>
             <div className='w-full md:w-1/2'>
                 <label className='block mb-3'>Wifi password :</label>
-                <Input id="picture" type="text" className='mt-3' placeholder="wifi"/>
+                <Input value={wifiPass} onChange={(e) => setWifiPass(e.target.value)}  id="picture" type="text" className='mt-3' placeholder="wifi"/>
             </div>
             </div>
             <div>
                 <label for="example7" className="mb-1 block text-sm font-medium text-gray-700">Restaurant URL :</label>
                 <div className="relative z-0 flex">
                     <div className="inset-y-0 left-0 flex items-center rounded-md rounded-r-none border border-r-0 border-gray-300 bg-gray-100 px-2.5 text-gray-700">https://</div>
-                    <Input type="url" id="example7" className="block w-full rounded-md rounded-l-none border border-gray-300 shadow-sm focus:z-10 focus:border-primary-400 focus:ring focus:ring-primary-200 focus:ring-opacity-50 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500" placeholder="example.com" />
+                    <Input value={website_url} onChange={(e) => setWebsite_url(e.target.value)} type="url" id="example7" className="block w-full rounded-md rounded-l-none border border-gray-300 shadow-sm focus:z-10 focus:border-primary-400 focus:ring focus:ring-primary-200 focus:ring-opacity-50 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500" placeholder="example.com" />
                 </div>
             </div>
         </div>
@@ -192,21 +276,21 @@ export default function DashboardCompany() {
         <div className='flex flex-col md:flex-row w-full py-5 gap-5 items-center'>
             <div className='w-full md:w-1/2'>
                 <label className=''>Google analytics :</label>
-                <Input className='mt-3' placeholder='Google analytics' type="text"/>
+                <Input value={anylytics} onChange={(e) => setAnylytics(e.target.value)} className='mt-3' placeholder='Google analytics' type="text"/>
             </div>
             <div className='w-full md:w-1/2'>
                 <label className='block mb-3'>Facebook Pixel :</label>
-                <Input className='mt-3' placeholder='Facebook Pixel' type="text"/>
+                <Input value={facebook_pixel} onChange={(e) => setFacebook_pixel(e.target.value)} className='mt-3' placeholder='Facebook Pixel' type="text"/>
                 </div>
             </div>
             <div className='flex flex-col md:flex-row w-full  gap-5 items-center'>
             <div className='w-full md:w-full'>
                 <label className='block mb-3'>Google ads Pixel :</label>
-                <Input className='mt-3' placeholder='Google ads Pixel' type="text"/>
+                <Input value={ads_pixel} onChange={(e) => setAds_pixel(e.target.value)} className='mt-3' placeholder='Google ads Pixel' type="text"/>
             </div>
             <div className='w-full md:w-full'>
                 <label className='block mb-3'>Tiktok pixel :</label>
-                <Input className='mt-3' placeholder='Tiktok pixel' type="text"/>
+                <Input value={tiktok_pixel} onChange={(e) => setTiktok_pixel(e.target.value)} className='mt-3' placeholder='Tiktok pixel' type="text"/>
             </div>
             </div>
         </div>
@@ -241,23 +325,23 @@ export default function DashboardCompany() {
                     <div>
                     <div className='flex items-center m-5 justify-center'>
                         <AiOutlineInstagram className='w-10 h-10 text-gray-500' />
-                        <Input className='m-5 w-[16rem]' placeholder='Instagram Account...' />
+                        <Input value={instgram} onChange={(e) => setInstgram(e.target.value)} className='m-5 w-[16rem]' placeholder='Instagram Account...' />
                     </div>
                     <div className='flex items-center m-5'>
                         <FiFacebook  className='w-10 h-10 text-gray-500' />
-                        <Input className='m-5 w-[16rem]' placeholder='Instagram Account...' />
+                        <Input value={facebook} onChange={(e) => setFacebook(e.target.value)} className='m-5 w-[16rem]' placeholder='Instagram Account...' />
                     </div>
                     <div className='flex items-center m-5'>
                         <PiTiktokLogoLight className='w-10 h-10 text-gray-500' />
-                        <Input className='m-5 w-[16rem]' placeholder='Instagram Account...' />
+                        <Input value={tiktok} onChange={(e) => setTiktok(e.target.value)}  className='m-5 w-[16rem]' placeholder='Instagram Account...' />
                     </div>
                     <div className='flex items-center m-5'>
                         <BsSnapchat className='w-10 h-10 text-gray-500' />
-                        <Input className='m-5 w-[16rem]' placeholder='Instagram Account...' />
+                        <Input value={snapshat} onChange={(e) => setSnapshat(e.target.value)}  className='m-5 w-[16rem]' placeholder='Instagram Account...' />
                     </div>
                     <div className='flex items-center m-5'>
                         <AiOutlineYoutube className='w-10 h-10 text-gray-500' />
-                        <Input className='m-5 w-[16rem]' placeholder='Instagram Account...' />
+                        <Input value={youtube} onChange={(e) => setYoutube(e.target.value)} className='m-5 w-[16rem]' placeholder='Instagram Account...' />
                     </div>
                 </div>
                     </CardContent>
@@ -270,11 +354,11 @@ export default function DashboardCompany() {
 
                         <div className='w-full md:w-full'>
                         <label className='block mb-3'>Trustpilot :</label>
-                            <Input  className='mt-3' placeholder='Trustpilot' />
+                            <Input value={trustpilot_link} onChange={(e) => setTrustpilot_link(e.target.value)} className='mt-3' placeholder='Trustpilot' />
                         </div>
                         <div className='w-full md:w-full'>
                             <label className='block mb-3'>Google Business :</label>
-                            <Input  className='mt-3' placeholder='Google Business' />
+                            <Input value={google_buss} onChange={(e) => setGoogle_buss(e.target.value)} className='mt-3' placeholder='Google Business' />
                             </div>
 
                     </CardContent>

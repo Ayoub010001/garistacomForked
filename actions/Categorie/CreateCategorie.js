@@ -43,3 +43,27 @@ export const deleteCategorie = async (id) => {
         console.log("The Error => ", err);
     }
 }
+
+export const updateCategorie = async ({
+    id,
+    name,
+    visibility,
+    image
+}) => {
+    try{
+        const respone = await axiosInstance.put('/api/categories/' + id, {
+            name: name,
+            visibility: visibility,
+            image: image
+        }
+        );
+        if(respone)
+        {
+          console.log("The Response  => ", respone);
+        }
+      return respone.data  
+     }
+     catch(error){
+       console.log("The Error => ", error);
+     }
+ }

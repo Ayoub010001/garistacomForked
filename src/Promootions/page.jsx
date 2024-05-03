@@ -1,11 +1,13 @@
 import { columns } from "./columns"
 import { DataTable } from "./data-table"
 import { Button } from "@/components/ui/button"
-import React ,{useState} from 'react';
-import { useEffect } from "react"
+import React ,{useState, useEffect} from 'react';
 import { axiosInstance } from "../../axiosInstance"
 import Spinner from 'react-spinner-material';
-
+import { BiSolidEdit } from "react-icons/bi";
+import { Switch } from '@/components/ui/switch'
+import UpdateForm from "./updateForm";
+import DeletForm from "./DeletForm";
 async function getData() {
   // Fetch data from your API here.
   return [
@@ -45,7 +47,7 @@ export default function DemoPage() {
     useEffect(() => {
       // Fetch data from the API when the component mounts
       const fetchValue = async () => {
-        setLoading(true)
+        // setLoading(true)
         try{
           
           const respone = await axiosInstance.get("/api/banners")
@@ -53,8 +55,8 @@ export default function DemoPage() {
           {
            
             setDataBanner(respone.data)
-            setLoading(false)
           }
+          // setLoading(false)
         }
         catch(err)
         {
@@ -63,6 +65,10 @@ export default function DemoPage() {
       }
       fetchValue()
     }, []);
+
+
+ 
+    
   console.log(data)
   console.log("The Data Banner => ", dataBanner);
   const [isOpen, setIsOpen] = useState(true);
@@ -91,7 +97,7 @@ export default function DemoPage() {
                 </div>
             <div className="container mx-auto py-10">
 
-          <DataTable columns={columns} data={dataBanner} />
+          <DataTable columns={columns} />
         </div>
         </>
     }
@@ -99,3 +105,6 @@ export default function DemoPage() {
 
   )
 }
+
+
+

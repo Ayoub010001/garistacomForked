@@ -1,20 +1,8 @@
 import React, { createContext, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
 import { MdAddBox } from 'react-icons/md';
 import { Input } from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuLabel,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { BiDotsVerticalRounded } from "react-icons/bi";
 import { MdCloudUpload, MdDelete } from 'react-icons/md';
 import { AiFillFileImage } from 'react-icons/ai';
 import { Button } from "@/components/ui/button"
@@ -27,10 +15,7 @@ import {
     DialogTrigger,
     DialogClose,
 } from "@/components/ui/dialog"
-import UpdateForm from './updateForm';
-import DeleteForm from './deleteForm';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/card';
-import Uploader from './uploader';
 import { addCategorie, deleteCategorie } from '../../../actions/Categorie/CreateCategorie';
 import { axiosInstance } from '../../../axiosInstance';
 import { useEffect } from 'react';
@@ -70,12 +55,9 @@ function AddQrCode({props}) {
               }
             // console.log("resulat => ", result);
         }
-
         setName("")
         setFile("")
-
         fetchCat();
-
     }, [])
     const [name,setName] = useState("");
     const [images,setImages] = useState([]); // État pour stocker le rôle sélectionné
