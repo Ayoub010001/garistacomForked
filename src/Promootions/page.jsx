@@ -84,16 +84,6 @@ export default function DemoPage() {
         <>
         <div className="flex items-center justify-between space-y-2 p-4">
                 <h2 className="text-3xl font-bold tracking-tight">Promotions</h2>
-                <div
-                  className="flex items-center space-x-2 "
-                  style={{
-                    backgroundColor: "black",
-                    color: "white",
-                    borderRadius: ".5rem",
-                  }}
-                >
-                  <Button>Download</Button>
-              </div>
                 </div>
             <div className="container mx-auto py-10">
 

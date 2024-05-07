@@ -32,11 +32,13 @@ import {
 } from "../../components/ui/dialog";
 import LineChartpage from "./components/lineChart";
 import { useEffect } from "react";
+import QRCode from 'react-qrcode-logo';
+import Spinner from "react-spinner-material";
 
 export function DashboardPage() {
-    const [qrValue, setQrValue] = useState();
+    const [restoInfo, setRestoInfo] = useState([]);
     const [usersData, setUsersData] = useState({})
-
+    const [loading, setLoading] = useState(false)
     useEffect(() => {
         const getUserData = () => {
           const userData = localStorage.getItem('userGarista');
@@ -49,11 +51,50 @@ export function DashboardPage() {
             console.log('No user data found');
           }
         };
-      
+
+        const getRestaurantByUser = async ()  => {
+            setLoading(true)
+            try{
+              const res = await getRestaurant(usersData.id);
+              if(res)
+              {
+                setRestoInfo(res.data);
+                setLoading(false)
+              }
+            }
+            catch(err)
+            {
+                console.log("The Error", err);
+            }
+        }
+        getRestaurantByUser();
         getUserData();
       }, []);
 
     const defaultPageURL = "https://votre-domaine.com/page-par-defaut";
+    const [showQRCode, setShowQRCode] = useState(false); // State to control QR code display
+    const [qrCodeURL, setQRCodeURL] = useState(''); 
+    const toggleQRCode = () => {
+      setShowQRCode(!showQRCode);
+      if (!showQRCode) {
+        // Generate the QR code URL when showing the QR code
+        // Replace 'YOUR_SLUG' with the actual slug from your API
+        const slug = 'YOUR_SLUG'; // Get the slug from your API
+        const qrCodeLink = `http://localhost:3000/theme/${slug}`;
+        setQRCodeURL(qrCodeLink);
+      }
+    };
+
+    console.log('The UserRestaurant => ', restoInfo);
+
+    if(loading)
+    {
+        return(
+        <div className='justify-center items-center flex  h-[50vh]'>
+            <Spinner size={100} spinnerColor={"#28509E"} spinnerWidth={1} visible={true} style={{borderColor: "#28509E", borderWidth: 2}}/>
+          </div>
+        )
+    }
     return (
         <div className="">
             {/* <div className="md:hidden">
@@ -88,15 +129,13 @@ export function DashboardPage() {
                                         <DialogTitle
                                             style={{ display: "flex", alignItems: "center" }}
                                         >
-                                            <span style={{ marginRight: "0.5rem" }}>Your Menu</span>{" "}
+                                            <span style={{ marginRight: "0.5rem" }}>Your Menus</span>{" "}
                                             <MdRestaurantMenu size={20} />
                                         </DialogTitle>
                                         <DialogDescription>
                                             <div className="m-5 ml-10 flex mt-10 gap-10 ">
-                                                <img
-                                                    className="w-19 h-19 m-auto"
-                                                    src="https://media.istockphoto.com/id/828088276/fr/vectoriel/code-qr-illustration.jpg?s=612x612&w=0&k=20&c=3HruJu6JLgPsHstpZ5p43XkqqvP5c7AzJ7qwZ8KGgG4="
-                                                    alt="" />
+                                                {showQRCode && <QRCode value={qrCodeURL} logoImage="path_to_your_logo_image" />}
+
                                             </div>
                                         </DialogDescription>
                                     </DialogHeader>

@@ -10,6 +10,7 @@ import axios from "axios";
 import { useForm } from 'react-hook-form';
 import { axiosInstance } from "../../axiosInstance";
 import { APIURL } from "../../lib/ApiKey";
+import { getRestaurant } from "../../actions/Restaurant/Restaurant";
 
 function Login({ onLogin, className, ...props }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -94,7 +95,19 @@ function Login({ onLogin, className, ...props }) {
         {
           sessionStorage.setItem('dataItem', JSON.stringify(response.data.user.id));
           sessionStorage.setItem('isLoggedIn', "loggin");
-          navigate("/Dashboard");
+          let Id = JSON.stringify(response.data.user.id)
+          try{
+            const res = await getRestaurant(Id);
+            if(res)
+            {
+              sessionStorage.setItem('RestoInfo', JSON.stringify(res));
+            }
+          }
+          catch(err)
+          {
+              console.log("The Error", err);
+          }
+          navigate("/");
         }
       } else {
         setIsLoading(false);

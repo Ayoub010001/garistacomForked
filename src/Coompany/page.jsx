@@ -85,6 +85,7 @@ import { useState } from 'react';
 import { getCurrency } from '../../actions/Currency/CurrencyApi';
 import Spinner from 'react-spinner-material';
 import { getInfo } from '../../actions/Info/Info';
+import { editCompany } from '../../actions/Company/Company';
 
 export const description =
   "A product edit page. The product edit page has a form to edit the product details, stock, product category, product status, and product images. The product edit page has a sidebar navigation and a main content area. The main content area has a form to edit the product details, stock, product category, product status, and product images. The sidebar navigation has links to product details, stock, product category, product status, and product images."
@@ -116,6 +117,7 @@ export default function DashboardCompany() {
     const [tiktok_pixel, setTiktok_pixel] = useState('')
     const [ads_pixel, setAds_pixel] = useState('')
     const [anylytics, setAnylytics] = useState('')
+    const [id, setId] = useState('') 
     useEffect(() => {
        const fetchValue = async () => {
         setLoading(true)
@@ -132,6 +134,7 @@ export default function DashboardCompany() {
             Data = resInfo;
             Data.map((item) => {
                 setDescription(item.description)
+                setId(item.id)
                 setName(item.resto.name)
                 setAddress(item.address)
                 setWifiPass(item.wifi_pass)
@@ -141,6 +144,7 @@ export default function DashboardCompany() {
                 setTiktok(item.tiktok)
                 setYoutube(item.youtube)
                 setSnapshat(item.snapshat)
+                setCurrValue(item.currency)
                 setWhatsapp(item.whatsapp)
                 setGoogle_buss(item.google_buss)
                 setTrustpilot_link(item.trustpilot_link)
@@ -160,6 +164,42 @@ export default function DashboardCompany() {
 
        fetchValue();
     }, [])
+
+
+    const handleUpdate = async () => {
+        try{
+           const res = await editCompany({
+               id,
+               instgram,
+               address,
+               ads_pixel,
+               anylytics,
+               cover_image,
+               currency: currValue,
+               description,
+               facebook_pixel,
+               facebook,
+               google_buss,
+               snapshat,
+               tiktok,
+               tiktok_pixel,
+               trustpilot_link,
+               website_url,
+               whatsapp,
+               wifi_pass: wifiPass,
+               youtube
+           })
+
+           if(res)
+           {
+            console.log('The Response => ',res);
+           }
+        }
+        catch(err)
+        {
+            console.log('The Error => ', err);
+        }
+    }
 
     if(loading)
     {
@@ -183,8 +223,8 @@ export default function DashboardCompany() {
                 borderRadius: ".5rem",
               }}
             >
-              <Button>Save</Button>
-</div>
+              <Button onClick={handleUpdate}>Save</Button>
+           </div>
         </div>
         <div className="flex gap-4 min-h-screen w-full flex-col bg-muted/40">
 

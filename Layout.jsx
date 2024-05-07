@@ -50,7 +50,7 @@ function Layout() {
         <header>
           <div className="flex">
             <Sidebar>
-                <Link to="/Dashboard">
+                <Link to="/">
               <SidebarItem
                 icon={<LayoutDashboard size={20} />}
                 text="Dashboard"

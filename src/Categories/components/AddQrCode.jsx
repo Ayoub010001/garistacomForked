@@ -279,7 +279,9 @@ function AddQrCode({props}) {
                                         )}
                                     />
                                 </div>
-                                <Button variant="outline" className="justify-end items-end bg-black text-white mt-5 hover:bg-black hover:text-white" type="submit">Add Categories</Button>
+                                <DialogClose>
+                                   <Button variant="outline" className="justify-end items-end bg-black text-white mt-5 hover:bg-black hover:text-white" type="submit">Add Categories</Button>
+                                </DialogClose>
                             </div>
                         </form>
                     </DialogHeader>

@@ -13,6 +13,7 @@ import { GrSort } from "react-icons/gr";
 import { BiCommentError } from "react-icons/bi";
 import NavBar from "../pages/dashboard/navBar.jsx";
 import "../index.css";
+import { getUserById } from "../../actions/User/CreateUser.js";
 
 
 export const SidebarContext = createContext();
@@ -32,6 +33,23 @@ function Layout() {
   // const { expanded } = useContext(SidebarContext);
   const [userDat, setUserDat] = useState([])
   const idUser = sessionStorage.getItem('dataItem');
+
+  useEffect(() => {
+    const getUserData = async () => {
+      const userItem = await getUserById(idUser);
+      console.log("The User Item => ", userItem.users);
+      // if(userItem)
+      // {
+        userItem.map(obj =>  {
+          console.log("The Items => ", obj);
+          setUserDat(obj)
+        })
+      // }
+    };
+  
+    getUserData();
+  }, []);
+
   useEffect(() => {
     // Vérifiez si l'utilisateur est déjà authentifié lors du chargement de la page
     const isUserAuthenticated = localStorage.getItem("authenticated");
@@ -60,7 +78,7 @@ function Layout() {
         <header>
           <div className="flex">
             <Sidebar>
-                <Link to="/Dashboard">
+                <Link to="/">
               <SidebarItem
                 icon={<LayoutDashboard size={20} />}
                 text="Dashboard"
@@ -227,7 +245,7 @@ function Layout() {
                 expanded ? "ml-64" : "ml-16"
               } transition-all duration-200 `}
             >
-                <NavBar/>
+                <NavBar usersData={userDat}/>
               <Outlet />
             </main>
           </div>

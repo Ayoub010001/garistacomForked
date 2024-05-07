@@ -3,9 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { MdAddBox } from 'react-icons/md';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { FormAdd } from './FormAdd';
 import {
     Dialog,
     DialogContent,
@@ -41,39 +39,13 @@ import { FaUserCircle } from "react-icons/fa";
 import UpdateForm from './updateForm';
 import { MdErrorOutline } from "react-icons/md";
 import DeleteForm from './deleteForm';
-import { useEffect } from 'react';
-import { getRoles } from '../../../actions/Role/getRoles';
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-  } from "@/components/ui/form"
+import { UserCard } from './UserCard';
 
 export const UserContext = createContext();
 
-const FormSchema = z.object({
-    email: z
-      .string({
-        required_error: "Please select an email to display.",
-      })
-      .email(),
-  })
-
 function AddQrCode() {
     const { state } = useLocation();
-    const { handleSubmit } = useForm();
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-  })
 
-  function onSubmit(data) {
-   console.log("The data is: " + JSON.stringify(data));
-  }
- 
     const { names } = state == null ? "tes" : state.value;
 
     console.log("qr",names)
@@ -84,16 +56,11 @@ function AddQrCode() {
     const [email,setEmail] = useState("");
     const [phone,setPhone] = useState("");
     const [role,setRole] = useState("");
-    const [rolesData, setRolesData] = useState([]);
     const [password,setPassword] = useState(""); // État pour stocker le rôle sélectionné
     const [modalOpen, setModalOpen] = useState(false);
-    const [position, setPosition] = useState("bottom")
     const [tableNames, setTableNames] = useState([]);
     const [usersList, setUsersList] = useState([]);
-    const [updateFormState, setUpdateFormState] = useState(false);
-    const [deleteFormState, setDeleteFormState] = useState(false);
-    const handleRoleChange = (selectedRole) => {
-        console.log("The RoleSelected => ",selectedRole);
+       const handleRoleChange = (selectedRole) => {
         setRole(selectedRole);
     };
 
@@ -116,53 +83,9 @@ function AddQrCode() {
         setModalOpen(false);
     };
 
-    useEffect(() => {
-        const getRolesData = async() => {
-        const rolesres = await getRoles();
-        console.log("The rolles => ",rolesres);
-        setRolesData(rolesres)
-        }
-    
-        getRolesData();
-    }, [])
-
-
-    console.log("ro => ", role);
     return (
         <div className='flex gap-5'>
-            {usersList.map((user, index) => (
-                <div key={index}>
-                    <Card className="w-[250px] h-[280px] ">
-                        <DropdownMenu className="flex justify-end ">
-                            <DropdownMenuTrigger asChild className="flex justify-end ">
-                                <Button className="flex justify-end " style={{backgroundColor:"white"}}><BiDotsVerticalRounded size={25} color='black'/></Button>
-
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
-                                    <DropdownMenuItem onSelect={() => setUpdateFormState(true)}>Update</DropdownMenuItem>
-                                    <DropdownMenuItem onSelect={() => setDeleteFormState(true)}>Delete</DropdownMenuItem>
-                                </DropdownMenuRadioGroup>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                        <CardHeader className="flex text-center justify-end">
-                            <CardTitle>{user.firstname} {user.lastname}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="m-5 ml-10 flex mt-0 gap-10 ">
-                                <FaUserCircle size={100} className="w-19 h-19 m-auto"/>
-                                <p>{user.role}</p>
-                            </div>
-                            <div className="justify-center text-zinc-500">{user.email}</div>
-                        </CardContent>
-                        <CardFooter className="justify-center"></CardFooter>
-                    </Card>
-                    <UpdateForm updateFormState={updateFormState} setUpdateFormState={setUpdateFormState} />
-                    <DeleteForm deleteFormState={deleteFormState} setDeleteFormState={setDeleteFormState} />
-                </div>
-            ))}
+           <UserCard usersList={usersList}/>
             <Dialog>
                 <DialogTrigger>
                     <Card className="w-[250px] h-[280px] border-dashed grid place-content-center">
@@ -197,46 +120,10 @@ function AddQrCode() {
                     </Card>
                 </DialogTrigger>
                 <DialogContent className="max-w-[50rem]">
-                    <DialogHeader>
-                        {
-                            rolesData.lenght <=0 
-                            ?
-                            <></>
-                            :
-                            <>
-                            <DialogTitle>Add a new User</DialogTitle>
-                            <DialogDescription >Create a new user Lorem ipsum dolor sit amet consectetur </DialogDescription>
-                             <div className="flex flex-col gap-3 items-center justify-center pt-4">
-                                <div className="flex gap-3">
-                                    <Input type="text" placeholder="First name" className="w-72 p-2 border border-gray-300 rounded-md" value={firstname} onChange={(e) => setFirstname(e.target.value)} />
-                                    <Input type="text" placeholder="Last name" className="w-72 p-2 border border-gray-300 rounded-md" value={lastname} onChange={(e) => setLastname(e.target.value)} />
-                                </div>
-                                <div className="flex gap-3">
-                                    <Input type="text" placeholder="Email" className="w-72 p-2 border border-gray-300 rounded-md" value={email} onChange={(e) => setEmail(e.target.value)} />
-                                    <Input type="text" placeholder="Phone" className="w-72 p-2 border border-gray-300 rounded-md" value={phone} onChange={(e) => setPhone(e.target.value)} />
-                                </div>
-                                <div className="flex gap-3">
-                                    <Input type="password" placeholder="password" className="w-72 p-2 border border-gray-300 rounded-md" value={password} onChange={(e) => setPassword(e.target.value)} />
-                                    <Select onValueChange={(e) => handleRoleChange(e)}>
-                                        <SelectTrigger className="w-72">
-                                            <SelectValue placeholder="Role" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {
-                                                rolesData.map((obj, i) => (
-                                                    <SelectItem key={i} value={obj.id}>{obj.name}</SelectItem>
-                                                ))
-                                            }
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <DialogClose>
-                                    <Button variant="outline" className="justify-end items-end bg-black !text-[#fff] hover:bg-black mt-5" onClick={handleAddUser}>Add User</Button>
-                                </DialogClose>
-                            </div> 
-                            </>
-                        }
-                    </DialogHeader>
+                  <DialogHeader>
+                        <FormAdd/>
+                  </DialogHeader>
+
                 </DialogContent>
             </Dialog>
         </div>

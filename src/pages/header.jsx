@@ -6,7 +6,7 @@ import {
   AvatarImage,
 } from "../components/ui/avatar";
 import { MdRestaurantMenu } from "react-icons/md";
-
+import QRCode from 'react-qrcode-logo';
 import { FaLink } from "react-icons/fa6";
 import UserNav from "./dashboard/components/user-nav";
 import {
@@ -19,7 +19,20 @@ import {
   DialogFooter,
 } from "../components/ui/dialog";
 function Header() {
-    const defaultPageURL = "https://votre-domaine.com/page-par-defaut";
+  const defaultPageURL = 'https://votre-domaine.com/page-par-defaut';
+  const [showQRCode, setShowQRCode] = useState(false); // State to control QR code display
+  const [qrCodeURL, setQRCodeURL] = useState(''); 
+  const toggleQRCode = () => {
+    setShowQRCode(!showQRCode);
+    if (!showQRCode) {
+      // Generate the QR code URL when showing the QR code
+      // Replace 'YOUR_SLUG' with the actual slug from your API
+      const slug = 'YOUR_SLUG'; // Get the slug from your API
+      const qrCodeLink = `http://localhost:3000/theme/${slug}`;
+      setQRCodeURL(qrCodeLink);
+    }
+  };
+  
   return (
     <div className="border-b ">
           <div className="flex h-16 items-center px-4">
@@ -44,11 +57,12 @@ function Header() {
                     </DialogTitle>
                     <DialogDescription>
                       <div className="m-5 ml-10 flex mt-10 gap-10 ">
-                        <img
+                        {/* <img
                           className="w-19 h-19 m-auto"
                           src="https://media.istockphoto.com/id/828088276/fr/vectoriel/code-qr-illustration.jpg?s=612x612&w=0&k=20&c=3HruJu6JLgPsHstpZ5p43XkqqvP5c7AzJ7qwZ8KGgG4="
                           alt=""
-                        />
+                        /> */}
+                         {showQRCode && <QRCode value={qrCodeURL} logoImage="path_to_your_logo_image" />}
                       </div>
                     </DialogDescription>
                   </DialogHeader>

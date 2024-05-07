@@ -26,6 +26,8 @@ import Arrangement from "../Arrangement/page"
 import ArrangementChild from "../Arrangement/arrangementChild/page"
 import DashboardCompany from "../Coompany/page";
 import DashboardProfile from "../Proofile/page";
+import Theme from "../Theme/App"
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -36,7 +38,7 @@ export const router = createBrowserRouter([
           // children: [{ index: true, element: <Dashboard /> }],
         },
       {
-        path: "/Dashboard",
+        path: "/",
         element: <Layout />,
         children: [{ index: true, element: <Dashboard /> }],
       },
@@ -118,6 +120,10 @@ export const router = createBrowserRouter([
         element: <Layout />,
         children: [{ index: true, element: <DashboardCompany/> }],
       },
+      {
+        path: "/Theme/:slug",
+        children: [{ index: true, element: <Theme /> }],
+      },
     //   {
     //     path: "/Profile",
     //     element: <Layout />,
@@ -128,6 +134,10 @@ export const router = createBrowserRouter([
         element: <Layout />,
         children: [{ index: true, element: <DashboardProfile /> }],
       },
+      {
+        path: "*",
+        element: <Theme />
+      }
     ],
   },
 ]);
