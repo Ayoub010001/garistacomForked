@@ -94,6 +94,7 @@ function Login({ onLogin, className, ...props }) {
         if(response.data.user.id)
         {
           sessionStorage.setItem('dataItem', JSON.stringify(response.data.user.id));
+          sessionStorage.setItem('tokenData', JSON.stringify(response.data));
           sessionStorage.setItem('isLoggedIn', "loggin");
           let Id = JSON.stringify(response.data.user.id)
           try{

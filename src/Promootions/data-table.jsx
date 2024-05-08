@@ -55,6 +55,8 @@ import { AddPromo } from "./AddPromo";
 import DeletForm from "./DeletForm";
 import UpdateForm from "./updateForm";
 import Spinner from "react-spinner-material";
+import { toast } from "react-hot-toast";
+
 export function DataTable() {
 
 
@@ -110,7 +112,8 @@ export function DataTable() {
         const payment = row.original
        
         const [updateFormState, setUpdateFormState] = useState(false);
-  
+        const [deleteFormState, setDeleteFormState] = useState(false);
+
         return (
           <>
           <div className="flex gap-2">
@@ -118,7 +121,7 @@ export function DataTable() {
               <BiSolidEdit size={20}/>
           </Button>
   
-          <DeletForm id={row.original.id} handleDelete={handleDeleteItem}/>
+          <DeletForm id={row.original.id} handleDelete={handleDeleteItem} deleteFormState={deleteFormState} setDeleteFormState={setDeleteFormState}/>
           </div>
   
            <UpdateForm updateFormState={updateFormState} setUpdateFormState={setUpdateFormState} id={row.original.id} handleUpdate={handleUpdate} />
@@ -173,19 +176,34 @@ export function DataTable() {
         }
     };
 
-    const handleDeleteItem = async (idDelete) => {
+    const handleDeleteItem = async (id) => {
       // console.log("the Id Of delete", idDelete);
-      try{
-        const res = await deleteBanner(idDelete)
-        if(res){
-          console.log("Succedd => ",res);
-          fetchValue()
+      // try{
+      //   const res = await deleteBanner(idDelete)
+      //   if(res){
+      //     console.log("Succedd => ",res);
+      //     fetchValue()
+      //   }
+      // }
+      // catch(err)
+      // {
+      //   console.log('The Error => ',err);
+      // }
+      console.log("The ID => ",id);
+      try {
+        const response = await axiosInstance.delete(`/api/banners/${id}`);
+
+        if (response) {
+            console.log("Banner added successfully");
+            fetchValue();
+            toast.success("Item deleted successfully");
+            
+        } else {
+            console.error("Failed to add category => ",response.statusText);
         }
-      }
-      catch(err)
-      {
-        console.log('The Error => ',err);
-      }
+    } catch (error) {
+        console.error("Error:", error);
+    }
     }
 
     const handleUpdate = async ({
@@ -196,19 +214,14 @@ export function DataTable() {
 
       const formData = new FormData();
       formData.append('_method', 'PUT');
+      console.log("The File => ",file);
       formData.append("image", file);
       formData.append("title", title);
-      formData.append("visibility", isAct);
       formData.append("resto_id", 1); // Assuming this is a default value for resto_id
 
       try {
 
-          const response = await axiosInstance.post(`/api/banners/${id}`, formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data", // Set the content type to multipart/form-data for file upload
-              },
-          }
+          const response = await axiosInstance.post(`/api/banners/${id}`, formData
           );
   
           if (response) {
@@ -233,14 +246,13 @@ export function DataTable() {
       console.log("The visibility => ", isActive);
    }
     
-    const handleAddUser = async (data) => {
+    const handleAddUser = async (data, toastMessage) => {
       // console.log("The Images => ", images);
 
 
       const formData = new FormData();
-      formData.append("image", file);
-      // }
-      formData.append("title", data.name);
+      formData.append("image", data.images);
+      formData.append("title", data.title);
       formData.append("resto_id", 1);
       try {
           const response = await fetch(`${APIURL}/api/banners/`, {
@@ -254,6 +266,7 @@ export function DataTable() {
               setFileName("")
               reset();
               fetchValue();
+              toast.success(toastMessage);
               
           } else {
               console.error("Failed to add category");
@@ -325,7 +338,7 @@ export function DataTable() {
                     file={file}
                     fileName={fileName}
                     handleImageChange={handleImageChange}
-                    handleSubmit={handleSubmit}
+                    handleSubmit={handleAddUser}
                     onSubmit={onSubmit}
                     register={register}
                     control={control}

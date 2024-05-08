@@ -40,93 +40,229 @@ import UpdateForm from './updateForm';
 import { MdErrorOutline } from "react-icons/md";
 import DeleteForm from './deleteForm';
 import { UserCard } from './UserCard';
+import { useEffect } from 'react';
+import { getRoles } from '../../../actions/Role/getRoles';
+import { toast } from "react-hot-toast";
+import { axiosInstance } from '../../../axiosInstance';
+import Spinner from 'react-spinner-material';
 
 export const UserContext = createContext();
 
 function AddQrCode() {
     const { state } = useLocation();
-
+    const [isLoading, setIsLoading] = useState(false)
     const { names } = state == null ? "tes" : state.value;
 
     console.log("qr",names)
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    const [user, setUser] = useState([{ nom: 'toto' },{ nom: 'titi' }]);
-    const [firstname,setFirstname] = useState("");
-    const [lastname,setLastname] = useState("");
-    const [email,setEmail] = useState("");
-    const [phone,setPhone] = useState("");
+    const handleDialogClose = () => {
+      setIsDialogOpen(false);
+    };
+    
+    const handleDialogOpen = () => {
+      setIsDialogOpen(true);
+    };
+    const [user, setUser] = useState([]);
     const [role,setRole] = useState("");
-    const [password,setPassword] = useState(""); // État pour stocker le rôle sélectionné
-    const [modalOpen, setModalOpen] = useState(false);
+    const [roles, setRoles] = useState([])
+    const [loading, setLoading] = useState(false)
     const [tableNames, setTableNames] = useState([]);
     const [usersList, setUsersList] = useState([]);
        const handleRoleChange = (selectedRole) => {
         setRole(selectedRole);
     };
+    const fetchUser = async () => {
+        setLoading(true);
+        try{
+            const res = await axiosInstance.get('/api/staffs')
+            if(res)
+            {
+                console.log("The Data reutned => ", res);
+                setUsersList(res.data)
+                setLoading(false);
+            }
+        }
+        catch(err)
+        {
+            console.log("The Error => ",err);
+        }
+      }
+    useEffect(() => {
+      const fetchValues = async () => {
+        try{
 
-    const handleAddUser = () => {
-        const newUser = {
-            firstname: firstname,
-            lastname: lastname,
-            email: email,
-            phone: phone,
-            role: role // Utilisation de l'état du rôle sélectionné
-        };
+           const res = await getRoles();
+           if(res)
+           {
+            console.log("The Result => ", res);
+            setRoles(res)
+           }
 
-        setUsersList([...usersList, newUser]);
-        setFirstname("");
-        setLastname("");
-        setEmail("");
-        setPhone("");
-        setRole("");
-        console.log(usersList);
-        setModalOpen(false);
-    };
+        }
+        catch(err)
+        {
+            console.log("The error => ",err);
+        }
+      }
+
+      fetchUser()
+      fetchValues()
+    }, [])
+
+    const handleData = async ({
+        data,
+        toastMessage
+    }) => {
+        try {
+            setLoading(true);
+
+             const res =  await axiosInstance.post(`/api/staffs`, {
+                  "first_name": data.first_name,
+                  "last_name": data.last_name,
+                  "email": data.email,
+                  "password": data.password,
+                  "phone": data.phone,
+                  "username": data.username,
+                  "role_id": parseInt(data.role_id),
+                  "resto_id": 1,
+              });
+              if(res)
+              {
+                  console.log("The Added => ", res);
+                  handleDialogClose()
+                //   fetchUser();
+                //   toast.success(toastMessage);
+                }
+                
+        } catch (error) {
+            console.log("The Error => ",error);
+        }finally{
+            toast.success(toastMessage);
+            fetchUser();
+          } 
+          
+    }
+
+    const handleUpdate = async ({
+        data,
+        toastMessage,
+        id
+    }) => {
+
+        try {
+            // setLoading(true);
+
+             const res =  await axiosInstance.put('/api/staffs/'+id, {
+                first_name : data.first_name,
+                last_name : data.last_name,
+                password : data.password,
+                phone : data.phone,
+                email : data.email,
+                username : data.usernam,
+                role_id : parseInt(data.role_id),
+                resto_id : 1,
+             } 
+             );
+              if(res)
+              {
+                  console.log("The Added => ", res);
+                  handleDialogClose()
+                //   fetchUser();
+                //   toast.success(toastMessage);
+                }
+        } catch (error) {
+            console.log("The Error => ",error);
+        }finally{
+            toast.success(toastMessage);
+            fetchUser();
+          } 
+          
+    }
+
+
+
+    const handleDelete= async ({
+        id,
+        toastMessage
+    }) => {
+        try {
+            setLoading(true);
+
+             const res =  await axiosInstance.delete(`/api/staffs/${id}`);
+              if(res)
+              {
+                  console.log("The Added => ", res);
+              }
+                            //   router.push(`/dashboard/products`);
+        } catch (error) {
+            console.log("The Error => ",error);
+        }finally{
+            toast.success(toastMessage);
+            fetchUser();
+          } 
+    }
+
 
     return (
-        <div className='flex gap-5'>
-           <UserCard usersList={usersList}/>
-            <Dialog>
-                <DialogTrigger>
-                    <Card className="w-[250px] h-[280px] border-dashed grid place-content-center">
-                        <CardHeader className="text-center">
-                            <CardTitle className="text-lg">Add managers or waiters for your restaurant</CardTitle>
+        <>
+        {
+            loading 
+            ?
+            <div className='justify-center items-center flex  h-[50vh]'>
+             <Spinner size={100} spinnerColor={"#28509E"} spinnerWidth={1} visible={true} style={{borderColor: "#28509E", borderWidth: 2}}/>
+            </div>
+            :
+            <>
+            <div className='grid grid-cols-6 gap-5'>
+                   {usersList.map((user, index) => (
+                       <UserCard key={index} handleDelete={handleDelete} handleUpdate={handleUpdate} usersList={user}/>
+                   ))}
 
-                        </CardHeader>
-                        <CardContent>
-                            {tableNames.map((tableName, index) => (
-                                <div key={index}>{tableName.nom}</div>
-                            ))}
-                            <UserContext.Provider value={user}>
-                                <button
-                                    style={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        backgroundColor: '#ffffff',
-                                        width: '100%',
-                                        height: '100%',
-                                        border: 'none',
-                                        cursor: 'pointer',
-                                    }}
-                                    onClick={() => {
-                                        console.log('Icon clicked');
-                                    }}
-                                >
-                                    <MdAddBox size={50} style={{ color: '#000' }} />
-                                </button>
-                            </UserContext.Provider>
-                        </CardContent>
+                     <Card onClick={handleDialogOpen} className="w-[250px] cursor-pointer h-[280px] border-dashed grid place-content-center">
+                                <CardHeader className="text-center">
+                                    <CardTitle className="text-lg">Add managers or waiters for your restaurant</CardTitle>
+
+                                </CardHeader>
+                                <CardContent>
+                                    {/* {tableNames.map((tableName, index) => (
+                                        <div key={index}>{tableName.nom}</div>
+                                    ))} */}
+                                    <UserContext.Provider value={user}>
+                                        <button
+                                            style={{
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                backgroundColor: '#ffffff',
+                                                width: '100%',
+                                                height: '100%',
+                                                border: 'none',
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={handleDialogOpen}
+                                        >
+                                            <MdAddBox size={50} style={{ color: '#000' }} />
+                                        </button>
+                                    </UserContext.Provider>
+                                </CardContent>
                     </Card>
-                </DialogTrigger>
-                <DialogContent className="max-w-[50rem]">
-                  <DialogHeader>
-                        <FormAdd/>
-                  </DialogHeader>
+                    <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
+                        {/* <DialogTrigger>
 
-                </DialogContent>
-            </Dialog>
-        </div>
+                        </DialogTrigger> */}
+                        <DialogContent className="max-w-[50rem]">
+                        <DialogHeader>
+                                <FormAdd loading={isLoading} roles={roles} handleData={handleData}/>
+                        </DialogHeader>
+
+                        </DialogContent>
+                    </Dialog>
+                    </div>
+                </>
+            }
+        </>
+
     );
 }
 

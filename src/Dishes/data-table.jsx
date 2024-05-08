@@ -32,6 +32,8 @@ import {
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { FaCirclePlus } from "react-icons/fa6";
+import { Switch } from '@/components/ui/switch'
+
 import {
     Dialog,
     DialogContent,
@@ -53,6 +55,8 @@ import { axiosInstance } from "../../axiosInstance";
 import { useForm } from "react-hook-form";
 import AddDiche from "./AddDiche";
 import DeletForm from "./DeleteForm";
+import { BiSolidEdit } from "react-icons/bi";
+import UpdateForm from "./updateForm";
 export function DataTable({
   categries
 }) {
@@ -73,6 +77,16 @@ export function DataTable({
       {
         accessorKey: "categories",
         header: "CATEGORIES",
+        cell: ({ row }) => {
+
+            return (
+                <div className="capitalize">
+                    {row.original.categorie.name}
+                </div>
+            );
+
+
+    }
       },
       {
         accessorKey: "price",

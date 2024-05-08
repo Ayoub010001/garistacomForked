@@ -102,7 +102,7 @@ export const AddPromo = ({
                     </div>
                   </DialogClose>
                 </form> */}
-                <FormAdd />
+                <FormAdd handleAdded={handleSubmit}/>
             </DialogHeader>
             <DialogFooter className="flex justify-center items-center">
         </DialogFooter>

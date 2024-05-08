@@ -1,49 +1,47 @@
-
-import {useState} from "react"
-import { Button } from "@/components/ui/button"
-
+import React,{useState} from "react";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogHeader,
-    DialogTitle,
     DialogTrigger,
+    DialogTitle,
+    DialogDescription,
+    DialogClose,
     DialogFooter,
   } from "@/components/ui/dialog";
-import { BiSolidTrash } from "react-icons/bi";
+  import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
+import ImageUploading from 'react-images-uploading';
+import { MdCloudUpload, MdDelete } from 'react-icons/md'
+import { AiFillFileImage } from 'react-icons/ai'
 import { MdErrorOutline } from "react-icons/md";
-import { deleteBanner } from "../../actions/Banner/Banner";
-import { DialogClose } from "../components/ui/dialog";
-const DeletForm = ({
-  id,
-  handleDelete
-}) => {
-
-
+import Uploader from "./uploader";
+import { Button } from "@/components/ui/button"
+import { BiSolidTrash } from "react-icons/bi";
+function DeleteForm({deleteFormState, setDeleteFormState, id, handleDelete}) {
+    const toastMessage = 'User Deleted.';
 
   return (
-    <Dialog className="items-center justify-center">
-    <DialogTrigger asChild>
-      <Button variant="outline" className="bg-black text-white hover:text-white hover:bg-black"><BiSolidTrash size={20}/></Button>
-    </DialogTrigger>
+      <Dialog className="items-center justify-center" open={deleteFormState} onOpenChange={setDeleteFormState}>
+                <DialogTrigger asChild>
+                <Button variant="outline" className="bg-black text-white hover:text-white hover:bg-black"><BiSolidTrash size={20}/></Button>
+                </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[425px] items-center justify-center ">
-        <DialogHeader className="items-center justify-center ">
-        <MdErrorOutline size={80}/>
-          <DialogTitle className="flex items-center text-[1.7rem]"> Are you sure ?</DialogTitle>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-            <DialogClose>
-              <div className="grid grid-cols-2 items-center gap-4">
-                  <Button onClick={() => handleDelete(id)}>Yes</Button>
-                  <Button>No</Button>
-              </div>
-            </DialogClose>
-        </div>
-      </DialogContent>
-  </Dialog>
+                <DialogContent className="sm:max-w-[425px] items-center justify-center ">
+                    <DialogHeader className="items-center justify-center ">
+                        <DialogTitle className="flex items-center text-[1.7rem]"> Are you sure ?</DialogTitle>
+                    </DialogHeader>
+                    <div className="pt-6 space-x-2 flex items-center justify-end w-full">
+                        <Button variant="outline" onClick={() => setDeleteFormState(!deleteFormState)}>
+                          Cancel
+                        </Button>
+                        <Button  variant="darkBlack" onClick={() => handleDelete(id)}>Continue</Button>
+                    </div>
+                </DialogContent>
+
+
+            </Dialog>
   )
 }
 
-export default DeletForm
+export default DeleteForm

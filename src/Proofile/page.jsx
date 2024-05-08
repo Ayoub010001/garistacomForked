@@ -100,15 +100,31 @@ export default function DashboardProfile() {
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  const [currentPassword, setCurrentPassword]= useState('')
+  const [newPassword, setNewPassword]= useState('')
+  const [confirmPassword, setConfirmPassword]= useState('')
   const idUser = sessionStorage.getItem('dataItem');
   const [Loading, setLoading] = useState(false);
   console.log("The User Item => ", idUser);
+  const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const handleImageChange = (e) => {
+    const selectedFile = e.target.files[0];
+    // setFile(selectedFile);
+    if (selectedFile) {
+        setFile(selectedFile);
+        setFileName(selectedFile.name);
+        // setError('file', { type: 'manual', message: '' }); // Clear any previous error message
+    }
+};
   useEffect(() => {
     const getUserData = async () => {
       setLoading(true)
       try{
 
         const userItem = await getUserById(idUser);
+
+  
         if(userItem)
          {
            console.log("The User Item => ", userItem.users);
@@ -140,24 +156,56 @@ export default function DashboardProfile() {
   
   async function handleUpdate () {
       try{
-         const respone = await axiosInstance.put('/api/auth/edit/' + userDat.id, {
-          first_name: name,
-          last_name: lastName,
-          phone: phone,
-          email: email,
-         }
-         );
+
+        const formData = new FormData()         
+        formData.append('first_name', name)
+        formData.append('last_name', lastName)
+        formData.append('phone', phone)
+        formData.append('email', email)
+        formData.append('image', file)
+        const respone = await axiosInstance.put('/api/auth/edit/' + userDat.id, formData,{
+          headers: {
+            "Content-Type": "multipart/form-data", // Set the content type to multipart/form-data for file upload
+          },
+        });
          if(respone)
          {
-           console.log("The Response  => ", respone);
+           console.log("The Response  => ", respone.data);
          }
-         
       }
       catch(error){
         console.log("The Error => ", error);
       }
   }
-  console.log("The Items of Product => ", name);
+
+  async function ChangePassw() {
+    try{
+      const token = sessionStorage.getItem('tokenData');
+
+      let tok = JSON.parse(token)
+      // Construct the URL with parameters
+      const url = `api/auth/changepassword?current_password=${encodeURIComponent(currentPassword)}&new_password=${encodeURIComponent(newPassword)}&confirm_password=${encodeURIComponent(confirmPassword)}`;
+
+      // Make the GET or POST request, here using POST for example
+      const res = await axiosInstance.post(url, {}, {
+          headers: {
+              Authorization: `Bearer ${tok.token}` // Assuming the token is stored like this
+          }
+      });
+
+      if(res)
+      {
+        console.log('Password changed successfully', res.data);
+      }
+
+
+    }
+    catch(err)
+    {
+      console.log("The Error => ",err);
+    }
+  }
+  console.log("The Items of Product => ", file , " " , fileName);
 
 
   // if(!userDat?.id){
@@ -285,7 +333,7 @@ export default function DashboardProfile() {
                 </div>
                 <div className='w-full md:w-full'>
             <label className='block mb-3'>Photo :</label>
-            <Input id="example1" type="file" class="block w-full text-sm file:mr-4 file:rounded-md file:border-0 file:bg-neutral-500 file:py-2.5 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-700 focus:outline-none disabled:pointer-events-none disabled:opacity-60" />
+            <Input id="example1" onChange={handleImageChange} type="file" class="block w-full text-sm file:mr-4 file:rounded-md file:border-0 file:bg-neutral-500 file:py-2.5 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-700 focus:outline-none disabled:pointer-events-none disabled:opacity-60" />
 
           </div>
             </div>
@@ -306,13 +354,13 @@ export default function DashboardProfile() {
 
             <div className='w-full  '>
                  <label >Current Password:</label>
-                <Input className='my-3' placeholder='write password' />
+                <Input value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)}  className='my-3' placeholder='write password' />
                 <label >New Password:</label>
-                <Input className='my-3' placeholder='write password' />
+                <Input value={newPassword} onChange={(e) => setNewPassword(e.target.value)}  className='my-3' placeholder='write password' />
                 <label >Re-type New Password:</label>
-                <Input className='my-3' placeholder='write password' />
+                <Input value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className='my-3' placeholder='write password' />
                 <div className='flex justify-end'>
-                    <Button >Change password</Button>
+                    <Button onClick={ChangePassw}>Change password</Button>
                 </div>
 
             </div>
