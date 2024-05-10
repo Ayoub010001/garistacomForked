@@ -8,6 +8,8 @@ function Uploader({ onChange }) {
 
   const [image, setImage] = useState(null);
   const [fileName, setFileName] = useState("No selected file");
+  const toastMessage = 'Banner updated.'
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setFileName(file.name);

@@ -71,7 +71,7 @@ export const FormAdd = ({ initialData, categories, handleAdded }) => {
 
               <FormLabel>Promotion Image</FormLabel>
               <FormControl>
-              <Uploader onChange={(image) => form.setValue("images", image)} />
+              <Uploader onChange={(image) => form.setValue("images", image)}  />
               </FormControl>
               {formState.errors.images && (
                 <FormMessage error={formState.errors.images.message} />

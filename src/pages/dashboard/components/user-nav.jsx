@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
 import { getUserById } from "../../../../actions/User/CreateUser";
+import { axiosInstance } from "../../../../axiosInstance";
 
 function UserNav() {
   const navigate = useNavigate();
@@ -42,9 +43,30 @@ function UserNav() {
     getUserData();
   }, []);
 
-  const handleLogout = () => {
-    sessionStorage.setItem('isLoggedIn', "not loggin");
-    logout(navigate)
+  const handleLogout =async () => {
+    // sessionStorage.setItem('isLoggedIn', "not loggin");
+    const token = sessionStorage.getItem('tokenData');
+
+    let tok = JSON.parse(token)
+
+    console.log("The token => ", tok);
+      try {
+        const response = await axiosInstance.post('/api/auth/logout', {}, {  // Empty data object for POST request
+          headers: {
+              'Authorization': `Bearer ${tok.token}`,  // Use template literals to include the token
+              'Content-Type': 'application/json',  // Content-Type should be application/json for JSON data
+          }
+      });
+
+      if (response.status === 200) {
+          console.log("The Response of Logout => ", response.data);
+          navigate('/login');  // Ensure this navigate function is correctly defined/imported
+      } else {
+          setIsLoggedIn(false);  
+      } 
+    }catch (error) {
+        console.error('Error during login:', error);
+      }
   }
 
 

@@ -97,17 +97,7 @@ function Login({ onLogin, className, ...props }) {
           sessionStorage.setItem('tokenData', JSON.stringify(response.data));
           sessionStorage.setItem('isLoggedIn', "loggin");
           let Id = JSON.stringify(response.data.user.id)
-          try{
-            const res = await getRestaurant(Id);
-            if(res)
-            {
-              sessionStorage.setItem('RestoInfo', JSON.stringify(res));
-            }
-          }
-          catch(err)
-          {
-              console.log("The Error", err);
-          }
+
           navigate("/");
         }
       } else {

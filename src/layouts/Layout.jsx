@@ -14,6 +14,7 @@ import { BiCommentError } from "react-icons/bi";
 import NavBar from "../pages/dashboard/navBar.jsx";
 import "../index.css";
 import { getUserById } from "../../actions/User/CreateUser.js";
+import { getRestaurant } from "../../actions/Restaurant/Restaurant.js";
 
 
 export const SidebarContext = createContext();
@@ -33,6 +34,7 @@ function Layout() {
   // const { expanded } = useContext(SidebarContext);
   const [userDat, setUserDat] = useState([])
   const idUser = sessionStorage.getItem('dataItem');
+  const [restoInfo, setRestoInfo] = useState([]);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -46,8 +48,26 @@ function Layout() {
         })
       // }
     };
-  
-    getUserData();
+
+
+      const getRestaurantByUser = async ()  => {
+          setLoading(true)
+          try{
+            const res = await getRestaurant(userDat.id);
+
+            console.log("The Reponse => ", res);
+            if(res)
+            {
+              setRestoInfo(res.data);
+            }
+          }
+          catch(err)
+          {
+              console.log("The Error", err);
+          }
+      }
+      getRestaurantByUser();
+      getUserData();
   }, []);
 
   useEffect(() => {
@@ -245,7 +265,7 @@ function Layout() {
                 expanded ? "ml-64" : "ml-16"
               } transition-all duration-200 `}
             >
-                <NavBar usersData={userDat}/>
+                <NavBar usersData={restoInfo}/>
               <Outlet />
             </main>
           </div>

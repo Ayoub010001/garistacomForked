@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import './App.css'
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router/index";
@@ -7,16 +7,49 @@ import Context from "./context/Context";
 import { LoginProvider } from "../actions/Authentification/LoginProvider";
 import { Toaster } from "react-hot-toast";
 import { QueryClient } from "react-query";
+import axios from "axios";
+import { CartProvider } from "./context/CartContext";
 function App() {
 
-  const queryClient = new QueryClient()
+  const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/users');
+                setUsers(response.data.users); 
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        };
+
+        fetchUsers();
+    }, []);
+
+    const handleImageUpdate = async (userId, newImage) => {
+        try {
+            const formData = new FormData();
+            formData.append('image', newImage);
+
+            const response = await axios.post(`http://localhost:8000/api/users/${userId}/update-image`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error updating image:', error);
+        }
+    };
   return (
     <>
     {/* <Context> */}
-        <LoginProvider>
-          <Toaster />
-          <RouterProvider router={router}></RouterProvider>
-        </LoginProvider>
+            <LoginProvider>
+                {/* <CartProvider> */}
+                    <Toaster />
+                    <RouterProvider router={router}></RouterProvider>
+                {/* </CartProvider> */}
+            </LoginProvider>
     {/* </Context> */}
 
     </>

@@ -69,6 +69,8 @@ function DashboardPage() {
     setIsLoggedIn(userLoggedIn);
   };
 
+  
+
   // Call checkLoginStatus on initial render
   useEffect(() => {
     checkLoginStatus();

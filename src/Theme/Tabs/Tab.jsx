@@ -54,7 +54,7 @@ const menu = [
         </div>
       </div>
 
-      <MenuItems  dishes={dishes} />
+      <MenuItems  dishes={dishes.length > 0 && dishes.filter(dish => selectedTab === 'All' || dish.categorie.name === selectedTab)} selectedTab={selectedTab}/>
 
     </div>
   );

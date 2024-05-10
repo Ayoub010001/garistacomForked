@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import {tabAchat} from './constant/page'
 import Banner from "./Banner/Banner";
 import Tab from "./Tabs/Tab";
@@ -9,6 +9,7 @@ import Footer from "./Footer/Footer";
 import Achat from "./Achat/Achat";
 import Claims from "./Claims/Claims";
 import Spinner from "react-spinner-material";
+import { axiosInstance } from "../../axiosInstance";
 
 function App() {
   const [cartCount, setCartCount] = useState(tabAchat.length);
@@ -20,42 +21,44 @@ function App() {
   const [restoId, setRestoId] = useState(null)
   const [dishes, setDishes] = useState([])
   const [selectedTab, setSelectedTab] = useState('All');
+  const [resInfo , setResInfo] = useState([])
 
   // Function to fetch the list of available restos
-  const fetchRestos = async () => {
-    try {
-      const response = await fetch("http://127.0.0.1:8000/api/restos");
-      const data = await response.json();
-      let Data = [];
-      if(data)
-      {
-        Data = data; 
-        const restoSlug = window.location.pathname.split("/")[2];
-        let slug='';
-        Data.map((item) => {
-          console.log("The Items =>" ,item);
-          slug= item.slug;
-          setRestoId(item.id)
-        })
-        if(slug == restoSlug)
-        {
-           return console.log("The Slug Valide = ", true, slug, restoSlug);
-        }
-        else{
-          setValidSlug(true)
-        }
-      }
-      setRestos(data);
-    } catch (error) {
-      console.error("Error fetching restos:", error);
-    }
-  };
+  // const fetchRestos = async () => {
+  //   try {
+  //     const response = await fetch("http://127.0.0.1:8000/api/restos");
+  //     const data = await response.json();
+  //     let Data = [];
+  //     if(data)
+  //     {
+  //       Data = data; 
+  //       const restoSlug = window.location.pathname.split("/")[2];
+  //       let slug='';
+  //       Data.map((item) => {
+  //         console.log("The Items =>" ,item);
+  //         slug= item.slug;
+  //         setRestoId(item.id)
+  //       })
+  //       if(slug == restoSlug)
+  //       {
+  //          return console.log("The Slug Valide = ", true, slug, restoSlug);
+  //       }
+  //       else{
+  //         setValidSlug(true)
+  //       }
+  //     }
+  //     setRestos(data);
+  //   } catch (error) {
+  //     console.error("Error fetching restos:", error);
+  //   }
+  // };
 
   
   const restoSlug = window.location.pathname.split("/")[2];
 
   const fetchCategories = async (id) => 
   {
+    setLoading(true)
     try{
       const res = await fetch(`http://127.0.0.1:8000/api/getCategorieByResto/${id}`);
       const data = await res.json();
@@ -71,10 +74,12 @@ function App() {
     {
       console.log("the Error => ", err);
     }
+    finally{
+      setLoading(false)
+    }
   }
 
   const fetchDishes = async () => {
-    setLoading(true);
     try {
         let url = 'http://127.0.0.1:8000/api/getdishes/';
 
@@ -95,7 +100,6 @@ function App() {
         if (data) {
           console.log('Fetched dishes:', data); // Log the fetched data
           setDishes(data);
-          setLoading(false);
       } else {
           console.log('No data fetched');
       }
@@ -105,6 +109,25 @@ function App() {
     }
 };
 
+const fetchInfo = async (id) => {
+  try{ 
+    const res = await axiosInstance.get('/api/infos/'+id)
+    if(res)
+    {
+      console.log("The data of Info => ", res);
+      let Data = [];
+      Data = res.data;
+      Data.map(item => {
+        setResInfo(item)
+      })
+    }
+  }
+  catch(err)
+  {
+    console.log("the Error => ",err);
+  }
+
+}
   const fetchRestosbyslug = async () => {
     setLoading(true)
     try {
@@ -113,14 +136,42 @@ function App() {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
+      
+      console.log("The Response => ",data);
+      let Data = [];
+      Data = data;
+      const res = await axiosInstance.get('/api/infos/'+Data[0].id)
       if(data)
       {
-        setRestosSlug(data);
-        fetchCategories(data[0].id)
+        Data.map((item) => {
+          setRestos(item);
+          fetchCategories(item.id)
+          // fetchInfo(item.id)
+        })
+        // setLoading(true)
+
+        if(res)
+          {
+            console.log("The data of Info => ", res);
+            let Data = [];
+            Data = res.data;
+            Data.map(item => {
+              setResInfo(item)
+            })
+          }
       }
-      setLoading(false)
+      // const isValidSlug = useValidateSlug(restoSlug, Data.map(item => item.slug));
+
+      // console.log("The IsValide => ", isValidSlug);
+      // if(!isValidSlug)
+      // {
+      //   return <Navigate to="/not-found" replace />;
+      // }
     } catch (error) {
       console.error("Error fetching restos:", error.message);
+    }
+    finally{
+      setLoading(false)
     }
   };
 
@@ -128,16 +179,17 @@ function App() {
 
 
 useEffect(() => {
-  fetchRestos();
+  // fetchRestos();
   fetchRestosbyslug();
   fetchDishes()
 
-}, []); // Fetch restos when the component mounts
+}, [restoSlug]); // Fetch restos when the component mounts
+
 useEffect(() => {
-  fetchDishes()
-}, [selectedTab]); // Fetch restos when the component mounts
-
-
+  if (selectedTab) {
+    fetchDishes(); // Fetch dishes when selectedTab changes
+  }
+}, [selectedTab]);
   if(loading)
   { 
     return(
@@ -147,11 +199,13 @@ useEffect(() => {
     )
   }
 
+// console.log("The IsValid => ", isValidSlug);
+  // if(!isValidSlug)
+  // {
+  //   return <Navigate to="/not-found" replace />;
+  // }
 
-  if(validSlug)
-  {
-    return null;
-  }
+  console.log("The Resto => ",dishes);
   return (
     // <Router>
       <div className="h-screen">
@@ -161,34 +215,49 @@ useEffect(() => {
               path={`/`}
               element={
                 <>
-                  <Banner items={restosslug}/>
-                  <Tab categories={categories} resto={restoId} dishes={dishes} selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
+                  <Banner items={restos} infoRes={resInfo}/>
+                  <Tab categories={categories} resto={restoId}  dishes={dishes} selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
                   <Footer slug={restoSlug}/>
                 </>
               }
             />
             <Route path={`/theme/:restoSlug/info`} element={
               <>
-              <Info />
+              <Info items={restos} infoRes={resInfo}/>
               <Footer slug={restoSlug}/>
               </>
             } />
             <Route path="/theme/:restoSlug/Achat" element={
               <>
-              <Achat   cartCount={cartCount} setCartCount={setCartCount} />
+              <Achat  cartCount={cartCount} setCartCount={setCartCount} />
               <Footer slug={restoSlug}/>
               </>
             } />
             <Route path="/theme/:restoSlug/Claims" element={
               <>
-              <Claims/>
+              <Claims items={restos}/>
               <Footer slug={restoSlug}/>
               </>
             } />
           </Routes>
-        
+
       </div>
   );
 }
+
+function useValidateSlug(slug, validSlugs) {
+  const navigate = useNavigate();
+  const [isValid, setIsValid] = useState(true);
+
+  useEffect(() => {
+    if (!validSlugs.includes(slug)) {
+      setIsValid(false);
+      navigate("/not-found", { replace: true }); // Redirects to a "Not Found" page
+    }
+  }, [slug, validSlugs, navigate]);
+
+  return isValid;
+}
+
 
 export default App;

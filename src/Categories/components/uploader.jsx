@@ -1,72 +1,73 @@
-import { useState } from 'react';
-import { MdCloudUpload, MdDelete } from 'react-icons/md';
-import { AiFillFileImage } from 'react-icons/ai';
-import { Label } from "@/components/ui/label";
-import './uploader.css';
+import { useState } from 'react'
+import { MdCloudUpload, MdDelete } from 'react-icons/md'
+import { AiFillFileImage } from 'react-icons/ai'
+import {Label} from "@/components/ui/label"
+import './uploader.css'
+import { APIURL } from '../../../lib/ApiKey'
+import { axiosInstance } from '../../../axiosInstance'
 
-function Uploader({ setImage, setImages }) {
+function Uploader({ onChange, getValue = null, }) {
+
+  console.log("get Valued => ", getValue);
+
+  const [image, setImage] = useState(null);
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("No selected file");
 
-  const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      setFileName(selectedFile.name);
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImage(reader.result); // Pass the base64 encoded image data
-      };
-      reader.readAsDataURL(selectedFile);
-    }
-  };
-
-  const handleDelete = () => {
-    setFile(null);
-    setFileName("No selected File");
-    setImage(null);
-  };
-
-  const handleImageChange = (event) => {
-    const selectedImages = Array.from(event.target.files);
-    console.log("The Selected Images => ", selectedImages[0].name);
-    setImages(selectedImages);
-    
+const handleDelete = () => {
+  setFile(null);
+  setFileName("");
 };
-  return (
-    <main className='w-[590px] mt-2'>
-      <form className='form-drag' onClick={() => document.querySelector(".input-field").click()}>
-        <input
-          type="file"
-          accept='image/*'
-          className='input-field'
-          hidden
-          onChange={handleImageChange} multiple
-        />
+  const handleFileChange = (event) => {
+    let file;
+    if(getValue == null)
+    {
+      file =  event.target.files[0]
+    }
+    else{
+      file =  getValue;
+    }
+    setFileName(file.name);
+    setFile(file)
 
-        {file ? (
-          <img src={URL.createObjectURL(file)} width={150} height={150} alt={fileName} />
+    setImage(URL.createObjectURL(file));
+    onChange(file);  // Pass the File object to the parent component
+  };
+
+  const imageData = image == null ? `${APIURL}/storage/${getValue}` : image;
+  return (
+    <main className="w-[590px]">
+      <form className="form-drag" onClick={() => document.querySelector('.input-field').click()}>
+        <input type="file" accept="image/*" className="input-field" hidden onChange={handleFileChange} />
+         
+        {getValue != null
+        ? (
+          <>
+          {
+             file
+             ?
+             <img src={imageData} width={150} height={150} alt={fileName} />
+             :
+             <img src={imageData} width={150} height={150} alt={fileName} />
+          }
+          </>
         ) : (
           <>
-            <MdCloudUpload color="black" size={60} />
-            <p>Browse Files to upload</p>
+          {
+            image
+            ?
+            <img src={imageData} width={150} height={150} alt={fileName} />
+            :
+            <>
+              <MdCloudUpload color="black" size={60} />
+              <p>Browse Files to upload</p>
+            </>
+          }
           </>
         )}
-
       </form>
-      
-      {
-
-      }
-      <section className='uploaded-row'>
-        <AiFillFileImage color='black' />
-        <span className='upload-content'>
-          {fileName} -
-          <MdDelete onClick={handleDelete} />
-        </span>
-      </section>
     </main>
-  );
+  )
 }
 
-export default Uploader;
+export default Uploader

@@ -86,6 +86,8 @@ import { getCurrency } from '../../actions/Currency/CurrencyApi';
 import Spinner from 'react-spinner-material';
 import { getInfo } from '../../actions/Info/Info';
 import { editCompany } from '../../actions/Company/Company';
+import { axiosInstance } from '../../axiosInstance';
+import { toast } from "react-hot-toast";
 
 export const description =
   "A product edit page. The product edit page has a form to edit the product details, stock, product category, product status, and product images. The product edit page has a sidebar navigation and a main content area. The main content area has a form to edit the product details, stock, product category, product status, and product images. The sidebar navigation has links to product details, stock, product category, product status, and product images."
@@ -117,7 +119,9 @@ export default function DashboardCompany() {
     const [tiktok_pixel, setTiktok_pixel] = useState('')
     const [ads_pixel, setAds_pixel] = useState('')
     const [anylytics, setAnylytics] = useState('')
+    const [logo, setLogo] = useState('')
     const [id, setId] = useState('') 
+
     useEffect(() => {
        const fetchValue = async () => {
         setLoading(true)
@@ -174,7 +178,6 @@ export default function DashboardCompany() {
                address,
                ads_pixel,
                anylytics,
-               cover_image,
                currency: currValue,
                description,
                facebook_pixel,
@@ -190,16 +193,61 @@ export default function DashboardCompany() {
                youtube
            })
 
+           handleImageUpdate(logo)
+           handleImageUpdatecover(cover_image)
            if(res)
            {
             console.log('The Response => ',res);
            }
+
+           toast.success("Info Updated")
+
         }
         catch(err)
         {
             console.log('The Error => ', err);
         }
     }
+
+    const handleImageUpdate = async (newImage) => {
+        try {
+            const formData = new FormData();
+            formData.append('logo', newImage);
+    
+            const response = await axiosInstance.post(`/api/infos/${id}/update-image`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            if(response)
+            {
+              console.log("The Response Data => ",response.data);
+              
+            }
+        } catch (error) {
+            console.error('Error updating image:', error);
+        }
+    };
+
+    const handleImageUpdatecover = async (newImage) => {
+        try {
+            const formData = new FormData();
+            formData.append('cover_image', newImage);
+    
+            const response = await axiosInstance.post(`/api/infos/${id}/update-image`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            if(response)
+            {
+              console.log("The Response Data => ",response.data);
+              
+            }
+        } catch (error) {
+            console.error('Error updating image:', error);
+        }
+    };
 
     if(loading)
     {
@@ -209,6 +257,7 @@ export default function DashboardCompany() {
             </div>
         )
     }
+
   return (
 
     // <TooltipProvider>
@@ -250,7 +299,7 @@ export default function DashboardCompany() {
             </div>
             <div className='w-full md:w-1/2'>
                 <label className='block mb-3'>Logo :</label>
-                <Input  id="example1" type="file" class="block w-full text-sm file:mr-4 file:rounded-md file:border-0 file:bg-neutral-500 file:py-2.5 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-700 focus:outline-none disabled:pointer-events-none disabled:opacity-60" />
+                <Input onChange={(e) => setLogo(e.target.files[0])} id="example1" type="file" class="block w-full text-sm file:mr-4 file:rounded-md file:border-0 file:bg-neutral-500 file:py-2.5 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-700 focus:outline-none disabled:pointer-events-none disabled:opacity-60" />
             </div>
             </div>
             <div className='flex flex-col md:flex-row w-full  gap-5 items-center'>
@@ -261,7 +310,7 @@ export default function DashboardCompany() {
             </div>
             <div className='w-full md:w-full my-5'>
                 <label className='block mb-3'>Cover Photo :</label>
-                <Input id="example1" type="file" class="block w-full text-sm file:mr-4 file:rounded-md file:border-0 file:bg-neutral-500 file:py-2.5 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-700 focus:outline-none disabled:pointer-events-none disabled:opacity-60" />
+                <Input id="example1" onChange={(e) => setCover_image(e.target.files[0])}  type="file" class="block w-full text-sm file:mr-4 file:rounded-md file:border-0 file:bg-neutral-500 file:py-2.5 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-700 focus:outline-none disabled:pointer-events-none disabled:opacity-60" />
 
             </div>
             <div className='w-full md:w-full'>

@@ -51,9 +51,14 @@ export const LoginProvider = ({ children }) => {
     }
   };
 
-  const logout =async (navigate) => {
+  const logout =async ({navigate, token}) => {
     try {
-      const response = await axiosInstance.post(`${APIURL}/api/auth/logout`);
+      console.log("The Token => ", token);
+      const response = await axiosInstance.post(`/api/auth/logout`,{
+        headers:{
+          Authorization: `Bearer ${token}`
+        }
+      });
   
       if (response.status === 200) {
         console.log("The Response of Logout => ", response.data);

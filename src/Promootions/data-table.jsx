@@ -261,11 +261,11 @@ export function DataTable() {
           });
   
           if (response.ok) {
-              console.log("Banner added successfully");
-              setFile(null)
-              setFileName("")
-              reset();
-              fetchValue();
+              console.log("Banner added successfully => ", response.json());
+              // setFile(null)
+              // setFileName("")
+              // reset();
+              // fetchValue();
               toast.success(toastMessage);
               
           } else {
@@ -276,6 +276,8 @@ export function DataTable() {
       }
   };
 
+  
+ 
     const table = useReactTable({
         data,
         columns,
@@ -339,9 +341,6 @@ export function DataTable() {
                     fileName={fileName}
                     handleImageChange={handleImageChange}
                     handleSubmit={handleAddUser}
-                    onSubmit={onSubmit}
-                    register={register}
-                    control={control}
                     handleDelete={handleDelete}
                     />
                 </div>

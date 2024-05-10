@@ -28,44 +28,64 @@ import { useState } from "react";
 import Spinner from "react-spinner-material";
 import { getRestaurant } from "../../../actions/Restaurant/Restaurant";
 import { useEffect } from "react";
+import { getUserById } from "../../../actions/User/CreateUser";
+import { axiosInstance } from "../../../axiosInstance";
 
-export default function NavBar({ usersData}) {
+export default function NavBar({ }) {
   const defaultPageURL = "https://votre-domaine.com/page";
   const [showQRCode, setShowQRCode] = useState(false); // State to control QR code display
   const [qrCodeURL, setQRCodeURL] = useState(''); 
-  const [restoInfo, setRestoInfo] = useState([]);
   const [loading, setLoading] = useState(false)
-  const idUser = sessionStorage.getItem('RestoInfo');
   const [copied, setCopied] = useState(false);
+  const [userDat, setUserDat] = useState([])
+  const idUser = sessionStorage.getItem('dataItem');
+  const [restoInfo, setRestoInfo] = useState([]);
+
   console.log('The User Resto => ',idUser);
-  // useEffect(() => {
-  //   const getUserData = async () => {
-  //     const userItem = await getUserById(idUser);
-  //     console.log("The User Item => ", userItem.users);
-  //     // if(userItem)
-  //     // {
-  //       userItem.map(obj =>  {
-  //         console.log("The Items => ", obj);
-  //         setUserDat(obj)
-  //       })
-  //     // }
-  //   };
-  
-  //   getUserData();
-  // }, []);
-
   useEffect(() => {
-    const fetchValue = async () => {
-      let Data = JSON.parse(idUser);
-      let Slug = "";
-      Data.map((item) => {
-        Slug = item.slug
-      })
-      setQRCodeURL(`http://192.168.11.115:3000/theme/${Slug}`)
-    }
+    const getUserData = async () => {
+      try{
+        const res = await axiosInstance.get('/api/getResto/'+idUser);
+        console.log("The User Item Resto=> ", res);
+        if(res)
+        {
+          setRestoInfo(res)
+          let Data = res.data;
+          let Slug = "";
+          Data.map((item) => {
+            console.log("tje item => " , item);
+            Slug = item.slug
+          })
+          setQRCodeURL(`http://192.168.11.115:3000/theme/mcdonalds`)
+        }
+      }
+      catch(err)
+      {
+        console.log("The Error => ", err);
+      }
+      // if(userItem)
+      // {
+        // userItem.map(obj =>  {
+        //   console.log("The Items => ", obj);
+        //   setUserDat(obj)
+        // })
+    };
+  
+    getUserData();
+  }, []);
 
-    fetchValue();
-  }, [])
+  // useEffect(() => {
+  //   const fetchValue = async () => {
+  //     let Data = JSON.parse(usersData);
+  //     let Slug = "";
+  //     Data.map((item) => {
+  //       Slug = item.slug
+  //     })
+  //     setQRCodeURL(`http://192.168.11.115:3000/theme/${Slug}`)
+  //   }
+
+  //   fetchValue();
+  // }, [])
 
     console.log("The User Data => ", qrCodeURL);
   if(loading)

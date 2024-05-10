@@ -17,6 +17,7 @@ import { getBannerById } from "../../actions/Banner/Banner";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import Spinner from 'react-spinner-material';
+import { axiosInstance } from "../../axiosInstance";
 
 export default function UpdateForm({updateFormState, setUpdateFormState, id, handleUpdate,}) {
 
@@ -57,8 +58,28 @@ export default function UpdateForm({updateFormState, setUpdateFormState, id, han
 
         }, [])
 
+        const handleImageUpdate = async (newImage,) => {
+          try {
+              const formData = new FormData();
+              formData.append('image', newImage);
+      
+              const response = await axiosInstance.post(`/api/banners/${id}/update-image`, formData, {
+                  headers: {
+                      'Content-Type': 'multipart/form-data',
+                  },
+              });
+              if(response)
+              {
+                console.log("The Response Data => ",response.data);
+              }
+          } catch (error) {
+              console.error('Error updating image:', error);
+          }
+      };
+
         const handleImageChange = (e) => {
           const selectedFile = e.target.files[0];
+          handleImageUpdate(selectedFile)
           // setFile(selectedFile);
           if (selectedFile) {
               setFile(selectedFile);
@@ -71,6 +92,8 @@ export default function UpdateForm({updateFormState, setUpdateFormState, id, han
         setFileName("");
       };
 
+
+   
       console.log("The Selected File => ",file);
   return (
     <Dialog open={updateFormState} onOpenChange={setUpdateFormState} className=" p-8 shadow-lg h-[45rem] w-[65rem] rounded-xl">

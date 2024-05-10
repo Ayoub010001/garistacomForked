@@ -26,6 +26,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 function MailDisplay({ mail }) {
   const today = new Date();
 
+  console.log("The");
   return (
     
     <div className="flex h-full flex-col">
@@ -48,7 +49,7 @@ function MailDisplay({ mail }) {
               </Avatar>
               <div className="grid gap-1">
                 <div className="font-semibold">{mail.name}</div>
-                <div className="line-clamp-1 text-sm">{mail.subject}</div>
+                <div className="line-clamp-1 text-sm">{mail.description}</div>
                 <div className="line-clamp-1 text-sm">
                   <span className="font-medium">Reply-To:</span> {mail.email}
                 </div>

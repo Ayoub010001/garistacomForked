@@ -1,6 +1,5 @@
 import React,{useEffect, useState} from "react"
 import Uploader from "./uploader";
-
 import {
   flexRender,
 //   SortingState,
@@ -8,7 +7,6 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-
     getFilteredRowModel,
 } from "@tanstack/react-table"
 import {
@@ -19,8 +17,6 @@ import {
   } from "@radix-ui/react-icons"
   import { Input } from "@/components/ui/input"
 //   import { Table } from "@tanstack/react-table"
-
-
 import {
   Table,
   TableBody,
@@ -33,7 +29,7 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { FaCirclePlus } from "react-icons/fa6";
 import { Switch } from '@/components/ui/switch'
-
+import AddDiche from './AddDiche'
 import {
     Dialog,
     DialogContent,
@@ -53,10 +49,10 @@ import {
 } from "@/components/ui/select";
 import { axiosInstance } from "../../axiosInstance";
 import { useForm } from "react-hook-form";
-import AddDiche from "./AddDiche";
 import DeletForm from "./DeleteForm";
 import { BiSolidEdit } from "react-icons/bi";
 import UpdateForm from "./updateForm";
+import { APIURL } from "../../lib/ApiKey";
 export function DataTable({
   categries
 }) {
@@ -78,14 +74,11 @@ export function DataTable({
         accessorKey: "categories",
         header: "CATEGORIES",
         cell: ({ row }) => {
-
             return (
                 <div className="capitalize">
                     {row.original.categorie.name}
                 </div>
             );
-
-
     }
       },
       {
@@ -96,9 +89,7 @@ export function DataTable({
           accessorKey: "visible",
           header: "VISIBLE",
           cell: ({ row }) => {
-  
               const [isActive, setIsActive] = useState(row.getValue("visible"));
-  
               const handleToggleChange = () => {
                   setIsActive(!isActive);
               };
@@ -107,30 +98,21 @@ export function DataTable({
                       <Switch onClick={handleToggleChange} checked={isActive} />
                   </div>
               );
-  
-  
       }
       },
       {
         id: "actions",
         cell: ({ row }) => {
           const payment = row.original
-    
           const [updateFormState, setUpdateFormState] = useState(false);
-    
           return (
             <>
             <div className="flex gap-2">
             <Button onClick={() => setUpdateFormState(true)} >
                 <BiSolidEdit size={20}/>
             </Button>
-    
-    
               <DeletForm id={row.original.id} />
             </div>
-    
-    
-    
             <UpdateForm updateFormState={updateFormState} setUpdateFormState={setUpdateFormState} />
             </>
           )
@@ -139,14 +121,13 @@ export function DataTable({
   ]
     // const [sorting, setSorting] = useState([]);
     const [columnFilters, setColumnFilters] = useState([]);
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit,control ,formState: { errors } } = useForm();
     const [data, setData] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
-
     const fetchValue = async () => {
       setLoading(true)
       try{
-        
         const respone = await axiosInstance.get("/api/dishes")
         console.log("The Response => ",respone.data);
         if(respone)
@@ -164,16 +145,66 @@ export function DataTable({
         }
       }
     }
-    
+    const fetchCategories = async () => {
+      setLoading(true)
+      try{
+        const respone = await axiosInstance.get("/api/categories")
+        console.log("The Response => ",respone.data);
+        if(respone)
+        {
+          setCategories(respone.data)
+          setLoading(false)
+        }
+      }
+      catch(err)
+      {
+        console.log("The Error => ", err.message);
+        if(err.message === "Request failed with status code 404")
+        {
+          setLoading(false)
+        }
+      }
+    }
+    const handleAddDish = async (data, toastMessage) => {
+      console.log('The Image ', data.image);
+      const formData = new FormData();
+      formData.append("image", data.image);
+      formData.append("name", data.name);
+      formData.append("desc", data.desc);
+      formData.append("price", data.price);
+      formData.append("category_id",parseInt(data.category_id));
+      formData.append("resto_id", 1);
+      try {
+        // const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+          // const response = await axiosInstance.post(`/api/dishes`, formData,
+          //   );
+          const response = await fetch(`${APIURL}/api/dishes/`, {
+            method: "POST",
+            body: formData,
+        });
+          if (response) {
+              console.log("Banner added successfully");
+              setFile(null)
+              setFileName("")
+              fetchValue();
+              toast.success(toastMessage);
+          } else {
+              console.error("Failed to add category");
+          }
+      } catch (error) {
+          console.error("Error:", error);
+      }
+  };
     useEffect(() => {
-
+      fetchCategories()
       fetchValue()
     }, []);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [categroieData, setCategorieData] = useState('');
-
+    const [file, setFile] = useState(null);
+    const [fileName, setFileName] = useState("");
     const table = useReactTable({
         data,
         columns,
@@ -187,21 +218,16 @@ export function DataTable({
         getPaginationRowModel: getPaginationRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
-
         state: {
             columnFilters,
         },
     });
-
     const HandleOpen =()=>{
         SetisOpen(true)
-
     }
-
     const onSubmit = async () => {
        console.log("Test");
     };
-  
   console.log("The Data create => ",HandleOpen);
   return (
     <>
@@ -222,8 +248,7 @@ export function DataTable({
                     />
                 </div>
                 <div className="flex justify-between gap-3">
-
-             <Dialog  className=" p-8 shadow-lg h-[45rem] w-[65rem] rounded-xl">
+{/* <Dialog  className=" p-8 shadow-lg h-[45rem] w-[65rem] rounded-xl">
                   <DialogTrigger className="flex justify-center">
                           <Button variant="ghost" className="relative  rounded-md bg-black text-white">
                              Add Dishes
@@ -231,15 +256,23 @@ export function DataTable({
                   </DialogTrigger>
                   <DialogContent className="max-w-[55rem]">
                          <AddDiche categries={categries}/>
-                          {/* <DialogFooter className="flex justify-center items-center">
-                      </DialogFooter> */}
                   </DialogContent>
-              </Dialog>
+              </Dialog> */}
+              <AddDiche
+              errors={errors}
+              file={file}
+              fileName={fileName}
+              categories={categories}
+              // handleImageChange={handleImageChange}
+              handleSubmit={handleAddDish}
+              onSubmit={onSubmit}
+              register={register}
+              control={control}
+              // handleDelete={handleDelete}
+              />
                 </div>
       </div>
-
       <div className="rounded-md border">
-
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -283,7 +316,6 @@ export function DataTable({
           </TableBody>
         </Table>
       </div>
-
         <div className="flex items-center justify-between px-2">
         <div className="flex items-center space-x-2">
     <p className="text-sm font-medium">Rows per page</p>
@@ -306,12 +338,10 @@ export function DataTable({
     </Select>
     </div>
         <div className="flex items-center space-x-6 lg:space-x-8">
-
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
             Page {table.getState().pagination.pageIndex + 1} of{" "}
             {table.getPageCount()}
           </div>
-
           <div className="flex items-center justify-end space-x-2 py-4">
           <Button
             variant="outline"
@@ -334,7 +364,14 @@ export function DataTable({
         </div>
         </div>
         </div>
-
     </>
   )
 }
+
+
+
+
+
+
+
+

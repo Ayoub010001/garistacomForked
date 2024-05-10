@@ -84,6 +84,7 @@ import { getRolesById } from '../../actions/Role/getRoles';
 import { getUserById } from '../../actions/User/CreateUser';
 import Spinner from 'react-spinner-material';
 import { axiosInstance } from '../../axiosInstance';
+import { toast } from "react-hot-toast";
 
 export const description =
   "A product edit page. The product edit page has a form to edit the product details, stock, product category, product status, and product images. The product edit page has a sidebar navigation and a main content area. The main content area has a form to edit the product details, stock, product category, product status, and product images. The sidebar navigation has links to product details, stock, product category, product status, and product images."
@@ -156,13 +157,12 @@ export default function DashboardProfile() {
   
   async function handleUpdate () {
       try{
-
+      
         const formData = new FormData()         
         formData.append('first_name', name)
         formData.append('last_name', lastName)
         formData.append('phone', phone)
         formData.append('email', email)
-        formData.append('image', file)
         const respone = await axiosInstance.put('/api/auth/edit/' + userDat.id, formData,{
           headers: {
             "Content-Type": "multipart/form-data", // Set the content type to multipart/form-data for file upload
@@ -171,6 +171,7 @@ export default function DashboardProfile() {
          if(respone)
          {
            console.log("The Response  => ", respone.data);
+           toast.success("User Updated")
          }
       }
       catch(error){
@@ -178,13 +179,33 @@ export default function DashboardProfile() {
       }
   }
 
+  const handleImageUpdate = async (newImage) => {
+    try {
+      setFile(newImage)
+        const formData = new FormData();
+        formData.append('image', newImage);
+
+        const response = await axiosInstance.post(`/api/users/${userDat.id}/update-image`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        if(response)
+        {
+          console.log("The Response Data => ",response.data);
+          
+        }
+    } catch (error) {
+        console.error('Error updating image:', error);
+    }
+};
   async function ChangePassw() {
     try{
       const token = sessionStorage.getItem('tokenData');
 
       let tok = JSON.parse(token)
       // Construct the URL with parameters
-      const url = `api/auth/changepassword?current_password=${encodeURIComponent(currentPassword)}&new_password=${encodeURIComponent(newPassword)}&confirm_password=${encodeURIComponent(confirmPassword)}`;
+      const url = `/api/auth/changepassword?current_password=${encodeURIComponent(currentPassword)}&new_password=${encodeURIComponent(newPassword)}&confirm_password=${encodeURIComponent(confirmPassword)}`;
 
       // Make the GET or POST request, here using POST for example
       const res = await axiosInstance.post(url, {}, {
@@ -196,6 +217,8 @@ export default function DashboardProfile() {
       if(res)
       {
         console.log('Password changed successfully', res.data);
+        toast.success("Password changed successfully")
+
       }
 
 
@@ -215,6 +238,8 @@ export default function DashboardProfile() {
   //     </div>
   //   )
   // }
+
+  const Image = file == null ? `http://localhost:8000/storage/${userDat.image}` : URL.createObjectURL(file)
   return (
 
     <TooltipProvider>
@@ -262,7 +287,7 @@ export default function DashboardProfile() {
                                   ?
                                   <img src="/public/avatar.png" height="100" width="150" alt="Profile" />
                                   :
-                                  <h1>test</h1>
+                                  <img src={Image} height="100" width="150" alt="Profile" />
                                 }
                               </button>
                               <span className="name mt-3">{name + ' ' + lastName}</span>
@@ -333,7 +358,7 @@ export default function DashboardProfile() {
                 </div>
                 <div className='w-full md:w-full'>
             <label className='block mb-3'>Photo :</label>
-            <Input id="example1" onChange={handleImageChange} type="file" class="block w-full text-sm file:mr-4 file:rounded-md file:border-0 file:bg-neutral-500 file:py-2.5 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-700 focus:outline-none disabled:pointer-events-none disabled:opacity-60" />
+            <Input id="example1" onChange={(e) => handleImageUpdate(e.target.files[0])} type="file" class="block w-full text-sm file:mr-4 file:rounded-md file:border-0 file:bg-neutral-500 file:py-2.5 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-700 focus:outline-none disabled:pointer-events-none disabled:opacity-60" />
 
           </div>
             </div>
@@ -352,19 +377,19 @@ export default function DashboardProfile() {
                   <div className=" mt-4 mb-4 flex justify-center bg-white">
             {/* <div className=" p-4"> */}
 
-            <div className='w-full  '>
-                 <label >Current Password:</label>
-                <Input value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)}  className='my-3' placeholder='write password' />
-                <label >New Password:</label>
-                <Input value={newPassword} onChange={(e) => setNewPassword(e.target.value)}  className='my-3' placeholder='write password' />
-                <label >Re-type New Password:</label>
-                <Input value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className='my-3' placeholder='write password' />
-                <div className='flex justify-end'>
-                    <Button onClick={ChangePassw}>Change password</Button>
-                </div>
+                      <div className='w-full  '>
+                          <label >Current Password:</label>
+                          <Input value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} className='my-3' placeholder='write password' />
+                          <label >New Password:</label>
+                          <Input value={newPassword} onChange={(e) => setNewPassword(e.target.value)}  className='my-3' placeholder='write password' />
+                          <label >Re-type New Password:</label>
+                          <Input value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className='my-3' placeholder='write password' />
+                          <div className='flex justify-end'>
+                              <Button onClick={ChangePassw}>Change password</Button>
+                          </div>
 
-            </div>
-        </div>
+                      </div>
+                  </div>
                   </CardContent>
 
                 </Card>

@@ -16,6 +16,8 @@ function Mail({
 }) {
   const [mail] = useMail();
 
+  console.log("The MAils => ", mails);
+
   return (
     <TooltipProvider>
       <div className="h-full max-h-[800px] grid grid-cols-2">
@@ -39,7 +41,7 @@ function Mail({
         </div>
         <div>
           <MailDisplay
-            mail={mails.find((item) => item.id === mail.selected) || null}
+            mail={mails.find((item) => item.id === mail.id)}
           />
         </div>
       </div>
