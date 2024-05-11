@@ -56,7 +56,7 @@ export default function NavBar({ }) {
             console.log("tje item => " , item);
             Slug = item.slug
           })
-          setQRCodeURL(`http://192.168.11.115:3000/theme/mcdonalds`)
+          setQRCodeURL(`https://admin.garista.com/theme/mcdonalds`)
         }
       }
       catch(err)

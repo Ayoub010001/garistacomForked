@@ -10,6 +10,7 @@ import Achat from "./Achat/Achat";
 import Claims from "./Claims/Claims";
 import Spinner from "react-spinner-material";
 import { axiosInstance } from "../../axiosInstance";
+import { APIURL } from "../../lib/ApiKey";
 
 function App() {
   const [cartCount, setCartCount] = useState(tabAchat.length);
@@ -60,7 +61,7 @@ function App() {
   {
     setLoading(true)
     try{
-      const res = await fetch(`http://127.0.0.1:8000/api/getCategorieByResto/${id}`);
+      const res = await fetch(`${APIURL}/api/getCategorieByResto/${id}`);
       const data = await res.json();
       if(data)
       {
@@ -81,7 +82,7 @@ function App() {
 
   const fetchDishes = async () => {
     try {
-        let url = 'http://127.0.0.1:8000/api/getdishes/';
+        let url = `${APIURL}/api/getdishes`;
 
         // // // If category is provided, add it to the URL query string
         if (selectedTab != "All") {
@@ -131,7 +132,7 @@ const fetchInfo = async (id) => {
   const fetchRestosbyslug = async () => {
     setLoading(true)
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/getRestoBySlug/${restoSlug}`);
+      const response = await fetch(`${APIURL}/api/getRestoBySlug/${restoSlug}`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }

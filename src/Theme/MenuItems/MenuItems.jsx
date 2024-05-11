@@ -17,8 +17,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addItem, removeAll } from '../../lib/cartSlice';
 
 import Dettaille from './Dettaille';
-import useCart from '../../lib/useCart';
-// import { useCart } from '../../context/CartContext';
 function MenuItems({dishes, selectedTab }) {
   const [selectedProp, setSelectedProp] = useState(0); // initialisation de l'état avec 0
   const [searchTerm, setSearchTerm] = useState(""); // état pour stocker la valeur de la recherche

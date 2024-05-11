@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import Spinner from 'react-spinner-material';
 import { axiosInstance } from "../../axiosInstance";
+import { APIURL } from "../../lib/ApiKey";
 
 export default function UpdateForm({updateFormState, setUpdateFormState, id, handleUpdate,}) {
 
@@ -124,7 +125,7 @@ export default function UpdateForm({updateFormState, setUpdateFormState, id, han
                               <img src={URL.createObjectURL(file)} width={150} height={150} alt={fileName} />
                           ) : (
                               <>
-                                <img src={`http://localhost:8000/storage/${banner.image}`} className="row-span-3 h-[13rem] w-[15rem]  object-cover" />
+                                <img src={`${APIURL}/storage/${banner.image}`} className="row-span-3 h-[13rem] w-[15rem]  object-cover" />
                               </>
                           )}
 

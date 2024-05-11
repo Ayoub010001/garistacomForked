@@ -75,7 +75,7 @@ export function DataTable() {
           cell: ({ row }) => (
             <div className="capitalize ml-1 w-16">
                 {/* {console.log("The Images of Update => ",JSON.parse(row.original) )} */}
-                  <img className="h-16  rounded-full" alt={row.getValue("title")} src={`http://localhost:8000/storage/${row.original.image}`}/>
+                  <img className="h-16  rounded-full" alt={row.getValue("title")} src={`${APIURL}/storage/${row.original.image}`}/>
               </div>
           ),
       },

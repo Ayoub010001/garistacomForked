@@ -85,6 +85,7 @@ import { getUserById } from '../../actions/User/CreateUser';
 import Spinner from 'react-spinner-material';
 import { axiosInstance } from '../../axiosInstance';
 import { toast } from "react-hot-toast";
+import { APIURL } from '../../lib/ApiKey';
 
 export const description =
   "A product edit page. The product edit page has a form to edit the product details, stock, product category, product status, and product images. The product edit page has a sidebar navigation and a main content area. The main content area has a form to edit the product details, stock, product category, product status, and product images. The sidebar navigation has links to product details, stock, product category, product status, and product images."
@@ -239,7 +240,7 @@ export default function DashboardProfile() {
   //   )
   // }
 
-  const Image = file == null ? `http://localhost:8000/storage/${userDat.image}` : URL.createObjectURL(file)
+  const Image = file == null ? `${APIURL}/storage/${userDat.image}` : URL.createObjectURL(file)
   return (
 
     <TooltipProvider>

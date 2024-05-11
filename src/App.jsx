@@ -8,7 +8,8 @@ import { LoginProvider } from "../actions/Authentification/LoginProvider";
 import { Toaster } from "react-hot-toast";
 import { QueryClient } from "react-query";
 import axios from "axios";
-import { CartProvider } from "./context/CartContext";
+import { APIURL } from "../lib/ApiKey";
+// import { CartProvider } from "./context/CartContext";
 function App() {
 
   const [users, setUsers] = useState([]);
@@ -16,7 +17,7 @@ function App() {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/users');
+                const response = await axios.get(`${APIURL}/api/users`);
                 setUsers(response.data.users); 
             } catch (error) {
                 console.error('Error fetching users:', error);
@@ -31,7 +32,7 @@ function App() {
             const formData = new FormData();
             formData.append('image', newImage);
 
-            const response = await axios.post(`http://localhost:8000/api/users/${userId}/update-image`, formData, {
+            const response = await axios.post(`${APIURL}/api/users/${userId}/update-image`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

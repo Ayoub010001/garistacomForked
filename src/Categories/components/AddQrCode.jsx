@@ -96,7 +96,7 @@ function AddQrCode({props}) {
         formData.append("name", data.name);
         formData.append("resto_id", 1);
         try {
-            const response = await fetch("http://127.0.0.1:8000/api/categories", {
+            const response = await fetch(`${APIURL}/api/categories`, {
                 method: "POST",
                 body: formData,
             });

@@ -102,6 +102,7 @@ export default function DashboardCompany() {
     const [currValue, setCurrValue] = useState('')
     const [currData, setCurrData] = useState([])
     const [name, setName] = useState('')
+    const [slug, setSlug] = useState('')
     const [description, setDescription] = useState('')
     const [address, setAddress] = useState('')
     const [wifiPass, setWifiPass] = useState('')
@@ -140,6 +141,7 @@ export default function DashboardCompany() {
                 setDescription(item.description)
                 setId(item.id)
                 setName(item.resto.name)
+                setSlug(item.resto.slug)
                 setAddress(item.address)
                 setWifiPass(item.wifi_pass)
                 setWebsite_url(item.website_url)
@@ -168,6 +170,29 @@ export default function DashboardCompany() {
 
        fetchValue();
     }, [])
+
+    const handleUpdateName = async () => {
+        try{
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('slug', slug);
+    
+          const res = await axiosInstance.put(`/api/resots/${id}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                },
+            });
+            if(response)
+            {
+            console.log("The Response Data => ",response.data);
+            
+            }
+        }
+        catch(err)
+        {
+            console.log("The Error => ", err);
+        }
+    }
 
 
     const handleUpdate = async () => {
@@ -249,6 +274,9 @@ export default function DashboardCompany() {
         }
     };
 
+    
+
+
     if(loading)
     {
         return(
@@ -272,7 +300,7 @@ export default function DashboardCompany() {
                 borderRadius: ".5rem",
               }}
             >
-              <Button onClick={handleUpdate}>Save</Button>
+              <Button onClick={() => {handleUpdate(); handleUpdateName()}}>Save</Button>
            </div>
         </div>
         <div className="flex gap-4 min-h-screen w-full flex-col bg-muted/40">
@@ -332,10 +360,7 @@ export default function DashboardCompany() {
                             <SelectItem className='cursor-pointer' value={item.type}>{item.type}</SelectItem>
                         ))
                     }
-                    {/* <SelectItem value="paypal">PayPal</SelectItem>
-                    <SelectItem value="cash">Espèces</SelectItem>
-                    <SelectItem value="transfer">Virement bancaire</SelectItem>
-                    <SelectItem value="crypto">Crypto-monnaie</SelectItem> */}
+
                     </SelectGroup>
                 </SelectContent>
                 </Select>
@@ -348,8 +373,8 @@ export default function DashboardCompany() {
             <div>
                 <label for="example7" className="mb-1 block text-sm font-medium text-gray-700">Restaurant URL :</label>
                 <div className="relative z-0 flex">
-                    <div className="inset-y-0 left-0 flex items-center rounded-md rounded-r-none border border-r-0 border-gray-300 bg-gray-100 px-2.5 text-gray-700">https://</div>
-                    <Input value={website_url} onChange={(e) => setWebsite_url(e.target.value)} type="url" id="example7" className="block w-full rounded-md rounded-l-none border border-gray-300 shadow-sm focus:z-10 focus:border-primary-400 focus:ring focus:ring-primary-200 focus:ring-opacity-50 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500" placeholder="example.com" />
+                    <div className="inset-y-0 left-0 flex items-center rounded-md rounded-r-none border border-r-0 border-gray-300 bg-gray-100 px-2.5 text-gray-700">https://admin.garista.com/menu/</div>
+                    <Input value={slug} onChange={(e) => setWebsite_url(e.target.value)} type="url" id="example7" className="block w-full rounded-md rounded-l-none border border-gray-300 shadow-sm focus:z-10 focus:border-primary-400 focus:ring focus:ring-primary-200 focus:ring-opacity-50 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500" placeholder="example.com" />
                 </div>
             </div>
         </div>
@@ -386,23 +411,7 @@ export default function DashboardCompany() {
                     </CardContent>
 
                     </Card>
-                    {/* <Card>
-                    <CardHeader>
-                    <CardTitle className='border-b-2 pb-2'>Tracking</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className='flex flex-col md:flex-row w-full pt-5 gap-5 items-center'>
-                        <div className='w-full md:w-full'>
-                        <label className='block mb-3'>Trustpilot :</label>
-                            <Input  className='mt-3' placeholder='Trustpilot' />
-                        </div>
-                        <div className='w-full md:w-full'>
-                            <label className='block mb-3'>Google Business :</label>
-                            <Input  className='mt-3' placeholder='Google Business' />
-                            </div>
-                        </div>
-                    </CardContent>
-                    </Card> */}
+
                 </div>
                 <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
 
@@ -452,20 +461,7 @@ export default function DashboardCompany() {
 
                     </CardContent>
                     </Card>
-                    {/* <Card>
-                    <CardHeader>
-                        <CardTitle>Archive Product</CardTitle>
-                        <CardDescription>
-                        Lipsum dolor sit amet, consectetur adipiscing elit.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div></div>
-                        <Button size="sm" variant="secondary">
-                        Archive Product
-                        </Button>
-                    </CardContent>
-                    </Card> */}
+
                 </div>
                 </div>
                 <div className="flex items-center justify-center gap-2 md:hidden">

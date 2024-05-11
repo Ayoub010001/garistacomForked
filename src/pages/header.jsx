@@ -28,7 +28,7 @@ function Header() {
       // Generate the QR code URL when showing the QR code
       // Replace 'YOUR_SLUG' with the actual slug from your API
       const slug = 'YOUR_SLUG'; // Get the slug from your API
-      const qrCodeLink = `http://localhost:3000/theme/${slug}`;
+      const qrCodeLink = `https://admin.garista.com/theme/${slug}`;
       setQRCodeURL(qrCodeLink);
     }
   };

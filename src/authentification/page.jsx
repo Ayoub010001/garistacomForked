@@ -97,6 +97,10 @@ function Login({ onLogin, className, ...props }) {
           sessionStorage.setItem('tokenData', JSON.stringify(response.data));
           sessionStorage.setItem('isLoggedIn', "loggin");
           let Id = JSON.stringify(response.data.user.id)
+          // const response = await axiosInstance.post(`${APIURL}/api/getResto/`,response.data.user.id)
+          // if(response){
+          //   sessionStorage.setItem('ResotInfo', JSON.stringify(response.data));
+          // }
 
           navigate("/");
         }

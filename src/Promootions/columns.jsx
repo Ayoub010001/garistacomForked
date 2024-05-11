@@ -30,6 +30,7 @@ import { IoCheckmarkOutline } from "react-icons/io5"
 import { Switch } from '@/components/ui/switch'
 import UpdateForm from "./updateForm";
 import DeletForm from "./DeletForm";
+import { APIURL } from "../../lib/ApiKey";
 export const columns = [
     {
         accessorKey: "image",
@@ -37,7 +38,7 @@ export const columns = [
         cell: ({ row }) => (
           <div className="capitalize ml-1 w-16">
               {/* {console.log("The Images of Update => ",JSON.parse(row.original) )} */}
-                <img className="h-16  rounded-full" alt={row.getValue("title")} src={`http://localhost:8000/${row.original.image}`}/>
+                <img className="h-16  rounded-full" alt={row.getValue("title")} src={`${APIURL}/${row.original.image}`}/>
             </div>
         ),
     },
