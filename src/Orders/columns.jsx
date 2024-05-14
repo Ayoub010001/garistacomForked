@@ -28,6 +28,19 @@ function formatDate(dateString) {
   return date.toISOString().split('T')[0];  // This splits the ISO string at 'T' and takes the first part (the date)
 }
 
+
+const updateStatus = (newStatus, orderId) => {
+  // Make an HTTP request to your API to update the status
+  console.log("The order Id is ",orderId);
+  axiosInstance.put(`/api/order/${orderId}`, { status: newStatus })
+    .then(response => {
+      console.log('Status updated successfully:', response.data);
+    })
+    .catch(error => {
+      console.error('Error updating status:', error);
+    });
+};
+
 const fetchOrderDetails = async (orderId) => {
   try {
     const response = await axiosInstance.get(`/api/order/${orderId}`);
@@ -38,6 +51,27 @@ const fetchOrderDetails = async (orderId) => {
     return null; // Return null or appropriate error handling
   }
 };
+function formatDateTime(dateTimeString) {
+  const dateTime = new Date(dateTimeString);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  const isToday = dateTime.toLocaleDateString() === today.toLocaleDateString();
+  const isYesterday = dateTime.toLocaleDateString() === yesterday.toLocaleDateString();
+
+  if (isToday) {
+    return dateTime.toLocaleTimeString();
+  } else if (isYesterday) {
+    const date = 'Yesterday';
+    const time = dateTime.toLocaleTimeString();
+    return `${date} ${time}`;
+  } else {
+    const date = dateTime.toLocaleDateString();
+    const time = dateTime.toLocaleTimeString();
+    return `${date} ${time}`;
+  }
+}
 
 const OrderItemsCell = ({ orderId }) => {
   const [items, setItems] = useState(null);
@@ -65,7 +99,7 @@ export const columns = [
     {
         accessorKey: "created_at",
         header: "DATE",
-        cell: ({ row }) => formatDate(row.original.created_at)
+        cell: ({ row }) =>  formatDateTime(row.original.created_at)
       },
       {
         accessorKey: "items",
@@ -86,27 +120,28 @@ export const columns = [
         header: "STATUS",
         cell: ({ row }) => {
                   const status = row.original.status
-                  const [choose,setChoose] = useState('')
+                  const [choose,setChoose] = useState(status)
 
                   let backgroundColor = '';
-                  if(choose == "canceled")
+                  if(choose == "Canceled")
                   {
                     backgroundColor = "#ffe1df"
                   }
-                  else if(choose == "new"){
+                  else if(choose == "New"){
                     backgroundColor = "#C4E4FF"
                   }
-                  else if(choose == "processing"){
+                  else if(choose == "Processing"){
                     backgroundColor = "#FFC374"
                   }
-                  else if(choose == "completed"){
+                  else if(choose == "Completed"){
                     backgroundColor = "#D9EDBF"
                   }
+
 
                   console.log("The Status Valuse => ", choose)
 
                   return (
-                    <Select onValueChange={(val) => setChoose(val)} >
+                    <Select onValueChange={(val) => { setChoose(val); updateStatus(val , row.original.id); }} >
                     <SelectTrigger className={`w-[120px] `} style={{backgroundColor: backgroundColor}}>
                       <SelectValue defaultValue={status} placeholder={status ? status : "Status"} />
                     </SelectTrigger>

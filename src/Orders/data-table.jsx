@@ -84,7 +84,7 @@ export function DataTable({
         initialState: {
             pagination: {
                 pageIndex: 0,
-                pageSize: 4,
+                pageSize: 5,
             },
         },
         getCoreRowModel: getCoreRowModel(),
