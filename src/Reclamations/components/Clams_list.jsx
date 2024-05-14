@@ -12,7 +12,55 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 // import { Mail } from "@/app/(app)/examples/mail/data"
 import { useMail } from "../use-mail"
 
+function calculateTimeDifference(updatedAtTimestamp) {
+  // Convert the updatedAtTimestamp string to a Date object
+  const updatedAt = new Date(updatedAtTimestamp);
 
+  // Get the current date and time
+  const now = new Date();
+
+  // Calculate the time difference in milliseconds
+  const timeDifference = now - updatedAt;
+
+  // Convert milliseconds to seconds
+  const secondsDifference = Math.floor(timeDifference / 1000);
+
+  // Convert seconds to minutes
+  const minutesDifference = Math.floor(secondsDifference / 60);
+
+  // Convert minutes to hours
+  const hoursDifference = Math.floor(minutesDifference / 60);
+
+  // Convert hours to days
+  const daysDifference = Math.floor(hoursDifference / 24);
+
+  // Convert days to months
+  const monthsDifference = Math.floor(daysDifference / 30);
+
+  // Convert days to years
+  const yearsDifference = Math.floor(daysDifference / 365);
+
+  // Check the difference and return the appropriate string
+  if (yearsDifference > 0) {
+      return yearsDifference === 1 ? "1 year ago" : yearsDifference + " years ago";
+  } else if (monthsDifference > 0) {
+      return monthsDifference === 1 ? "1 month ago" : monthsDifference + " months ago";
+  } else if (daysDifference > 0) {
+      if (daysDifference === 1) {
+          return "yesterday";
+      } else if (daysDifference === 2) {
+          return "2 days ago";
+      } else {
+          return daysDifference + " days ago";
+      }
+  } else if (hoursDifference > 0) {
+      return hoursDifference === 1 ? "1 hour ago" : hoursDifference + " hours ago";
+  } else if (minutesDifference > 0) {
+      return minutesDifference === 1 ? "1 minute ago" : minutesDifference + " minutes ago";
+  } else {
+      return "just now";
+  }
+}
 
 export function MailList({ items }) {
   const [mail, setMail] = useMail()
@@ -43,8 +91,8 @@ export function MailList({ items }) {
       <AvatarImage src="https://th.bing.com/th/id/OIP.2hAVCZRMcBjsE8AGQfWCVQHaHa?rs=1&pid=ImgDetMain" alt="@shadcn" className="h-8 w-8"/>
       <AvatarFallback>CN</AvatarFallback>
     </Avatar>
-    <div className="font-semibold">{item.name}</div>
-                  {!item.read && (
+    <div className="font-semibold">{item.clamer_name}</div>
+                  {!item.resto_id && (
                     <span className="flex h-2 w-2 rounded-full bg-blue-600" />
                   )}
 
@@ -61,13 +109,13 @@ export function MailList({ items }) {
                   {/* {formatDistanceToNow(new Date(item.date), {
                     addSuffix: true,
                   })} */}
-                  <div className="text-neutral-500">5 months ago</div>
+                  <div className="text-neutral-500">{calculateTimeDifference(item.updated_at)}</div>
                 </div>
               </div>
               {/* <div className="text-xs font-medium">{item.subject}</div> */}
             </div>
             <div className="line-clamp-2 text-xs text-muted-foreground">
-              {/* {item.text.substring(0, 300)} */}
+              {item.description.substring(0, 300)}
             </div>
             {/* {item.labels.length ? (
               <div className="flex items-center gap-2">
