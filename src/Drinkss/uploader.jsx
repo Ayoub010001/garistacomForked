@@ -1,52 +1,46 @@
-import { useState } from 'react'
-import { MdCloudUpload, MdDelete } from 'react-icons/md'
-import { AiFillFileImage } from 'react-icons/ai'
-import './uploader.css'
+import { useState, useEffect } from 'react';
+import { MdCloudUpload } from 'react-icons/md';
+import { APIURL } from '../../lib/ApiKey';
+import './uploader.css';
 
-function Uploader() {
+function Uploader({ onChange, getvalue, initalData }) {
+  const [image, setImage] = useState(null);
+  const [fileName, setFileName] = useState("No selected file");
+  
+  // If getvalue is provided, it means we are updating, so set the image and file name
+  useEffect(() => {
+    if (initalData) {
+      if(image == null)
+        {
+          setImage(`${APIURL}/public/storage/${getvalue}`);
+        }
+      // setFileName(getvalue); // Assuming getvalue contains the file name
+    }
+  }, [getvalue]);
 
-  const [image, setImage] = useState(null)
-  const [fileName, setFileName] = useState("No selected file")
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setFileName(file.name);
+    setImage(URL.createObjectURL(file));
+    onChange(file);  // Pass the File object to the parent component
+  };
+
   return (
     <main>
-      <form className='form-drag'
-      onClick={() => document.querySelector(".input-field").click()}
-      >
-        <input type="file" accept='image/*' className='input-field' hidden
-        onChange={({ target: {files}}) => {
-          files[0] && setFileName(files[0].name)
-          if(files){
-            setImage(URL.createObjectURL(files[0]))
-          }
-        }}
-         />
-
-        {image ?
-        <img src={image} width={150} height={150} alt={fileName} />
-        :
-        <>
-        <MdCloudUpload color="black" size={60} />
-        <p>Browse Files to upload</p>
-        </>
-      }
-
+      <form className='form-drag' onClick={() => document.querySelector(".input-field").click()}>
+        <input type="file" accept='image/*' className='input-field' hidden onChange={handleFileChange} />
+        
+        {image ? (
+          <img src={image} width={150} height={150} alt={fileName} />
+        ) : (
+          <>
+            <MdCloudUpload color="black" size={60} />
+            <p>Browse Files to upload</p>
+          </>
+        )}
       </form>
-
-      <section className='uploaded-row'>
-        <AiFillFileImage color='black' />
-        <span className='upload-content'>
-          {fileName} -
-          <MdDelete
-          onClick={() => {
-            setFileName("No selected File")
-            setImage(null)
-          }}
-           />
-        </span>
-      </section>
-
     </main>
-  )
+  );
 }
 
-export default Uploader
+export default Uploader;

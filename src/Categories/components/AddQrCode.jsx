@@ -36,23 +36,34 @@ function AddQrCode({props}) {
     const [imageUrls, setImageUrls] = useState([]);
     const { control, handleSubmit, register, formState: { errors }, setError } = useForm();
     const [loading, setLoading] = useState(false)
-    const fetchCat = async () =>{
+    const [resotInfo, setRestoInfo] = useState([]) 
+
+    const fetchCat = async (id) =>{
         // const result = await fetchCategorie();
         setLoading(true)
         try {
-            const categorieDates = await fetchCategorie(); // Call the fetchCategorie function to get the data
+            const restoInfo = sessionStorage.getItem('RestoInfo');
+            let Data = [];
+            Data = JSON.parse(restoInfo)
+            Data.map(item => {
+               setRestoInfo(item)
+               id = item.id;
+            })
+            const categorieDates = await axiosInstance.get('/api/categories/'+id); // Call the fetchCategorie function to get the data
             if(categorieDates)
             {
                 console.log("The Categories => ",categorieDates);
-                setCategories(categorieDates)
+                setCategories(categorieDates.data)
             }
-            setLoading(false)
             // const { Categories } = categorieData;
             // console.log("the cte => ", categorieData[0].image , "the name => ", categorieData[0].name);
             // const images = JSON.parse(categorieData[0].image); // Parse the JSON-encoded string to extract the array of image paths
             // setImageUrls(images);
           } catch (error) {
             console.error('Error fetching image URLs:', error);
+          }
+          finally{
+            setLoading(false)
           }
         // console.log("resulat => ", result);
     }
@@ -87,14 +98,17 @@ function AddQrCode({props}) {
         }
     };
     const handleAddUser = async (data, toastMessage) => {
-        console.log("The Images => ", images);
+        console.log("The Images => ", data.image ? data.image : null);
         const formData = new FormData();
           // Append each selected image to the formData
         //   for (let i = 0; i < fileName.length; i++) {
-        formData.append("image", data.images);
+            if(data.image)
+                {
+                    formData.append("image", data.image);
+                }
         // }
         formData.append("name", data.name);
-        formData.append("resto_id", 1);
+        formData.append("resto_id", resotInfo.id);
         try {
             const response = await fetch(`${APIURL}/api/categories`, {
                 method: "POST",
@@ -104,7 +118,7 @@ function AddQrCode({props}) {
             if (response.ok) {
                 console.log("Category added successfully");
                 toast.success(toastMessage);
-                fetchCat()
+                fetchCat(resotInfo.id)
             } else {
                 console.error("Failed to add category");
             }
@@ -113,9 +127,8 @@ function AddQrCode({props}) {
         }
     };
 
-    const handleDeleteCategrorie = async (itemId) =>{
+    const handleDeleteCategrorie = async (itemId,categories) =>{
         try{
-            setLoading(true)
           
             const response = await axiosInstance.delete("/api/categories/" + itemId,
             {
@@ -128,11 +141,11 @@ function AddQrCode({props}) {
             {
                 console.log("The Response => ",response);
                 toast.success("Categorie deleted");
-                fetchCat()
+                setCategories(categories.filter(item => item.id !== itemId));  
+                                  // fetchCat()
             }
             else{
                 console.log("not working");
-                setLoading(true)
             }
         }catch(err)
         {
@@ -160,7 +173,7 @@ function AddQrCode({props}) {
                 console.log("Banner Updated successfully", response.data);
 
                 toast.success(toastMessage);
-                fetchCat();
+                fetchCat(resotInfo.id)
                 
             } else {
                 console.error("Failed to add category");
@@ -170,6 +183,8 @@ function AddQrCode({props}) {
             console.error("Error:", error);
         }
      }
+
+
    
     console.log("The Olded Category: ", Categories);
     
@@ -190,7 +205,8 @@ function AddQrCode({props}) {
 
                {
                Categories.length > 0 && Categories.map((item, i) => (
-                    <CategorieCard key={i} item={item} handled={() => handleDeleteCategrorie(item.id)} handleUpdate={handleUpdate}/>
+                    <CategorieCard key={i} item={item}   handled={() => handleDeleteCategrorie(item.id, Categories)}
+                    handleUpdate={handleUpdate}/>
                 ))
                }
 

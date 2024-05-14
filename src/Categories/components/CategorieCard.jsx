@@ -7,7 +7,7 @@ import DeleteForm from './deleteForm'
 import { BiDotsVerticalRounded } from 'react-icons/bi'
 import { useState } from 'react'
 import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
-import { APIURL } from '../../../lib/ApiKey'
+import { APIURL } from "../../../lib/ApiKey";
 
 const CategorieCard = ({item, handled, handleUpdate}) => {
     const [position, setPosition] = useState("bottom")

@@ -1,5 +1,6 @@
 import React,{useEffect, useState} from "react"
 import Uploader from "./uploader";
+
 import {
   flexRender,
 //   SortingState,
@@ -7,6 +8,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+
     getFilteredRowModel,
 } from "@tanstack/react-table"
 import {
@@ -17,6 +19,9 @@ import {
   } from "@radix-ui/react-icons"
   import { Input } from "@/components/ui/input"
 //   import { Table } from "@tanstack/react-table"
+
+import { toast } from "react-hot-toast";
+
 import {
   Table,
   TableBody,
@@ -53,6 +58,8 @@ import DeletForm from "./DeleteForm";
 import { BiSolidEdit } from "react-icons/bi";
 import UpdateForm from "./updateForm";
 import { APIURL } from "../../lib/ApiKey";
+import Spinner from "react-spinner-material";
+
 export function DataTable({
   categries
 }) {
@@ -62,7 +69,7 @@ export function DataTable({
           header: () => <div className="ml-1">IMAGE</div>,
           cell: ({ row }) => (
               <div className="capitalize ml-1 w-16">
-                  <img className="h-16  rounded-full" src={row.getValue("image")}/>
+                  <img className="h-16  rounded-full" src={`${APIURL}/storage/${row.getValue("image")}`}/>
               </div>
           ),
       },
@@ -74,11 +81,14 @@ export function DataTable({
         accessorKey: "categories",
         header: "CATEGORIES",
         cell: ({ row }) => {
+
             return (
                 <div className="capitalize">
                     {row.original.categorie.name}
                 </div>
             );
+
+
     }
       },
       {
@@ -86,34 +96,60 @@ export function DataTable({
         header: "PRICE",
       },
       {
-          accessorKey: "visible",
+          accessorKey: "visibility",
           header: "VISIBLE",
           cell: ({ row }) => {
-              const [isActive, setIsActive] = useState(row.getValue("visible"));
-              const handleToggleChange = () => {
-                  setIsActive(!isActive);
-              };
+  
+              const [isActive, setIsActive] = useState(row.getValue("visibility"));
+  
+              const handleToggleChange = async () => {
+                setIsActive(!isActive); // Update local state
+                try {
+                    // Make API call to update backend data
+                    const response = await axiosInstance.put(`/api/dishes/${row.original.id}`, {
+                      visibility: !isActive // Toggle the visibility state
+                    });
+                    if (response) {
+                        console.log("Toggle switch state updated successfully");
+                    } else {
+                        console.error("Failed to update toggle switch state");
+                    }
+                } catch (error) {
+                    console.error("Error updating toggle switch state:", error);
+                }
+            };
               return (
                   <div className="capitalize">
                       <Switch onClick={handleToggleChange} checked={isActive} />
                   </div>
               );
+  
+  
       }
       },
       {
         id: "actions",
         cell: ({ row }) => {
           const payment = row.original
+    
           const [updateFormState, setUpdateFormState] = useState(false);
+          const [deleteFormState, setDeleteFormState] = useState(false);
+
           return (
             <>
             <div className="flex gap-2">
             <Button onClick={() => setUpdateFormState(true)} >
                 <BiSolidEdit size={20}/>
             </Button>
-              <DeletForm id={row.original.id} />
+    
+    
+            <DeletForm id={row.original.id} handleDelete={handleDeleteItem} deleteFormState={deleteFormState} setDeleteFormState={setDeleteFormState}/>
             </div>
-            <UpdateForm updateFormState={updateFormState} setUpdateFormState={setUpdateFormState} />
+    
+    
+            <UpdateForm handleImageUpdate={handleImageUpdate} isDialogOpen={updateFormState} setIsDialogOpen={setUpdateFormState} id={row.original.id} handleUpdate={handleUpdate}/>
+
+
             </>
           )
         },
@@ -124,31 +160,15 @@ export function DataTable({
     const { register, handleSubmit,control ,formState: { errors } } = useForm();
     const [data, setData] = useState([]);
     const [categories, setCategories] = useState([]);
+
     const [loading, setLoading] = useState(false);
-    const fetchValue = async () => {
+    const [resotInfo, setRestoInfo] = useState([]) 
+
+    const fetchCategories = async (id) => {
       setLoading(true)
       try{
-        const respone = await axiosInstance.get("/api/dishes")
-        console.log("The Response => ",respone.data);
-        if(respone)
-        {
-          setData(respone.data)
-          setLoading(false)
-        }
-      }
-      catch(err)
-      {
-        console.log("The Error => ", err.message);
-        if(err.message === "Request failed with status code 404")
-        {
-          setLoading(false)
-        }
-      }
-    }
-    const fetchCategories = async () => {
-      setLoading(true)
-      try{
-        const respone = await axiosInstance.get("/api/categories")
+        
+        const respone = await axiosInstance.get("/api/categories/"+id)
         console.log("The Response => ",respone.data);
         if(respone)
         {
@@ -165,6 +185,37 @@ export function DataTable({
         }
       }
     }
+    const fetchValue = async (id) => {
+      setLoading(true)
+      try{
+        const restoInfo = sessionStorage.getItem('RestoInfo');
+        let Data = [];
+        Data = JSON.parse(restoInfo)
+        Data.map(item => {
+           setRestoInfo(item)
+           fetchCategories(item.id)
+           id = item.id;
+        })
+        const respone = await axiosInstance.get("/api/dishes/"+id)
+        console.log("The Response => ",respone.data);
+        if(respone)
+        {
+          setData(respone.data)
+        }
+      }
+      catch(err)
+      {
+        console.log("The Error => ", err.message);
+        if(err.message === "Request failed with status code 404")
+        {
+          setLoading(false)
+        }
+      }
+      finally{
+        setLoading(false)
+      }
+    }
+
     const handleAddDish = async (data, toastMessage) => {
       console.log('The Image ', data.image);
       const formData = new FormData();
@@ -173,20 +224,27 @@ export function DataTable({
       formData.append("desc", data.desc);
       formData.append("price", data.price);
       formData.append("category_id",parseInt(data.category_id));
-      formData.append("resto_id", 1);
+      formData.append("resto_id", resotInfo.id);
       try {
-        // const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
           // const response = await axiosInstance.post(`/api/dishes`, formData,
           //   );
-          const response = await fetch(`${APIURL}/api/dishes/`, {
+          const response = await fetch(`${APIURL}/api/dishes`, {
             method: "POST",
             body: formData,
-        });
+        },
+      {
+        headers: {
+          'X-CSRF-TOKEN': csrfToken // Include CSRF token in the request headers
+        },
+        withCredentials: true
+
+      });
           if (response) {
               console.log("Banner added successfully");
               setFile(null)
               setFileName("")
-              fetchValue();
+              fetchValue(resotInfo.id);
               toast.success(toastMessage);
           } else {
               console.error("Failed to add category");
@@ -195,8 +253,79 @@ export function DataTable({
           console.error("Error:", error);
       }
   };
+
+
+  const handleUpdate = async ({
+    data,
+    toastMessage,
+    id
+}) => {
+    try {
+      console.log(`data is ${data}`);
+        // setLoading(true);
+         const res =  await axiosInstance.put('/api/dishes/'+id, {
+            name : data.name,
+            desc : data.desc,
+            price : data.price,
+            category_id : data.category_id,
+         }
+         );
+          if(res)
+          {
+              console.log("The Added => ", res);
+              // fetchValue(resotInfo.id);
+            }
+    } catch (error) {
+        console.log("The Error => ",error);
+    }finally{
+        toast.success(toastMessage);
+        fetchValue(resotInfo.id);
+      }
+}
+
+
+  const handleDeleteItem = async (id) => {
+
+    console.log("The ID => ",id);
+    try {
+      const response = await axiosInstance.delete(`/api/dishes/${id}`);
+
+      if (response) {
+          console.log("Item deleted successfully");
+          // fetchValue();
+          setData(data.filter(item => item.id !== id));
+          toast.success("Item deleted successfully");
+          
+      } else {
+          console.error("Failed to remove dishe => ",response.statusText);
+      }
+  } catch (error) {
+      console.error("Error:", error);
+  }
+  }
+
+  const handleImageUpdate = async ({newImage, id}) => {
+    try {
+        const formData = new FormData();
+        formData.append('image', newImage);
+        const response = await axiosInstance.post(`/api/dishes/${id}/update-image`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        if(response)
+        {
+          console.log("The Response Data => ",response.data);
+        }
+    } catch (error) {
+        console.error('Error updating image:', error);
+    }
+};
+
+
+
+    
     useEffect(() => {
-      fetchCategories()
       fetchValue()
     }, []);
     const [title, setTitle] = useState('');
@@ -211,24 +340,38 @@ export function DataTable({
         initialState: {
             pagination: {
                 pageIndex: 0,
-                pageSize: 4,
+                pageSize: 5,
             },
         },
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
+
         state: {
             columnFilters,
         },
     });
+
     const HandleOpen =()=>{
         SetisOpen(true)
+
     }
+
     const onSubmit = async () => {
        console.log("Test");
     };
+  
   console.log("The Data create => ",HandleOpen);
+
+  if(loading)
+    {
+      return(
+        <div className='justify-center items-center flex  h-[50vh]'>
+          <Spinner size={100} spinnerColor={"#28509E"} spinnerWidth={1} visible={true} style={{borderColor: "#28509E", borderWidth: 2}}/>
+        </div>
+      )
+    }
   return (
     <>
       <div className="flex items-center py-4 justify-between pr-4 border-b-[1px]">
@@ -248,7 +391,8 @@ export function DataTable({
                     />
                 </div>
                 <div className="flex justify-between gap-3">
-{/* <Dialog  className=" p-8 shadow-lg h-[45rem] w-[65rem] rounded-xl">
+
+             {/* <Dialog  className=" p-8 shadow-lg h-[45rem] w-[65rem] rounded-xl">
                   <DialogTrigger className="flex justify-center">
                           <Button variant="ghost" className="relative  rounded-md bg-black text-white">
                              Add Dishes
@@ -263,7 +407,7 @@ export function DataTable({
               file={file}
               fileName={fileName}
               categories={categories}
-              // handleImageChange={handleImageChange}
+              handleUpdate={handleUpdate}
               handleSubmit={handleAddDish}
               onSubmit={onSubmit}
               register={register}
@@ -272,7 +416,9 @@ export function DataTable({
               />
                 </div>
       </div>
+
       <div className="rounded-md border">
+
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -316,6 +462,7 @@ export function DataTable({
           </TableBody>
         </Table>
       </div>
+
         <div className="flex items-center justify-between px-2">
         <div className="flex items-center space-x-2">
     <p className="text-sm font-medium">Rows per page</p>
@@ -338,10 +485,12 @@ export function DataTable({
     </Select>
     </div>
         <div className="flex items-center space-x-6 lg:space-x-8">
+
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
             Page {table.getState().pagination.pageIndex + 1} of{" "}
             {table.getPageCount()}
           </div>
+
           <div className="flex items-center justify-end space-x-2 py-4">
           <Button
             variant="outline"
@@ -364,14 +513,7 @@ export function DataTable({
         </div>
         </div>
         </div>
+
     </>
   )
 }
-
-
-
-
-
-
-
-

@@ -17,8 +17,8 @@ import { getBannerById } from "../../actions/Banner/Banner";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import Spinner from 'react-spinner-material';
-import { axiosInstance } from "../../axiosInstance";
 import { APIURL } from "../../lib/ApiKey";
+import { axiosInstance } from "../../axiosInstance";
 
 export default function UpdateForm({updateFormState, setUpdateFormState, id, handleUpdate,}) {
 
@@ -31,6 +31,7 @@ export default function UpdateForm({updateFormState, setUpdateFormState, id, han
         const [fileName, setFileName] = useState("No selected file")
         const maxNumber = 3;
         const [name, setName] = useState()
+        const toastMessage =  'Banner updated.';
 
 
 
@@ -59,11 +60,11 @@ export default function UpdateForm({updateFormState, setUpdateFormState, id, han
 
         }, [])
 
-        const handleImageUpdate = async (newImage,) => {
+        const handleImageUpdate = async (newImage) => {
           try {
+            setFile(newImage)
               const formData = new FormData();
               formData.append('image', newImage);
-      
               const response = await axiosInstance.post(`/api/banners/${id}/update-image`, formData, {
                   headers: {
                       'Content-Type': 'multipart/form-data',
@@ -77,24 +78,11 @@ export default function UpdateForm({updateFormState, setUpdateFormState, id, han
               console.error('Error updating image:', error);
           }
       };
-
-        const handleImageChange = (e) => {
-          const selectedFile = e.target.files[0];
-          handleImageUpdate(selectedFile)
-          // setFile(selectedFile);
-          if (selectedFile) {
-              setFile(selectedFile);
-              setFileName(selectedFile.name);
-              // setError('file', { type: 'manual', message: '' }); // Clear any previous error message
-          }
-      };
       const handleDelete = () => {
         setFile(null);
         setFileName("");
       };
 
-
-   
       console.log("The Selected File => ",file);
   return (
     <Dialog open={updateFormState} onOpenChange={setUpdateFormState} className=" p-8 shadow-lg h-[45rem] w-[65rem] rounded-xl">
@@ -117,7 +105,7 @@ export default function UpdateForm({updateFormState, setUpdateFormState, id, han
                               // className={`input-field`}
                               className='input-field h-full w-full'
                               {...register('image', { required: 'Please select a file.' })}
-                              onChange={handleImageChange}
+                              onChange={(e) => handleImageUpdate(e.target.files[0])}
                               hidden
                           />
 
@@ -156,7 +144,7 @@ export default function UpdateForm({updateFormState, setUpdateFormState, id, han
                         <Button type="submit" onClick={() => handleUpdate({
                           id: id,
                           title: name,
-                          file: file != null ? file : banner.image
+                          toastMessage
                           })}>Save</Button>
                     </div>
                 </DialogHeader>

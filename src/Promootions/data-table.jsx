@@ -85,17 +85,29 @@ export function DataTable() {
         },
   
   
-      {
+        {
           accessorKey: "visibility",
           header: "VISIBLE",
           cell: ({ row }) => {
-            const [isActive, setIsActive] = useState(row.getValue("visibility"));
-
-              const handleToggleChange = () => {
-                  setIsActive(!isActive);
-                  // setIsChecking(isActive)
-                  handleVisible(isActive)
-              };
+  
+              const [isActive, setIsActive] = useState(row.getValue("visibility"));
+  
+              const handleToggleChange = async () => {
+                setIsActive(!isActive); // Update local state
+                try {
+                    // Make API call to update backend data
+                    const response = await axiosInstance.put(`/api/banners/${row.original.id}`, {
+                      visibility: !isActive // Toggle the visibility state
+                    });
+                    if (response) {
+                        console.log("Toggle switch state updated successfully");
+                    } else {
+                        console.error("Failed to update toggle switch state");
+                    }
+                } catch (error) {
+                    console.error("Error updating toggle switch state:", error);
+                }
+            };
               return (
                   <div className="capitalize">
                       <Switch onClick={handleToggleChange} checked={isActive} />
@@ -104,7 +116,7 @@ export function DataTable() {
   
   
       }
-  },
+      },
   
     {
       id: "actions",
@@ -137,12 +149,19 @@ export function DataTable() {
 
       const [data, setData] = useState([]);
       const [loading, setLoading] = useState(false);
+      const [resotInfo, setRestoInfo] = useState([]) 
 
-      const fetchValue = async () => {
+      const fetchValue = async (id) => {
         setLoading(true)
         try{
-          
-          const respone = await axiosInstance.get("/api/banners")
+          const restoInfo = sessionStorage.getItem('RestoInfo');
+          let Data = [];
+          Data = JSON.parse(restoInfo)
+          Data.map(item => {
+             setRestoInfo(item)
+             id = item.id;
+          })
+          const respone = await axiosInstance.get("/api/banners/"+id)
           console.log("The Response => ",respone.data);
           if(respone)
           {
@@ -195,7 +214,8 @@ export function DataTable() {
 
         if (response) {
             console.log("Banner added successfully");
-            fetchValue();
+            // fetchValue();
+            setData(data.filter(item => item.id !== id));
             toast.success("Item deleted successfully");
             
         } else {
@@ -209,19 +229,15 @@ export function DataTable() {
     const handleUpdate = async ({
       id,
       title,
-      file
+      toastMessage
     }) => {
-
-      const formData = new FormData();
-      formData.append('_method', 'PUT');
-      console.log("The File => ",file);
-      formData.append("image", file);
-      formData.append("title", title);
-      formData.append("resto_id", 1); // Assuming this is a default value for resto_id
+// Assuming this is a default value for resto_id
 
       try {
 
-          const response = await axiosInstance.post(`/api/banners/${id}`, formData
+          const response = await axiosInstance.put(`/api/banners/${id}`,{
+            title: title
+          }
           );
   
           if (response) {
@@ -229,7 +245,9 @@ export function DataTable() {
               // setFile(null)
               // setFileName("")
               // reset();
-              fetchValue();
+              toast.success(toastMessage);
+
+              fetchValue(resotInfo.id);
               
           } else {
               console.error("Failed to add category");
@@ -253,19 +271,20 @@ export function DataTable() {
       const formData = new FormData();
       formData.append("image", data.images);
       formData.append("title", data.title);
-      formData.append("resto_id", 1);
+      formData.append("resto_id", resotInfo.id);
       try {
-          const response = await fetch(`${APIURL}/api/banners/`, {
+          const response = await fetch(`${APIURL}/api/banners`, {
               method: "POST",
               body: formData,
           });
   
           if (response.ok) {
-              console.log("Banner added successfully => ", response.json());
+              console.log("Banner added successfully");
               // setFile(null)
               // setFileName("")
               // reset();
-              // fetchValue();
+              fetchValue(resotInfo.id);
+              
               toast.success(toastMessage);
               
           } else {
@@ -276,15 +295,13 @@ export function DataTable() {
       }
   };
 
-  
- 
     const table = useReactTable({
         data,
         columns,
         initialState: {
             pagination: {
                 pageIndex: 0,
-                pageSize: 4,
+                pageSize: 5,
             },
         },
         getCoreRowModel: getCoreRowModel(),
@@ -341,6 +358,9 @@ export function DataTable() {
                     fileName={fileName}
                     handleImageChange={handleImageChange}
                     handleSubmit={handleAddUser}
+                    onSubmit={onSubmit}
+                    register={register}
+                    control={control}
                     handleDelete={handleDelete}
                     />
                 </div>

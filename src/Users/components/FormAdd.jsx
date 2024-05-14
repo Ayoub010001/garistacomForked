@@ -6,7 +6,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
 import {
   Form,
   FormControl,
@@ -32,15 +31,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { axiosInstance } from "../../../axiosInstance";
 import Spinner from "react-spinner-material";
 // import Tiptap from "@/components/Tiptap";
-export const FormAdd = ({ initialData, roles, handleData, loading = false, handleUpdate }) => {
-
+export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loading = false, handleUpdate }) => {
+  const phoneRegex = new RegExp(
+    /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
+  );
     console.log("The Inital Data => ", initialData);
   const formSchema = z.object({
     first_name: z.string().min(1,'Please enter a valid first name'),
     last_name: z.string().min(1,'Please enter a valid last name'),
-    phone : z.string().min(9,'Please enter a valid phone number'),
-    username: z.string().min(1,'Username is required'),
-    email: z.string().email(),
+    phone : z.string().regex(phoneRegex, 'Please enter a valid phone number'),
+    username: z
+    .string()
+    .min(1, 'Username is required'),
+  email: z
+    .string()
+    .email(),
     password: z.string().min(8, "Password is required"),
     role_id: z.string().min(1,'Please select a role.'),
   });
@@ -58,6 +63,7 @@ export const FormAdd = ({ initialData, roles, handleData, loading = false, handl
   const action = initialData ? 'Save changes' : 'Create';
   const defaultValues = initialData ? {
     ...initialData,
+    role_id: selectedRoleId, 
     // price: parseFloat(String(initialData?.price)),
     // priceBig: parseFloat(String(initialData?.priceBig))
   } : {
@@ -189,7 +195,12 @@ export const FormAdd = ({ initialData, roles, handleData, loading = false, handl
                               <Select disabled={loading}  onValueChange={field.onChange}>
                                 <FormControl>
                                   <SelectTrigger>
-                                    <SelectValue  defaultValue={field.value} placeholder="Role" />
+                                    <SelectValue
+                                    defaultValues={selectedRoleId}
+                                      // defaultValue={field.value}
+                                      placeholder={initialData ? form.getValues("role")?.name : "Role"} 
+                                      //  placeholder="Role" 
+                                      />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
@@ -205,7 +216,7 @@ export const FormAdd = ({ initialData, roles, handleData, loading = false, handl
               </div>
               
         
-           <Button disabled={loading} type="submit" variant="outline" className="justify-center !flex items-center max-w-max mx-auto w-full bg-black hover:bg-black text-white hover:text-white">
+          <Button disabled={loading} type="submit" variant="outline" className="justify-center !flex items-center max-w-max mx-auto w-full bg-black hover:bg-black text-white hover:text-white">
                 {action}
             </Button>
         </form>

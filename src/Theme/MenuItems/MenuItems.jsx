@@ -17,6 +17,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addItem, removeAll } from '../../lib/cartSlice';
 
 import Dettaille from './Dettaille';
+import { APIURL } from '../../../lib/ApiKey';
 function MenuItems({dishes, selectedTab }) {
   const [selectedProp, setSelectedProp] = useState(0); // initialisation de l'état avec 0
   const [searchTerm, setSearchTerm] = useState(""); // état pour stocker la valeur de la recherche
@@ -101,7 +102,7 @@ function MenuItems({dishes, selectedTab }) {
                             onClick={() => setSelectedItem(item)}
                             className="tab items-center justify-center h-auto w-[150px] overflow-hidden p-1.5 text-lg font-semibold rounded-[8px] cursor-pointer transition-colors"
                           >
-                            {/* <img src={item.image} alt="Menu Icon" className="w-full object-cover rounded-[10px] h-32" /> */}
+                            <img src={`${APIURL}/storage/${item.image}`} alt="Menu Icon" className="w-full object-cover rounded-[10px] h-32" />
                             <div className='text-black flex justify-between items-center py-2 px-3'>
                               <div>
                                 <h2 className="text-[16px] mb-0 ">{item.name}</h2>
@@ -126,7 +127,7 @@ function MenuItems({dishes, selectedTab }) {
                       selectedItem != null &&
                       (
                         <>
-                        <CredenzaHeader photo={selectedItem} className="p-0">
+                        <CredenzaHeader photo={`${APIURL}/storage/${selectedItem.image}`} className="p-0">
                             
                               <CredenzaClose asChild>
                                 

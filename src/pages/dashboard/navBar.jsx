@@ -55,8 +55,9 @@ export default function NavBar({ }) {
           Data.map((item) => {
             console.log("tje item => " , item);
             Slug = item.slug
+            setRestoInfo(item)
           })
-          setQRCodeURL(`https://admin.garista.com/theme/mcdonalds`)
+          setQRCodeURL(`https://admin.garista.com/theme/${Slug}`)
         }
       }
       catch(err)
@@ -86,6 +87,13 @@ export default function NavBar({ }) {
 
   //   fetchValue();
   // }, [])
+  const baseUrl = `https://admin.garista.com/theme/${restoInfo.slug}?table_id=2`;
+  // Data you want to send, e.g., an ID, other parameters
+  const qrData = {
+      id: 123,
+      extraInfo: "MoreData"
+  };
+  const urlWithParams = `${baseUrl}`;
 
     console.log("The User Data => ", qrCodeURL);
   if(loading)
@@ -123,7 +131,7 @@ export default function NavBar({ }) {
                   <div className="m-5 ml-10 flex mt-10 gap-10 ">
                   <QRCode
                             id="qrcode-id-unique-nav"
-                            value={qrCodeURL}
+                            value={urlWithParams}
                             logoImage="/Logos/qrcode-logo.png"
                             logoWidth={40}
                             />
@@ -137,7 +145,7 @@ export default function NavBar({ }) {
               <div className="relative z-0 flex">
                     <div className="flex items-center justify-center gap-2">
                       <div className="block w-full  pl-2 rounded-r-none border-gray-600 shadow-sm focus:z-10 focus:border-primary-400 focus:ring focus:ring-primary-200 focus:ring-opacity-50 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-600">
-                         {qrCodeURL}
+                         {baseUrl}
                       </div>
                     <div>
                       <button onClick={copyToClipboard} for="example8" className="flex items-center space-x-4 rounded-md rounded-l-none border  border-gray-300 px-2.5 text-gray-700 hover:bg-gray-100">

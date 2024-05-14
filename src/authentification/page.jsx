@@ -11,6 +11,8 @@ import { useForm } from 'react-hook-form';
 import { axiosInstance } from "../../axiosInstance";
 import { APIURL } from "../../lib/ApiKey";
 import { getRestaurant } from "../../actions/Restaurant/Restaurant";
+import { useDispatch } from 'react-redux';
+import { setRestoInfo } from '../lib/restoSlice';
 
 function Login({ onLogin, className, ...props }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -20,37 +22,14 @@ function Login({ onLogin, className, ...props }) {
   const [error, setError] = useState("");
   const [userId, setUserId] = useState("")
   const [users, setUsers] = useState([])
+  // const [restoInfo, setRestoInfo] = useState([])
+  
   const navigate = useNavigate();
   // const { isLoggedIn, login, logout, ErrorMsg } = useLogin();
-
+  const dispatch = useDispatch();
   const { register, handleSubmit, formState: { errors } } = useForm();
 
-  // useEffect(() => {
-  //   const  getUser = async () => {
-  //     try {
-  //       const response = await axiosInstance.get(`${APIURL}/api/users`);
-    
-  //       if (response.status === 200) {
-  //         setUsers(response.data.users);
-  //         console.log("The Response of User => ", response.data.users);
-  //       }
-  //       return response.data;
-  //     } catch (error) {
-  //       console.error('Error User:', error);
-  //     }
-  //   }
-
-  //   getUser()
-  // }, [])
-
-  // console.log("The Usere => ", users);
-  // useEffect(() => {
-  //   localStorage.setItem('dataKey', users);
-  // }, [users])
-
-  // console.log("The Error => ", ErrorMsg);
-  // Function Handle navigation
-  const handleNavigation = () => {
+   const handleNavigation = () => {
 
     const response = login('admin@gmail.com', 'password')
     if(response)
@@ -97,13 +76,15 @@ function Login({ onLogin, className, ...props }) {
           sessionStorage.setItem('tokenData', JSON.stringify(response.data));
           sessionStorage.setItem('isLoggedIn', "loggin");
           let Id = JSON.stringify(response.data.user.id)
-          // const response = await axiosInstance.post(`${APIURL}/api/getResto/`,response.data.user.id)
-          // if(response){
-          //   sessionStorage.setItem('ResotInfo', JSON.stringify(response.data));
-          // }
 
-          navigate("/");
+          // console.log("The Id => ",Id);
+          const restoResponse = await axiosInstance.get(`/api/getResto/` + Id,); 
+          if (restoResponse.data) {
+            // dispatch(setRestoInfo(restoResponse.data));
+            sessionStorage.setItem('RestoInfo', JSON.stringify(restoResponse.data));
+          }
         }
+        navigate("/");
       } else {
         setIsLoading(false);
       }

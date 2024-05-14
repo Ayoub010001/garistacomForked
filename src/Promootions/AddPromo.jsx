@@ -20,7 +20,13 @@ import { FormAdd } from "./FormAdd"
 export const AddPromo = ({
     onSubmit,
     handleSubmit,
-
+    register,
+    handleImageChange,
+    errors,
+    file,
+    fileName,
+    control,
+    handleDelete
 }) => {
 
 
@@ -96,7 +102,7 @@ export const AddPromo = ({
                     </div>
                   </DialogClose>
                 </form> */}
-                <FormAdd handleAdded={handleSubmit} />
+                <FormAdd handleAdded={handleSubmit}/>
             </DialogHeader>
             <DialogFooter className="flex justify-center items-center">
         </DialogFooter>

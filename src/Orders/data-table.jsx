@@ -40,15 +40,44 @@ import {
     DialogFooter,
   } from "@/components/ui/dialog";
   import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { axiosInstance } from "../../axiosInstance"
+import { useEffect } from "react"
+import axios from "axios"
 export function DataTable({
 
     columns,
-    data,
+    // data,
     SetisOpen,
   }) {
     // const [sorting, setSorting] = useState([]);
     const [columnFilters, setColumnFilters] = useState([]);
+    const [data, setData] = useState([])
+    useEffect(() => {
+      getOrders()
+    }, [])
+ 
+    const getOrders = async () => {
+      try{
+         const res = await axiosInstance.get('/api/orders')
+         if(res)
+         {
+          console.log('The Response => ', res.data);
+          let Data = [];
+          Data = res.data;
+          // Data.map((item) =>  {
+          //   orderDetail(item)
+          //   console.log("The Item => ", item);
+          // })
+          setData(res.data)
+         }
+      } 
+      catch(err)
+      {
+        console.log('the Error => ', err.message);
+      }
+    }
 
+    console.log("The Data => ", data);
     const table = useReactTable({
         data,
         columns,
@@ -69,8 +98,9 @@ export function DataTable({
     });
     const HandleOpen =()=>{
         SetisOpen(true)
-
     }
+
+
   console.log("The Data create => ",HandleOpen);
   return (
     <>

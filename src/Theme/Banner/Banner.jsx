@@ -13,8 +13,8 @@ function Banner({items, infoRes}) {
     
         
     <div className="relative mx-auto h-[170px] max-w-md overflow-hidden rounded-[.5rem] bg-white shadow">
-      <div className=''>
-        <img src={`${APIURL}/storage/${infoRes.cover_image}`} loading='lazy' className="w-full object-cover max-h-44 " alt="" />
+      <div className='overflow-hidden bg-[#999]'>
+        <img src={`${APIURL}/storage/${infoRes.cover_image}`} loading='lazy' className="w-full object-cover max-h-44 bg-[#999] h-screen" alt={items.name} />
       </div>
       <div className="absolute inset-0 z-10 bg-gradient-to-t from-black"></div>
       <div className="absolute inset-x-0  bottom-16 z-20 p-4   text-center">

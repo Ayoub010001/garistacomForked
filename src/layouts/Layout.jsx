@@ -15,6 +15,7 @@ import NavBar from "../pages/dashboard/navBar.jsx";
 import "../index.css";
 import { getUserById } from "../../actions/User/CreateUser.js";
 import { getRestaurant } from "../../actions/Restaurant/Restaurant.js";
+import { useSelector } from "react-redux";
 
 
 export const SidebarContext = createContext();
@@ -34,39 +35,37 @@ function Layout() {
   // const { expanded } = useContext(SidebarContext);
   const [userDat, setUserDat] = useState([])
   const idUser = sessionStorage.getItem('dataItem');
-  const [restoInfo, setRestoInfo] = useState([]);
+  // const [restoInfo, setRestoInfo] = useState([]);
+  // const restoInfo = useSelector(state => state.resto.info);
 
   useEffect(() => {
     const getUserData = async () => {
       const userItem = await getUserById(idUser);
-      console.log("The User Item => ", userItem.users);
-      // if(userItem)
-      // {
+
         userItem.map(obj =>  {
           console.log("The Items => ", obj);
           setUserDat(obj)
         })
-      // }
     };
 
 
-      const getRestaurantByUser = async ()  => {
-          setLoading(true)
-          try{
-            const res = await getRestaurant(userDat.id);
+      // const getRestaurantByUser = async ()  => {
+      //     setLoading(true)
+      //     try{
+      //       const res = await getRestaurant(userDat.id);
 
-            console.log("The Reponse => ", res);
-            if(res)
-            {
-              setRestoInfo(res.data);
-            }
-          }
-          catch(err)
-          {
-              console.log("The Error", err);
-          }
-      }
-      getRestaurantByUser();
+      //       console.log("The Reponse => ", res);
+      //       if(res)
+      //       {
+      //         setRestoInfo(res.data);
+      //       }
+      //     }
+      //     catch(err)
+      //     {
+      //         console.log("The Error", err);
+      //     }
+      // }
+      // getRestaurantByUser();
       getUserData();
   }, []);
 
@@ -265,7 +264,7 @@ function Layout() {
                 expanded ? "ml-64" : "ml-16"
               } transition-all duration-200 `}
             >
-                <NavBar usersData={restoInfo}/>
+                <NavBar />
               <Outlet />
             </main>
           </div>

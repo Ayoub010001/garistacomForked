@@ -23,12 +23,19 @@ import { Switch } from "@/components/ui/switch"
 import { axiosInstance } from '../../../axiosInstance';
 
 const FormAdd = ({ initialData, categories, handleAddUser, handleUpdate }) => {
+    const MAX_FILE_SIZE = 2000000;
 
     const formSchema = z.object({
         name: z.string().min(1, 'Name is required'),
-        images: z
-        .instanceof(File, 'Image is required')
-        .refine((val) => val !== null, { message: 'Image is required' }),
+        image:  initialData
+    ? z.optional(
+        z.union([z.string(), z.instanceof(File)])
+      )
+      .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 2MB.`)
+      .optional()
+    : z.optional(z.instanceof(File))
+      .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 2MB.`)
+      .optional(),
         visibility: z.boolean().default(true).optional(),
     });
     const ProductFormValues = z.infer;
@@ -50,7 +57,7 @@ const FormAdd = ({ initialData, categories, handleAddUser, handleUpdate }) => {
         visibility : true,
       } : {
           name: '',
-        images: null,
+        // image: null,
         visibility: true,
         
     };
@@ -61,36 +68,58 @@ const FormAdd = ({ initialData, categories, handleAddUser, handleUpdate }) => {
     resolver: zodResolver(formSchema),
     defaultValues
     });
-    const handleImageUpdate = async (data) => {
+    const handleImageUpdate = async ({newImage, id}) => {
         try {
             const formData = new FormData();
-            formData.append('image', data.images);
-            const response = await axiosInstance.post(`/api/categories/${form.getValues('id')}/update-image`, formData, {
+            formData.append('image', newImage);
+            const response = await axiosInstance.post(`/api/categories/${id}/update-image`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
             if(response)
             {
-            console.log("The Response Data => ",response.data);
+              console.log("The Response Data => ",response.data);
             }
         } catch (error) {
             console.error('Error updating image:', error);
         }
     };
+    // const handleImageUpdate = async (data) => {
+    //     try {
+    //         const formData = new FormData();
+    //         formData.append('image', data.images);
+    //         const response = await axiosInstance.post(`/api/categories/${form.getValues('id')}/update-image`, formData, {
+    //             headers: {
+    //                 'Content-Type': 'multipart/form-data',
+    //             },
+    //         });
+    //         if(response)
+    //         {
+    //         console.log("The Response Data => ",response.data);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error updating image:', error);
+    //     }
+    // };
     console.log("The Inital Data => ", form.getValues('id'));
 
     const onSubmit = async (data) => {
-      const { images, name, visibility } = data;
-      console.log('Title:', name);
-      console.log('Image:', images);
-      console.log('Visibility:', visibility);
+
     if(initialData)
     {
+        if( typeof data.image != 'string') {
+            console.log('Data Image ',data)
+            handleImageUpdate({newImage: data.image, id: initialData.id})
+            }
+
+       console.log('Data in update :',data)
         handleUpdate({id: form.getValues('id'),data: data,toastMessage: toastMessage})
-        handleImageUpdate(data)
+        // handleImageUpdate(data)
     }
     else{
+
+    console.log('Data in add :',data)
         handleAddUser(data, toastMessage)
     }
     };
@@ -116,16 +145,18 @@ const FormAdd = ({ initialData, categories, handleAddUser, handleUpdate }) => {
                             <div className="flex gap-3">
                             <FormField
                                   control={form.control}
-                                  name="images"
+                                  name="image"
                                   render={({ field, formState }) => (
                                   <FormItem>
 
                                   <FormLabel>Categorie Image</FormLabel>
                                   <FormControl>
-                                  <Uploader onChange={(image) => form.setValue("images", image)}  getValue={form.getValues('image')}/>
+                                  <Uploader
+                                onChange={(image) => form.setValue("image", image)} initalData={initialData}
+                                  getValue={form.getValues('image')}/>
                                   </FormControl>
-                                  {formState.errors.images && (
-                                    <FormMessage error={formState.errors.images.message} />
+                                  {formState.errors.image && (
+                                    <FormMessage error={formState.errors.image.message} />
                                   )}
                                   </FormItem>
                                   )}

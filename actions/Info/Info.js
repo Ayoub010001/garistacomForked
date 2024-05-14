@@ -1,9 +1,9 @@
 import { axiosInstance } from "../../axiosInstance";
 
-export const getInfo = async () => {
+export const getInfo = async (id) => {
     try{
 
-        const res = await axiosInstance.get('/api/infos')
+        const res = await axiosInstance.get('/api/infos/'+id)
         if(res){
             console.log("The Restaurant => ",res);
         }

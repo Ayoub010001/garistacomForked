@@ -37,7 +37,7 @@ const menu = [
               <h2 className="text-[14px] mb-0">All</h2>
             </div>
           </div>
-          {categories.map((item) => (
+          {categories.length >0 && categories.map((item) => (
             <div key={item.id} className="relative shadow-md rounded-xl border-gray-300 border inline-block ">
               
                 <div

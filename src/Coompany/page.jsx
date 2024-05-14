@@ -85,7 +85,7 @@ import { useState } from 'react';
 import { getCurrency } from '../../actions/Currency/CurrencyApi';
 import Spinner from 'react-spinner-material';
 import { getInfo } from '../../actions/Info/Info';
-import { editCompany } from '../../actions/Company/Company';
+import { editCompany, postCompany } from '../../actions/Company/Company';
 import { axiosInstance } from '../../axiosInstance';
 import { toast } from "react-hot-toast";
 
@@ -122,78 +122,98 @@ export default function DashboardCompany() {
     const [anylytics, setAnylytics] = useState('')
     const [logo, setLogo] = useState('')
     const [id, setId] = useState('') 
-
+    const [resotInfo, setRestoInfo] = useState([]) 
+    const [restos, setRestos] = useState([])
+    const toastmessage = resotInfo.length == 0 ? "Created Success"  : "Update Success"  
+    const fetchValue = async () => {
+     setLoading(true)
+     try {
+         
+         const restoInfoses = sessionStorage.getItem('RestoInfo');
+         let Data = [];
+         Data = JSON.parse(restoInfoses)
+         let id;
+         Data.map(item => {
+             // setRestoInfo(item)
+             id = item.id;
+             setRestos(item)
+             // setName(item.name)
+             // setSlug(item.slug)
+         })
+         const resultResto = await axiosInstance.get('/api/restos/'+id)
+         console.log("The Result Resto => ",resultResto.data);
+         let DataResult = [];
+         DataResult = resultResto.data;
+             setName(resultResto.data.name)
+             setSlug(resultResto.data.slug)
+             const response = await getCurrency();
+             const resInfo = await getInfo(id);
+             
+             if(response && resInfo)
+             {
+                 console.log("the Response => ", resInfo);
+                 setCurrData(response)
+                 setCurrValue(response[2].type)
+                 let Data = [];
+             Data = resInfo;
+             Data.map((item) => {
+             setRestoInfo(item)
+             setDescription(item.description)
+             setId(item.id)
+             setAddress(item.address)
+             setWifiPass(item.wifi_pass)
+             setWebsite_url(item.website_url)
+             setFacebook(item.facebook)
+             setInstgram(item.instgram)
+             setTiktok(item.tiktok)
+             setYoutube(item.youtube)
+             setSnapshat(item.snapshat)
+             setCurrValue(item.currency)
+             setWhatsapp(item.whatsapp)
+             setGoogle_buss(item.google_buss)
+             setTrustpilot_link(item.trustpilot_link)
+             setCover_image(item.cover_image)
+             setFacebook_pixel(item.facebook_pixel)
+             setTiktok_pixel(item.tiktok_pixel)
+             setAds_pixel(item.ads_pixel)
+             setAnylytics(item.anylytics)
+         })
+        }
+    }
+    catch(err){
+        console.log("the error => ", err);
+    }
+    finally{
+         setLoading(false)
+     }
+    }
     useEffect(() => {
-       const fetchValue = async () => {
-        setLoading(true)
-        try {
-           const response = await getCurrency();
-           const resInfo = await getInfo();
-
-           if(response && resInfo)
-           {
-            console.log("the Response => ", resInfo);
-            setCurrData(response)
-            setCurrValue(response[2].type)
-            let Data = [];
-            Data = resInfo;
-            Data.map((item) => {
-                setDescription(item.description)
-                setId(item.id)
-                setName(item.resto.name)
-                setSlug(item.resto.slug)
-                setAddress(item.address)
-                setWifiPass(item.wifi_pass)
-                setWebsite_url(item.website_url)
-                setFacebook(item.facebook)
-                setInstgram(item.instgram)
-                setTiktok(item.tiktok)
-                setYoutube(item.youtube)
-                setSnapshat(item.snapshat)
-                setCurrValue(item.currency)
-                setWhatsapp(item.whatsapp)
-                setGoogle_buss(item.google_buss)
-                setTrustpilot_link(item.trustpilot_link)
-                setCover_image(item.cover_image)
-                setFacebook_pixel(item.facebook_pixel)
-                setTiktok_pixel(item.tiktok_pixel)
-                setAds_pixel(item.ads_pixel)
-                setAnylytics(item.anylytics)
-            })
-            setLoading(false)
-           }
-        }
-        catch(err){
-            console.log("the error => ", err);
-        }
-       }
 
        fetchValue();
     }, [])
 
     const handleUpdateName = async () => {
         try{
-            const formData = new FormData();
-            formData.append('name', name);
-            formData.append('slug', slug);
+            // const formData = new FormData();
+            // formData.append('name', name);
+            // formData.append('slug', slug);
     
-          const res = await axiosInstance.put(`/api/resots/${id}`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                },
-            });
-            if(response)
+          const res = await axiosInstance.put(`/api/restos/${restos.id}`, 
+          {
+            name: name,
+            slug: slug
+          });
+            if(res)
             {
-            console.log("The Response Data => ",response.data);
-            
+              console.log("The Response Data => ",res.data);
+            //   sessionStorage.setItem('RestoInfo', JSON.stringify(res.data));
             }
         }
         catch(err)
         {
-            console.log("The Error => ", err);
+            console.error("The Error => ", err.response ? err.response.data : err.message);
         }
-    }
-
+    }   
 
     const handleUpdate = async () => {
         try{
@@ -225,13 +245,60 @@ export default function DashboardCompany() {
             console.log('The Response => ',res);
            }
 
-           toast.success("Info Updated")
+           toast.success(toastmessage)
 
         }
         catch(err)
         {
             console.log('The Error => ', err);
         }
+        // finally{
+        //     fetchValue()
+        // }
+    }
+
+    const handleAdded = async () => {
+        try{
+           const res = await postCompany({
+               instgram,
+               address,
+               ads_pixel,
+               anylytics,
+               currency: currValue,
+               description,
+               facebook_pixel,
+               facebook,
+               google_buss,
+               snapshat,
+               tiktok,
+               tiktok_pixel,
+               trustpilot_link,
+               website_url,
+               whatsapp,
+               wifi_pass: wifiPass,
+               youtube,
+               cover_image,
+               logo,
+               resto_id: restos.id
+           })
+
+        //    handleImageUpdate(logo)
+        //    handleImageUpdatecover(cover_image)
+           if(res)
+           {
+            console.log('The Response => ',res);
+           }
+
+           toast.success(toastmessage)
+
+        }
+        catch(err)
+        {
+            console.log('The Error of Added => ', err.message);
+        }
+        // finally{
+        //     fetchValue()
+        // }
     }
 
     const handleImageUpdate = async (newImage) => {
@@ -273,8 +340,22 @@ export default function DashboardCompany() {
             console.error('Error updating image:', error);
         }
     };
+    const handleSubmit = async () => {
+       if(resotInfo.length == 0)
+       {
+        handleAdded()
+        handleUpdateName()
+       }
+       else{
+        handleUpdate()
+        handleUpdateName()
+       }
 
-    
+    }
+
+
+
+    console.log("The Resto => ", resotInfo.length);
 
 
     if(loading)
@@ -300,7 +381,7 @@ export default function DashboardCompany() {
                 borderRadius: ".5rem",
               }}
             >
-              <Button onClick={() => {handleUpdate(); handleUpdateName()}}>Save</Button>
+              <Button onClick={handleSubmit}>Save</Button>
            </div>
         </div>
         <div className="flex gap-4 min-h-screen w-full flex-col bg-muted/40">

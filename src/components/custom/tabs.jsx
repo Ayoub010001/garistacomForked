@@ -19,10 +19,17 @@ function TabsDemo({ qrValue, setQrValue }) {
 
     const addToTableNames = async () => {
         try {
+            const restoInfo = sessionStorage.getItem('RestoInfo');
+            let Data = [];
+            Data = JSON.parse(restoInfo)
+            let id;
+            Data.map(item => {
+                id = item.id
+            })
             // API call to create a new table
             const tableResponse = await axiosInstance.post(`/api/tables`, {
                 name: names,
-                resto_id: 1
+                resto_id: id
                 // Add other necessary fields for table creation
             });
     
@@ -33,7 +40,7 @@ function TabsDemo({ qrValue, setQrValue }) {
                 // Assuming the table ID is needed to create the QR code
                 const qrCodeResponse = await axiosInstance.post(`/api/qrcodes`, {
                     table_id: table.id,
-                    resto_id: 1
+                    resto_id: id
                 });
     
                 if (qrCodeResponse) {

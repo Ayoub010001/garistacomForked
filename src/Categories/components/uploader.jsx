@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState , useEffect} from 'react'
 import { MdCloudUpload, MdDelete } from 'react-icons/md'
 import { AiFillFileImage } from 'react-icons/ai'
 import {Label} from "@/components/ui/label"
@@ -6,33 +6,32 @@ import './uploader.css'
 import { APIURL } from '../../../lib/ApiKey'
 import { axiosInstance } from '../../../axiosInstance'
 
-function Uploader({ onChange, getValue = null, }) {
-
-  console.log("get Valued => ", getValue);
+function Uploader({ onChange, getValue,initalData }) {
 
   const [image, setImage] = useState(null);
-  const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("No selected file");
+  // const [file, setFile] = useState(null);
+  console.log("get Valued => ", getValue);
 
-const handleDelete = () => {
-  setFile(null);
-  setFileName("");
-};
+
+  useEffect(() => {
+    if (initalData) {
+      if(image == null)
+        {
+          setImage(`${APIURL}/storage/${getValue}`);
+        }
+      // setFileName(getValue); // Assuming getValue contains the file name
+    }
+  }, [getValue]);
+
+
   const handleFileChange = (event) => {
-    let file;
-    if(getValue == null)
-    {
-      file =  event.target.files[0]
-    }
-    else{
-      file =  getValue;
-    }
+    const file = event.target.files[0];
     setFileName(file.name);
-    setFile(file)
-
     setImage(URL.createObjectURL(file));
     onChange(file);  // Pass the File object to the parent component
   };
+
 
   const imageData = image == null ? `${APIURL}/storage/${getValue}` : image;
   return (
@@ -40,29 +39,12 @@ const handleDelete = () => {
       <form className="form-drag" onClick={() => document.querySelector('.input-field').click()}>
         <input type="file" accept="image/*" className="input-field" hidden onChange={handleFileChange} />
          
-        {getValue != null
-        ? (
-          <>
-          {
-             file
-             ?
-             <img src={imageData} width={150} height={150} alt={fileName} />
-             :
-             <img src={imageData} width={150} height={150} alt={fileName} />
-          }
-          </>
+        {image ? (
+          <img src={image} width={150} height={150} alt={fileName} />
         ) : (
           <>
-          {
-            image
-            ?
-            <img src={imageData} width={150} height={150} alt={fileName} />
-            :
-            <>
-              <MdCloudUpload color="black" size={60} />
-              <p>Browse Files to upload</p>
-            </>
-          }
+            <MdCloudUpload color="black" size={60} />
+            <p>Browse Files to upload</p>
           </>
         )}
       </form>

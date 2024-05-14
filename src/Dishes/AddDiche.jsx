@@ -1,4 +1,5 @@
 import React,{useState} from "react"
+
   import { Input } from "@/components/ui/input"
 import { MdCloudUpload, MdDelete } from 'react-icons/md'
 import { AiFillFileImage } from 'react-icons/ai'
@@ -28,6 +29,8 @@ const AddDiche = ({
     handleDelete,
     categories
 }) => {
+
+
   return (
     <>
     <Dialog  className=" p-8 shadow-lg h-[45rem] w-[65rem] rounded-xl">
@@ -43,4 +46,5 @@ const AddDiche = ({
 </>
   )
 }
+
 export default AddDiche;

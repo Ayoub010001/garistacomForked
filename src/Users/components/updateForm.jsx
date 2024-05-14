@@ -87,7 +87,7 @@ export default function UpdateForm({isDialogOpen, setIsDialogOpen, id, handleUpd
             {
                 !isLoading
                 ?
-                <FormAdd initialData={tableNames} roles={roles} handleUpdate={handleUpdate}/>
+                <FormAdd initialData={tableNames} selectedRoleId={String(tableNames.role_id)} roles={roles} handleUpdate={handleUpdate}/>
                 :
                 <div className='justify-center items-center flex'>
                 <Spinner size={100} spinnerColor={"#28509E"} spinnerWidth={1} visible={true} style={{borderColor: "#28509E", borderWidth: 2}}/>

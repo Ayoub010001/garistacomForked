@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import {tabAchat} from './constant/page'
 import Banner from "./Banner/Banner";
 import Tab from "./Tabs/Tab";
@@ -23,42 +23,15 @@ function App() {
   const [dishes, setDishes] = useState([])
   const [selectedTab, setSelectedTab] = useState('All');
   const [resInfo , setResInfo] = useState([])
-
-  // Function to fetch the list of available restos
-  // const fetchRestos = async () => {
-  //   try {
-  //     const response = await fetch("http://127.0.0.1:8000/api/restos");
-  //     const data = await response.json();
-  //     let Data = [];
-  //     if(data)
-  //     {
-  //       Data = data; 
-  //       const restoSlug = window.location.pathname.split("/")[2];
-  //       let slug='';
-  //       Data.map((item) => {
-  //         console.log("The Items =>" ,item);
-  //         slug= item.slug;
-  //         setRestoId(item.id)
-  //       })
-  //       if(slug == restoSlug)
-  //       {
-  //          return console.log("The Slug Valide = ", true, slug, restoSlug);
-  //       }
-  //       else{
-  //         setValidSlug(true)
-  //       }
-  //     }
-  //     setRestos(data);
-  //   } catch (error) {
-  //     console.error("Error fetching restos:", error);
-  //   }
-  // };
-
+  const [message, setMessage] = useState('')
   
   const restoSlug = window.location.pathname.split("/")[2];
-
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const extraInfo = queryParams.get('table_id');
   const fetchCategories = async (id) => 
   {
+    if (!id) return;
     setLoading(true)
     try{
       const res = await fetch(`${APIURL}/api/getCategorieByResto/${id}`);
@@ -80,35 +53,49 @@ function App() {
     }
   }
 
-  const fetchDishes = async () => {
+  const fetchDishes = async (restoId) => {
     try {
-        let url = `${APIURL}/api/getdishes`;
+        let dishesUrl = `${APIURL}/api/getdishes/${restoId}`;
+        let drinksUrl = `${APIURL}/api/getdrinks/${restoId}`;
 
-        // // // If category is provided, add it to the URL query string
-        if (selectedTab != "All") {
-            url += `?category=${selectedTab}`;
-        }  
+        if (selectedTab !== "All") {
+            const categoryQuery = `?category=${selectedTab}`;
+            dishesUrl += categoryQuery;
+            drinksUrl += categoryQuery;
+        }
 
-        console.log("The Url => ", url);
-        // // If restoId is provided, add it to the URL query string
-        // if (restoId) {
-        //     url += `&resto_id=${restoId}`;
-        // }
+        // Execute both fetch calls concurrently
+        const [dishesResponse, drinksResponse] = await Promise.all([
+            fetch(dishesUrl),
+            fetch(drinksUrl)
+        ]);
 
-        const response = await fetch(url);
-        const data = await response.json();
+        // Parse responses
+        const dishesData = await (dishesResponse.ok ? dishesResponse.json() : dishesResponse.json().then(data => data));
+        const drinksData = await (drinksResponse.ok ? drinksResponse.json() : drinksResponse.json().then(data => data));
 
-        if (data) {
-          console.log('Fetched dishes:', data); // Log the fetched data
-          setDishes(data);
-      } else {
-          console.log('No data fetched');
-      }
+        // Handle possible empty arrays or specific messages like "No Dishes found"
+        let combinedData = [];
+        if (dishesData && dishesData.length) combinedData.push(...dishesData);
+        if (drinksData && drinksData.length) combinedData.push(...drinksData);
+
+        setDishes(combinedData);
+
+        if (combinedData.length === 0 || dishesData.message || drinksData.message) {
+            console.log('No matching dishes or drinks found or specific message received.');
+            // Optionally set a state to show this message in the UI
+            setMessage(dishesData.message || drinksData.message || 'No items found.');
+        }
 
     } catch (error) {
-        console.error('Error fetching dishes:', error);
+        console.error('Error fetching dishes and drinks:', error.message);
+        setMessage('Failed to fetch data. Please try again.');
     }
 };
+
+
+
+console.log("The Resto Id => ", restoId);
 
 const fetchInfo = async (id) => {
   try{ 
@@ -147,6 +134,8 @@ const fetchInfo = async (id) => {
         Data.map((item) => {
           setRestos(item);
           fetchCategories(item.id)
+          setRestoId(item.id)
+          fetchDishes(item.id)
           // fetchInfo(item.id)
         })
         // setLoading(true)
@@ -182,15 +171,15 @@ const fetchInfo = async (id) => {
 useEffect(() => {
   // fetchRestos();
   fetchRestosbyslug();
-  fetchDishes()
+  fetchDishes(restoId)
 
 }, [restoSlug]); // Fetch restos when the component mounts
 
 useEffect(() => {
   if (selectedTab) {
-    fetchDishes(); // Fetch dishes when selectedTab changes
+    fetchDishes(restoId); // Fetch dishes when selectedTab changes
   }
-}, [selectedTab]);
+}, [selectedTab, restoId]);
   if(loading)
   { 
     return(
@@ -206,7 +195,7 @@ useEffect(() => {
   //   return <Navigate to="/not-found" replace />;
   // }
 
-  console.log("The Resto => ",dishes);
+  console.log("The Resto Infos => ",resInfo);
   return (
     // <Router>
       <div className="h-screen">
@@ -218,30 +207,29 @@ useEffect(() => {
                 <>
                   <Banner items={restos} infoRes={resInfo}/>
                   <Tab categories={categories} resto={restoId}  dishes={dishes} selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-                  <Footer slug={restoSlug}/>
+                  <Footer slug={restoSlug}  table_id={extraInfo}/>
                 </>
               }
             />
             <Route path={`/theme/:restoSlug/info`} element={
               <>
               <Info items={restos} infoRes={resInfo}/>
-              <Footer slug={restoSlug}/>
+              <Footer slug={restoSlug}  table_id={extraInfo}/>
               </>
             } />
-            <Route path="/theme/:restoSlug/Achat" element={
+            <Route path={`/theme/:restoSlug/Achat`}  element={
               <>
-              <Achat  cartCount={cartCount} setCartCount={setCartCount} />
-              <Footer slug={restoSlug}/>
+              <Achat resto_id={restoId} tabel_id={extraInfo} />
+              <Footer slug={restoSlug}  table_id={extraInfo}/>
               </>
             } />
-            <Route path="/theme/:restoSlug/Claims" element={
+            <Route path={`/theme/:restoSlug/Claims`} element={
               <>
               <Claims items={restos}/>
-              <Footer slug={restoSlug}/>
+              <Footer slug={restoSlug} table_id={extraInfo}/>
               </>
             } />
           </Routes>
-
       </div>
   );
 }

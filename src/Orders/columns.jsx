@@ -19,46 +19,87 @@ import {
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { IoCheckmarkOutline } from "react-icons/io5"
 import { Switch } from '@/components/ui/switch'
+import axios from "axios"
+import { useEffect } from "react"
+import { axiosInstance } from "../../axiosInstance"
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toISOString().split('T')[0];  // This splits the ISO string at 'T' and takes the first part (the date)
+}
+
+const fetchOrderDetails = async (orderId) => {
+  try {
+    const response = await axiosInstance.get(`/api/order/${orderId}`);
+    console.log("The Item => ", response.data);
+    return response.data; // Assuming this returns the full order details including items
+  } catch (error) {
+    console.error("Failed to fetch order details:", error);
+    return null; // Return null or appropriate error handling
+  }
+};
+
+const OrderItemsCell = ({ orderId }) => {
+  const [items, setItems] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  console.log("The Id => ", orderId);
+  useEffect(() => {
+    setLoading(true);
+    fetchOrderDetails(orderId).then(data => {
+      setItems(data.dishes); // Assuming the API returns an object with a dishes array
+    });
+    setLoading(false);
+  }, [orderId]);
+
+  if (loading) return <span>Loading...</span>;
+  if (!items) return <span>No items</span>;
+
+  return <span>{items.map(item => item.name).join(', ')}</span>; // Displaying item names as a string
+};
 export const columns = [
     {
         accessorKey: "id",
         header: "ID",
     },
     {
-        accessorKey: "date",
+        accessorKey: "created_at",
         header: "DATE",
+        cell: ({ row }) => formatDate(row.original.created_at)
       },
       {
         accessorKey: "items",
         header: "ITEMS",
+        cell: ({row}) =>   OrderItemsCell({orderId: row.original.id}) 
       },
       {
-        accessorKey: "subtotal",
+        accessorKey: "total",
         header: "SUBTOTAL",
       },
       {
-        accessorKey: "table",
+        accessorKey: "table_id",
         header: "TABLE",
+        cell: ({ row }) => <div>{row.original.table.name}</div>
       },
       {
         accessorKey: "status",
         header: "STATUS",
         cell: ({ row }) => {
-                  const payment = row.original
+                  const status = row.original.status
                   const [choose,setChoose] = useState('')
 
                   let backgroundColor = '';
-                  if(choose == "Canceled")
+                  if(choose == "canceled")
                   {
                     backgroundColor = "#ffe1df"
                   }
-                  else if(choose == "New"){
+                  else if(choose == "new"){
                     backgroundColor = "#C4E4FF"
                   }
-                  else if(choose == "Processing"){
+                  else if(choose == "processing"){
                     backgroundColor = "#FFC374"
                   }
-                  else if(choose == "Completed"){
+                  else if(choose == "completed"){
                     backgroundColor = "#D9EDBF"
                   }
 
@@ -67,7 +108,7 @@ export const columns = [
                   return (
                     <Select onValueChange={(val) => setChoose(val)} >
                     <SelectTrigger className={`w-[120px] `} style={{backgroundColor: backgroundColor}}>
-                      <SelectValue placeholder="Status" />
+                      <SelectValue defaultValue={status} placeholder={status ? status : "Status"} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="New">New</SelectItem>

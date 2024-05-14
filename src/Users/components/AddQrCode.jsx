@@ -67,31 +67,40 @@ function AddQrCode() {
     const [role,setRole] = useState("");
     const [roles, setRoles] = useState([])
     const [loading, setLoading] = useState(false)
+    const [resotInfo, setRestoInfo] = useState([]) 
     const [tableNames, setTableNames] = useState([]);
     const [usersList, setUsersList] = useState([]);
        const handleRoleChange = (selectedRole) => {
         setRole(selectedRole);
     };
-    const fetchUser = async () => {
+    const fetchUser = async (id) => {
         setLoading(true);
         try{
-            const res = await axiosInstance.get('/api/staffs')
+            const res = await axiosInstance.get('/api/getStaffByResto/'+id)
             if(res)
             {
                 console.log("The Data reutned => ", res);
                 setUsersList(res.data)
-                setLoading(false);
             }
         }
         catch(err)
         {
             console.log("The Error => ",err);
         }
+        finally{
+            setLoading(false);
+        }
       }
     useEffect(() => {
       const fetchValues = async () => {
         try{
-
+            const restoInfo = sessionStorage.getItem('RestoInfo');
+             let Data = [];
+             Data = JSON.parse(restoInfo)
+             Data.map(item => {
+                setRestoInfo(item)
+                fetchUser(item.id)
+             })
            const res = await getRoles();
            if(res)
            {
@@ -106,10 +115,10 @@ function AddQrCode() {
         }
       }
 
-      fetchUser()
       fetchValues()
     }, [])
 
+    console.log("The Data => ", resotInfo.id);
     const handleData = async ({
         data,
         toastMessage
@@ -125,7 +134,7 @@ function AddQrCode() {
                   "phone": data.phone,
                   "username": data.username,
                   "role_id": parseInt(data.role_id),
-                  "resto_id": 1,
+                  "resto_id": resotInfo.id,
               });
               if(res)
               {
@@ -139,7 +148,7 @@ function AddQrCode() {
             console.log("The Error => ",error);
         }finally{
             toast.success(toastMessage);
-            fetchUser();
+            fetchUser(resotInfo.id);
           } 
           
     }
@@ -159,9 +168,9 @@ function AddQrCode() {
                 password : data.password,
                 phone : data.phone,
                 email : data.email,
-                username : data.usernam,
+                username : data.username,
                 role_id : parseInt(data.role_id),
-                resto_id : 1,
+                resto_id : resotInfo.id,
              } 
              );
               if(res)
@@ -175,7 +184,7 @@ function AddQrCode() {
             console.log("The Error => ",error);
         }finally{
             toast.success(toastMessage);
-            fetchUser();
+            fetchUser(resotInfo.id);
           } 
           
     }
@@ -199,7 +208,7 @@ function AddQrCode() {
             console.log("The Error => ",error);
         }finally{
             toast.success(toastMessage);
-            fetchUser();
+            fetchUser(resotInfo.id);
           } 
     }
 
@@ -215,7 +224,7 @@ function AddQrCode() {
             :
             <>
             <div className='grid grid-cols-6 gap-5'>
-                   {usersList.map((user, index) => (
+                   {usersList.length > 0 && usersList.map((user, index) => (
                        <UserCard key={index} handleDelete={handleDelete} handleUpdate={handleUpdate} usersList={user}/>
                    ))}
 

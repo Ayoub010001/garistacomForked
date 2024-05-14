@@ -33,6 +33,7 @@ function AddQrCode({props}) {
   const [tableNames, setTableNames] = useState([]);
   const [QrCode, setQrCode] = useState([])
   const [loading, setLoading] = useState(false)
+  const [restoInfo, setRestoInfo] = useState([])
   // Fonction pour mettre à jour tableNames
   const updateTableNames = (newTableNames) => {
       setTableNames(newTableNames);
@@ -42,24 +43,40 @@ function AddQrCode({props}) {
     async function fetchValues()
     {
         setLoading(true)
+        const restoInfo = sessionStorage.getItem('RestoInfo');
+        let Data = [];
+        Data = JSON.parse(restoInfo)
+        let id;
+        Data.map(item => {
+            id = item.id
+            setRestoInfo(item)
+        })
         try{
-           const res = await axiosInstance.get('/api/qrcodes')
-
-           if(res){
-            console.log("The Response is => ", res.data);
-            setQrCode(res.data)
+           const res = await axiosInstance.get('/api/qrcodes/'+id)
+           
+           // Data you want to send, e.g., an ID, other parameters
+           const qrData = {
+               id: 123,
+               extraInfo: "MoreData"
+            };
+            if(res){
+               console.log("The Response is => ", res.data);
+               setQrCode(res.data)
            }
-           setLoading(false)
         }
         catch(err)
         {
             console.log("The Error => ", err);
+        }
+        finally{
+            setLoading(false)
         }
     }
 
     fetchValues()
   }, [])
   const [qrValue,setQrValue] =useState()
+
 
   return (
     <>
@@ -79,7 +96,7 @@ function AddQrCode({props}) {
                 <div className="m-5 ml-10 flex mt-0 gap-10 ">
                 <QRCode
                     id="qrcode-id-unique"
-                    value="https://fadadoussama.com/"
+                    value={`https://admin.garista.com/theme/${restoInfo.slug}?table_id=2`}
                     logoImage="/Logos/qrcode-logo.png"
                     logoWidth={40}
                     className="w-64 h-64"
@@ -88,45 +105,47 @@ function AddQrCode({props}) {
                 </CardContent>
             </Card>
 
-                {QrCode.length > 0 && QrCode.map((item, index) => (
-                    <div key={index}>
-                        <Dialog >
-                        <DialogTrigger asChild>
-                            <button>
-                        <Card className="w-[250px] h-[250px]">
-                    <CardHeader  className="text-center">
-                    <CardTitle>{item.table.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                    <div className="m-5 ml-10 flex mt-0 gap-10 ">
-                    <QRCode
-                        id="qrcode-id-unique"
-                        value="https://fadadoussama.com/"
-                        logoImage="/Logos/qrcode-logo.png"
-                        logoWidth={40}
-                        className="w-64 h-64"
-                    />
-                    </div>
-                    </CardContent>
-                </Card>
-                </button>
-                </DialogTrigger >
-                <DialogContent className="max-w-[85rem]">
-                <div className='m-5 ml-10 flex mt-10 gap-10 '>
-                            <QrCodeTemplate setQrValue={setQrValue}/>
-                            <div>
-                                <TabsDemoCustom qrValue={qrValue} setQrValue={setQrValue}/>
+                {QrCode.length > 0 && QrCode.map((item, index) => {
+                      const baseUrl = `https://admin.garista.com/theme/${restoInfo.slug}`;
 
-                            </div>
+                      const urlWithParams = `${baseUrl}?table_id=${encodeURIComponent(item.table_id)}`;
+                      return(
+                        <div key={index}>
+                            <Dialog >
+                            <DialogTrigger asChild>
+                                <button>
+                            <Card className="w-[250px] h-[250px]">
+                        <CardHeader  className="text-center">
+                        <CardTitle>{item.table.name}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                        <div className="m-5 ml-10 flex mt-0 gap-10 ">
+                        <QRCode
+                            id="qrcode-id-unique"
+                            value={urlWithParams}
+                            logoImage="/Logos/qrcode-logo.png"
+                            logoWidth={40}
+                            className="w-64 h-64"
+                        />
                         </div>
-                </DialogContent>
-                    </Dialog>
+                        </CardContent>
+                    </Card>
+                    </button>
+                    </DialogTrigger >
+                    <DialogContent className="max-w-[85rem]">
+                    <div className='m-5 ml-10 flex mt-10 gap-10 '>
+                                <QrCodeTemplate setQrValue={setQrValue}/>
+                                <div>
+                                    <TabsDemoCustom qrValue={qrValue} setQrValue={setQrValue}/>
 
+                                </div>
+                            </div>
+                    </DialogContent>
+                           </Dialog>
+                        </div>
+                      )
 
-                    </div>
-
-                )
-                )}
+                })}
                 <Link to="/QrCode/AddQrCode">
                     <div className='flex gap-4'>
 
