@@ -79,7 +79,44 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
     resolver: zodResolver(formSchema),
     defaultValues
   });
+  const checkUsernameExists = async (username) => {
+    try {
+      const response = await axiosInstance.get(`/api/checkUserStaff?username=${username}`);
+      console.log('response username ', response.data);
+      return response.data.status; // Assuming the response indicates if the username exists
+    } catch (error) {
+      console.error('Error checking username:', error);
+      return false; // Return false by default in case of an error
+    }
+  };
+  const checkEmailExists = async (email) => {
+    try {
+      const response = await axiosInstance.get(`/api/checkEmail?email=${email}`);
+      console.log('response email ', response.data);
+      return response.data.status; // Assuming the response indicates if the username exists
+    } catch (error) {
+      console.error('Error checking email:', error);
+      return false; // Return false by default in case of an error
+    }
+  };
   const onSubmit = async (data) => {
+    const usernameExists = await checkUsernameExists(data.username);
+    const emailExists = await checkEmailExists(data.email);
+    if (!usernameExists) {
+      form.setError('username', {
+        type: 'manual',
+        message: 'This username is already in use',
+      });
+    }
+    if (!emailExists) {
+      form.setError('email', {
+        type: 'manual',
+        message: 'This email is already in use',
+      });
+    }
+    if (!usernameExists || !emailExists) {
+      return;
+    }
     console.log('Data : ', data , parseInt(data.role_id))
     
     if(initialData)
@@ -99,6 +136,7 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
   };
 
   const filteredRoles = roles.filter(role => role.name === 'Manager' || role.name === 'Waiter');
+
 
   return (
     <>

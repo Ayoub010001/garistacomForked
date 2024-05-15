@@ -18,6 +18,8 @@ import { addItem, removeAll } from '../../lib/cartSlice';
 
 import Dettaille from './Dettaille';
 import { APIURL } from '../../../lib/ApiKey';
+// import Logo from './waiter-svgrepo-com.svg';
+import Logo from './servant-outline.svg';
 function MenuItems({dishes, selectedTab }) {
   const [selectedProp, setSelectedProp] = useState(0); // initialisation de l'état avec 0
   const [searchTerm, setSearchTerm] = useState(""); // état pour stocker la valeur de la recherche
@@ -26,6 +28,8 @@ function MenuItems({dishes, selectedTab }) {
   const [newtab, setNewtab] = useState([...tabAchat]);
   const [selectedItem, setSelectedItem ]=useState(null);
   const [quantity, setQuantity] = useState(1)
+  const [credenzaOpen, setCredenzaOpen] = useState(false);
+
   const Cat = [
     {
       type: "Burgers",
@@ -49,7 +53,9 @@ function MenuItems({dishes, selectedTab }) {
   const toggleModal = (item) => {
     setSelectedItem(item); 
     setIsModalOpen(!isModalOpen);
+    setCredenzaOpen(!credenzaOpen);
   };
+  
   useEffect(() => {
     tabAchat.length = 0;
     tabAchat.push(...newtab);
@@ -176,6 +182,7 @@ function MenuItems({dishes, selectedTab }) {
                               <Button variant="outline bg-black text-white">Close</Button>
                             </CredenzaClose>
                           </CredenzaFooter>
+                          
                         </>
 
                       )
@@ -203,8 +210,41 @@ function MenuItems({dishes, selectedTab }) {
           ))}
         </div> */}
        {/* <Dettaille updateFormState={updateFormState} setUpdateFormState={setUpdateFormState} /> */}
+       {/* <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-950 py-4 px-6 shadow-lg">
+        <Button className="fixed bottom-4 right-4 h-16 w-16 rounded-full bg-green-500 text-white shadow-lg flex items-center justify-center">
+          <PhoneIcon className="h-8 w-8" />
+        </Button>
+      </div> */}
+    <div className={`mb-1 fixed bottom-16 right-2 flex items-center justify-center ${credenzaOpen ? 'hidden' : ''}`}>
+  <Button className="h-16 w-16 rounded-full bg-blue-500 text-white shadow-lg flex items-center justify-center"  size="icon"
+                variant="outline">
+  {/* <BellIcon className="h-8 w-8" /> */}
+  <img src={Logo} alt="Waiter Icon" className="h-8 w-8 text-white fill-[#fff]"  />
+  </Button>
+</div>
+
+
     </>
   );
 }
 
+function BellIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+      <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+    </svg>
+  )
+}
 export default MenuItems;

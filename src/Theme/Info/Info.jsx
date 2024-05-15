@@ -23,7 +23,7 @@ function Info({
     }
   return (
    <>
-           <ScrollArea className="h-[900px] w-auto rounded-md border p-4">
+           <ScrollArea className="h-[900px] w-auto rounded-md border p-4" style={{ height: '900px' }}>
        <div className="container">
          <div className="mt-8">
             <div className='flex flex-col gap-2 items-center justify-center'>
