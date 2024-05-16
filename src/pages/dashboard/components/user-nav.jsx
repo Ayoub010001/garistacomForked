@@ -19,7 +19,7 @@ import { useLogin } from "../../../../actions/Authentification/LoginProvider";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
-import { getUserById } from "../../../../actions/User/CreateUser";
+import { getStaffById, getUserById } from "../../../../actions/User/CreateUser";
 import { axiosInstance } from "../../../../axiosInstance";
 
 function UserNav() {
@@ -27,17 +27,24 @@ function UserNav() {
   const [userDat, setUserDat] = useState([])
   const { getUser, logout } = useLogin();
   const idUser = sessionStorage.getItem('dataItem');
+  const roleUser = sessionStorage.getItem('role');
+
+  console.log("The user Role => ");
   useEffect(() => {
     const getUserData = async () => {
-      const userItem = await getUserById(idUser);
-      console.log("The User Item => ", userItem.users);
-      // if(userItem)
-      // {
+      let role = JSON.parse(roleUser) 
+      const userItem = role == "user" ?  await getUserById(idUser) :  await getStaffById(idUser);
+      console.log("The User Item => ", userItem, idUser);
+      if(role == "user")
+      {
         userItem.map(obj =>  {
           console.log("The Items => ", obj);
           setUserDat(obj)
         })
-      // }
+      }
+      else{
+        setUserDat(userItem)
+      }
     };
   
     getUserData();

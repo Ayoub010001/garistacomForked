@@ -54,13 +54,19 @@ import { getRoles } from "../../../actions/Role/getRoles";
 import { axiosInstance } from "../../../axiosInstance";
 import {  useNavigate } from "react-router-dom";
 import { useLogin } from "../../../actions/Authentification/LoginProvider";
+import Spinner from "react-spinner-material";
 function DashboardPage() {
   const [qrValue, setQrValue] = useState();
   const navigate = useNavigate();
-
+  const [dishes, setDishes] = useState([]);
+  const [drinks, setDrinks] = useState([]);
+  const [totalItems, setTotalItems] = useState(0);
+  const [qrcodeLength, setQrcodeLength] = useState(0);
   const [userDat, setUserDat] = useState([])
   const idUser = sessionStorage.getItem('dataItem');
   const [isLoggedIn, setIsLoggedIn] = useState("not login");
+  const [loading, setLoading] = useState(false)
+  const [orders, setOrders] = useState([]); // State to hold orders data
 
   // Check if user is logged in by verifying session storage
   // You may customize this based on how you handle authentication
@@ -68,20 +74,104 @@ function DashboardPage() {
     const userLoggedIn = sessionStorage.getItem('isLoggedIn');
     setIsLoggedIn(userLoggedIn);
   };
+  const [restos, setRestos] = useState([])
 
+  const getOrders = async (id) => {
+    setLoading(true)
+    try{
+       const res = await axiosInstance.get('/api/order_resto/' + id)
+       if(res)
+       {
+        console.log('The Response of Order Resto => ', res.data);
+        setOrders(res.data);
+
+       }
+
+    } 
+    catch(err)
+    {
+      console.log('the Error => ', err.message);
+    }
+    finally{
+      setLoading(false)
+    }
+  }
+
+  const fetchData = async (id) => {
+    setLoading(true);
+    try {
+
+      const dishesResponse = await axiosInstance.get('/api/dishes/'+id);
+      const drinksResponse = await axiosInstance.get('/api/drinks/'+id);
+      const qrCodeResponse = await axiosInstance.get('/api/qrcodes/'+id);
+      console.log("The Response Dishes => ", dishesResponse.data.length );
+      
+      // const [dishesData, drinksData] = await Promise.all([dishesResponse, drinksResponse, qrCodeResponse]);
+      
+      // setDishes(dishesData.data);
+      // setDrinks(drinksData.data);
+      if(dishesResponse)
+      {
+        let Dataes = dishesResponse.data;
+        let DateDrink = drinksResponse.data
+        setTotalItems(Dataes.length + DateDrink.length);
+        setQrcodeLength(qrCodeResponse.data.length)
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try{
+                
+        const restoInfoses = sessionStorage.getItem('RestoInfo');
+        let Data = [];
+        Data = JSON.parse(restoInfoses)
+        let id;
+        Data.map(item => {
+            // setRestoInfo(item)
+            setRestos(item)
+            id = item.id
+          })
+          getOrders(id)
+          fetchData(id)
+      }
+      catch(err)
+      {
+        console.log("The Error => ", err);
+      }
+      // if(userItem)
+      // {
+        // userItem.map(obj =>  {
+        //   console.log("The Items => ", obj);
+        //   setUserDat(obj)
+        // })
+    };
   
+
+    getUserData();
+  }, []);
 
   // Call checkLoginStatus on initial render
   useEffect(() => {
     checkLoginStatus();
- 
 
   }, []);
 
+  const orderCount = orders.length > 0 ? orders.length : 0;
 
-
-
-  const defaultPageURL = "https://votre-domaine.com/page-par-defaut";
+  if(loading)
+  {
+    return(
+      <div className='justify-center items-center flex  h-[50vh]'>
+      <Spinner size={100} spinnerColor={"#28509E"} spinnerWidth={1} visible={true} style={{borderColor: "#28509E", borderWidth: 2}}/>
+    </div>
+    )
+  }
   return (
     <div className="">
       <div className="md:hidden">
@@ -166,7 +256,7 @@ function DashboardPage() {
                     <RiListUnordered className="h-4 w-4 text-muted-foreground"/>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">2350</div>
+                    <div className="text-2xl font-bold">{orderCount}</div>
                     {/* <p className="text-xs text-muted-foreground">
                       +180.1% from last month
                     </p> */}
@@ -192,7 +282,7 @@ function DashboardPage() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">12,234</div>
+                    <div className="text-2xl font-bold">{totalItems}</div>
                     {/* <p className="text-xs text-muted-foreground">
                       +19% from last month
                     </p> */}
@@ -206,7 +296,7 @@ function DashboardPage() {
                     <IoQrCodeOutline className="h-4 w-4 text-muted-foreground"/>
                     </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">573</div>
+                    <div className="text-2xl font-bold">{qrcodeLength}</div>
                     {/* <p className="text-xs text-muted-foreground">
                       +201 since last hour
                     </p> */}
@@ -219,7 +309,7 @@ function DashboardPage() {
                     <CardTitle>Last 30 days Orders</CardTitle>
                   </CardHeader>
                   <CardContent className="pl-2">
-                    <Overview />
+                    <Overview orders={orders.slice(-30)} />
                   </CardContent>
                 </Card>
                 <Card className="col-span-3">
@@ -245,7 +335,7 @@ function DashboardPage() {
                   </CardHeader>
                   <CardContent>
 
-                    <RecentSalesOrders />
+                    <RecentSalesOrders orders={orders} />
 
 
                   </CardContent>

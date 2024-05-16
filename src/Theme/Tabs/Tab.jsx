@@ -6,16 +6,10 @@ function Tab({
   categories,
   dishes,
   setSelectedTab,
-  selectedTab
+  selectedTab,
+  resto
 }) {
-const menu = [
-        { id: 1, title: 'All', url: '/' },
-        { id: 2, title: 'Burgers', url: '/Burgers' },
-        { id: 3,  title: 'Pizza', url: '/Pizza' },
-        { id: 4, title: 'Donuts', url: '/Donuts' },
-        { id: 5, title: 'Sandwich', url: '/Sandwich' },
-        { id: 6, title: 'Salades', url: '/Salades' },
-      ];
+
  
       
 
@@ -54,7 +48,7 @@ const menu = [
         </div>
       </div>
 
-      <MenuItems  dishes={dishes.length > 0 && dishes.filter(dish => selectedTab === 'All' || dish.categorie.name === selectedTab)} selectedTab={selectedTab}/>
+      <MenuItems  dishes={dishes.length > 0 && dishes.filter(dish => selectedTab === 'All' || dish.categorie.name === selectedTab)} restoId={resto} selectedTab={selectedTab}/>
 
     </div>
   );

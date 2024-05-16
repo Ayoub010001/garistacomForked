@@ -46,7 +46,6 @@ export default function NavBar({ }) {
     const getUserData = async () => {
       try{
         const res = await axiosInstance.get('/api/getResto/'+idUser);
-        console.log("The User Item Resto=> ", res);
         if(res)
         {
           setRestoInfo(res)

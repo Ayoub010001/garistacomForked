@@ -22,9 +22,9 @@ export const FormAdd = ({ initialData, categories, selectedCategoryId, handleAdd
     name: z.string().min(1, 'Title is required'),
     image:  initialData
     ? z.optional(
-        union([z.string(), z.instanceof(File)])
+        z.union([z.string(), z.instanceof(File)])
       )
-      .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 2MB.`)
+      .refine((file) => typeof file === 'string' || (file instanceof File && file.size <= MAX_FILE_SIZE), `Max image size is 2MB.`)
       .optional()
     : z.optional(z.instanceof(File))
       .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 2MB.`)

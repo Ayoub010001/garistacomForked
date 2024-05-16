@@ -1,58 +1,29 @@
 import React from "react";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import moment from 'moment'; // ensure moment is installed
 
-const Overview = () => {
-    const data = [
+const Overview = ({orders}) => {
+    const processData = (orders) => {
+        let groupedData = {};
+        if(orders)
         {
-            name: "Jan",
-            total: Math.floor(Math.random() * 5000) + 1000,
-        },
-        {
-            name: "Feb",
-            total: Math.floor(Math.random() * 5000) + 1000,
-        },
-        {
-            name: "Mar",
-            total: Math.floor(Math.random() * 5000) + 1000,
-        },
-        {
-            name: "Apr",
-            total: Math.floor(Math.random() * 5000) + 1000,
-        },
-        {
-            name: "May",
-            total: Math.floor(Math.random() * 5000) + 1000,
-        },
-        {
-            name: "Jun",
-            total: Math.floor(Math.random() * 5000) + 1000,
-        },
-        {
-            name: "Jul",
-            total: Math.floor(Math.random() * 5000) + 1000,
-        },
-        {
-            name: "Aug",
-            total: Math.floor(Math.random() * 5000) + 1000,
-        },
-        {
-            name: "Sep",
-            total: Math.floor(Math.random() * 5000) + 1000,
-        },
-        {
-            name: "Oct",
-            total: Math.floor(Math.random() * 5000) + 1000,
-        },
-        {
-            name: "Nov",
-            total: Math.floor(Math.random() * 5000) + 1000,
-        },
-        {
-            name: "Dec",
-            total: Math.floor(Math.random() * 5000) + 1000,
-        },
-    ];
+            orders.forEach(order => {
+                const month = moment(order.created_at).format("MMM");
+                if (!groupedData[month]) {
+                    groupedData[month] = {
+                        name: month,
+                        total: 0
+                    };
+                }
+                groupedData[month].total += parseFloat(order.total);
+            });
+        }
 
+
+        return Object.values(groupedData);
+    };
+
+    const data = processData(orders);
     return (
         <ResponsiveContainer width="100%" height={350}>
             <BarChart data={data} className="bar-chart">

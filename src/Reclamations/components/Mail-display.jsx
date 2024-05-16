@@ -26,7 +26,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 function MailDisplay({ mail }) {
   const today = new Date();
 
-  console.log("The");
   return (
     
     <div className="flex h-full flex-col">
@@ -39,31 +38,31 @@ function MailDisplay({ mail }) {
           <div className="flex items-start p-4 ">
             <div className="flex items-start gap-4  text-xl">
               <Avatar>
-                <AvatarImage alt={mail.name} />
-                <AvatarFallback>
-                  {mail.name
+                <AvatarImage alt={mail.clamer_name} />
+                {/* <AvatarFallback>
+                  {mail.clamer_name
                     .split(" ")
                     .map((chunk) => chunk[0])
                     .join("")}
-                </AvatarFallback>
+                </AvatarFallback> */}
               </Avatar>
               <div className="grid gap-1">
-                <div className="font-semibold">{mail.name}</div>
-                <div className="line-clamp-1 text-sm">{mail.description}</div>
+                <div className="font-semibold">{mail.clamer_name}</div>
+                <div className="line-clamp-1 text-sm">{mail.phone}</div>
                 <div className="line-clamp-1 text-sm">
                   <span className="font-medium">Reply-To:</span> {mail.email}
                 </div>
               </div>
             </div>
-            {mail.date && (
+            {mail.updated_at && (
               <div className="ml-auto text-xs text-muted-foreground">
-                {format(new Date(mail.date), "PPpp")}
+                {format(new Date(mail.updated_at), "PPpp")}
               </div>
             )}
           </div>
           <Separator />
           <div className="flex-1 whitespace-pre-wrap p-4 text-md">
-            {mail.text}
+            {mail.description}
           </div>
           <Separator className="mt-auto" />
 

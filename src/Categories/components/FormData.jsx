@@ -22,20 +22,20 @@ import {Label} from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { axiosInstance } from '../../../axiosInstance';
 
-const FormAdd = ({ initialData, categories, handleAddUser, handleUpdate }) => {
+const FormAdd = ({ initialData, handleAddUser, handleUpdate }) => {
     const MAX_FILE_SIZE = 2000000;
-
+console.log("The Visibility => ", initialData);
     const formSchema = z.object({
         name: z.string().min(1, 'Name is required'),
         image:  initialData
-    ? z.optional(
-        z.union([z.string(), z.instanceof(File)])
-      )
-      .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 2MB.`)
-      .optional()
-    : z.optional(z.instanceof(File))
-      .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 2MB.`)
-      .optional(),
+        ? z.optional(
+            z.union([z.string(), z.instanceof(File)])
+          )
+          .refine((file) => typeof file === 'string' || (file instanceof File && file.size <= MAX_FILE_SIZE), `Max image size is 2MB.`)
+          .optional()
+        : z.optional(z.instanceof(File))
+          .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 2MB.`)
+          .optional(),
         visibility: z.boolean().default(true).optional(),
     });
     const ProductFormValues = z.infer;
@@ -47,6 +47,10 @@ const FormAdd = ({ initialData, categories, handleAddUser, handleUpdate }) => {
     const [loading, setLoading] = useState(false);
     const [links, setLinks] = useState([]);
     const [linkInput, setLinkInput] = useState("");
+    const [isVisible, setisVisible] = useState(true);
+    // {initialData &&
+    //   setisVisible(initialData.visibility)
+    // }
     const title = initialData ? 'Edit Categorie' : 'Add a new Categorie';
       const description = initialData ? 'Edit a product.' : 'Add a new product';
       const toastMessage = initialData ? 'Product updated.' : 'Product created.';
@@ -54,17 +58,16 @@ const FormAdd = ({ initialData, categories, handleAddUser, handleUpdate }) => {
       const defaultValues = initialData ? {
           ...initialData,
         // images: null,
-        visibility : true,
+        visibility: initialData.visibility ?? true,
       } : {
           name: '',
         // image: null,
         visibility: true,
         
     };
-    
 
     const form = useForm({
-    // mode: 'onBlur',
+    mode: 'onBlur',
     resolver: zodResolver(formSchema),
     defaultValues
     });
@@ -162,7 +165,7 @@ const FormAdd = ({ initialData, categories, handleAddUser, handleUpdate }) => {
                                   )}
                                   />
                             </div>
-                            
+                            {initialData &&
                             <FormField
                                     control={form.control}
                                     name="visibility"
@@ -175,7 +178,7 @@ const FormAdd = ({ initialData, categories, handleAddUser, handleUpdate }) => {
                                         <FormControl>
                                             <Switch
                                             checked={field.value}
-                                            onCheckedChange={field.onChange}
+                                            onCheckedChange={(value) => form.setValue('visibility', value)}
                                             />
                                             
                                         </FormControl>
@@ -183,7 +186,7 @@ const FormAdd = ({ initialData, categories, handleAddUser, handleUpdate }) => {
                                         </FormItem>
                                     )}
                                     />
-                           
+                                  }
                                 <Button type="submit" variant="outline" className="justify-end items-end bg-black hover:bg-black text-white hover:text-white" 
                                 // onClick={handleAddUser}
                                 >{action}</Button>

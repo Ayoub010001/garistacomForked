@@ -11,12 +11,14 @@ function Achat({
 }) {
 
     console.log("The Resto Id => ",resto_id);
-  const cartItems = useSelector(state => state.cart.items);
+    const cartItems = useSelector(state => 
+        state.cart.items.filter(item => item.resto_id === resto_id)
+    );
   const totalCost = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
   async function submitOrder(cartItems, totalCost) {
     let cartItemProduct = cartItems.map(item => {
         return {
-            type: "dish",  // Assuming all items are dishes
+            type: item.type,  // Assuming all items are dishes
             id: item.id,
             quantity: item.quantity
         };
@@ -52,6 +54,8 @@ function Achat({
         console.error('Failed to submit order:', error.message);
         }
     }
+
+    console.log("The Resto Cart => ", cartItems);
   
   return (
       <div className="p-4 bg-white rounded-lg shadow-md">

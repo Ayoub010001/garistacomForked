@@ -449,24 +449,24 @@ export function DataTable({
         </div>
 
          <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-          className="bg-zinc-500"
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-          className="bg-black"
-        >
-          Next
-        </Button>
+         <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            className="bg-black text-white hover:bg-black hover:text-white"
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            className="bg-black text-white hover:bg-black hover:text-white"
+          >
+            Next
+          </Button>
       </div>
       </div>
     </div>

@@ -69,18 +69,22 @@ function Login({ onLogin, className, ...props }) {
   
       if (response.status === 200) {
         setIsLoading(true);
-        console.log("The Response => ", response.data.user.id);
+        let role = response.data.role;
+        // console.log("The Rele => ", role);
         if(response.data.user.id)
         {
-          sessionStorage.setItem('dataItem', JSON.stringify(response.data.user.id));
+          sessionStorage.setItem('dataItem', role == 'user' ? JSON.stringify(response.data.user.id) : JSON.stringify(response.data.user.user.id));
           sessionStorage.setItem('tokenData', JSON.stringify(response.data));
+          sessionStorage.setItem('role', JSON.stringify(response.data.role));
           sessionStorage.setItem('isLoggedIn', "loggin");
-          let Id = JSON.stringify(response.data.user.id)
+          let Id = role == 'user' ? JSON.stringify(response.data.user.id) : JSON.stringify(response.data.user.user.id)
+          console.log("The Id => ", Id);
 
           // console.log("The Id => ",Id);
           const restoResponse = await axiosInstance.get(`/api/getResto/` + Id,); 
           if (restoResponse.data) {
             // dispatch(setRestoInfo(restoResponse.data));
+            // console.log("The Resto Info => ", restoResponse);
             sessionStorage.setItem('RestoInfo', JSON.stringify(restoResponse.data));
           }
         }

@@ -18,7 +18,7 @@ import { addItem, removeAll } from '../../lib/cartSlice';
 
 import Dettaille from './Dettaille';
 import { APIURL } from '../../../lib/ApiKey';
-function MenuItems({dishes, selectedTab }) {
+function MenuItems({dishes, selectedTab, restoId }) {
   const [selectedProp, setSelectedProp] = useState(0); // initialisation de l'état avec 0
   const [searchTerm, setSearchTerm] = useState(""); // état pour stocker la valeur de la recherche
   const [updateFormState, setUpdateFormState] = useState(false);
@@ -63,7 +63,7 @@ function MenuItems({dishes, selectedTab }) {
   const cartItems = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
   const handleAddItem = (product, quantity) => {
-    dispatch(addItem({ product, quantity: quantity, volume: 'default' }));
+    dispatch(addItem({ product, quantity: quantity, resto_id: restoId }));
   };
   const handleRemoveAll  = product => {
     dispatch(removeAll());

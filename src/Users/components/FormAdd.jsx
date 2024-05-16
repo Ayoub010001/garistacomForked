@@ -79,7 +79,44 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
     resolver: zodResolver(formSchema),
     defaultValues
   });
+  const checkUsernameExists = async (username) => {
+    try {
+      const response = await axiosInstance.get(`/api/checkUserStaff?username=${username}`);
+      console.log('response username ', response.data);
+      return response.data.status; // Assuming the response indicates if the username exists
+    } catch (error) {
+      console.error('Error checking username:', error);
+      return false; // Return false by default in case of an error
+    }
+  };
+  const checkEmailExists = async (email) => {
+    try {
+      const response = await axiosInstance.get(`/api/checkEmail?email=${email}`);
+      console.log('response email ', response.data);
+      return response.data.status; // Assuming the response indicates if the username exists
+    } catch (error) {
+      console.error('Error checking email:', error);
+      return false; // Return false by default in case of an error
+    }
+  };
   const onSubmit = async (data) => {
+    const usernameExists = await checkUsernameExists(data.username);
+    const emailExists = await checkEmailExists(data.email);
+    if (!usernameExists) {
+      form.setError('username', {
+        type: 'manual',
+        message: 'This username is already in use',
+      });
+    }
+    if (!emailExists) {
+      form.setError('email', {
+        type: 'manual',
+        message: 'This email is already in use',
+      });
+    }
+    if (!usernameExists || !emailExists) {
+      return;
+    }
     console.log('Data : ', data , parseInt(data.role_id))
     
     if(initialData)
@@ -99,6 +136,7 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
   };
 
   const filteredRoles = roles.filter(role => role.name === 'Manager' || role.name === 'Waiter');
+
 
   return (
     <>
@@ -172,6 +210,7 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
                       </FormItem>
                     )}
                   />
+                 {!initialData &&
                   <FormField
                     control={form.control}
                     name="password"
@@ -184,10 +223,11 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
                       </FormItem>
                     )}
                   /> 
-              </div>
-          </div>
-              <div className='max-w-[40%] mx-auto'>
-              <FormField
+                  }
+                  {initialData && 
+                  <div className='w-72 '>
+
+                    <FormField
                     control={form.control}
                     name="role_id"
                     render={({ field }) => (
@@ -213,7 +253,42 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
                       </FormItem>
                     )}
                     /> 
+                  </div>
+                  }
               </div>
+          </div>
+          {!initialData && 
+              <div className='max-w-[40%] mx-auto !space-y-0'>
+              <FormField
+                    control={form.control}
+                    name="role_id"
+                    className={"!space-y-0"}
+                    render={({ field }) => (
+                      <FormItem>
+                              <Select className={"!space-y-0"} disabled={loading}  onValueChange={field.onChange}>
+                                <FormControl>
+                                  <SelectTrigger className={"!space-y-0"} >
+                                    <SelectValue
+                                    defaultValues={selectedRoleId}
+                                      // defaultValue={field.value}
+                                      className={"!space-y-0"} 
+                                      placeholder={initialData ? form.getValues("role")?.name : "Role"} 
+                                      //  placeholder="Role" 
+                                      />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {filteredRoles.map((role) => (
+                                        <SelectItem key={role.id} value={role.id.toString()}>{role.name}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                      </FormItem>
+                    )}
+                    /> 
+              </div>
+          }
               
         
           <Button disabled={loading} type="submit" variant="outline" className="justify-center !flex items-center max-w-max mx-auto w-full bg-black hover:bg-black text-white hover:text-white">

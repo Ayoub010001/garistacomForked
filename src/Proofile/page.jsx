@@ -81,7 +81,7 @@ import { Separator } from '@radix-ui/react-dropdown-menu';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { getRolesById } from '../../actions/Role/getRoles';
-import { getUserById } from '../../actions/User/CreateUser';
+import { getStaffById, getUserById } from '../../actions/User/CreateUser';
 import Spinner from 'react-spinner-material';
 import { axiosInstance } from '../../axiosInstance';
 import { toast } from "react-hot-toast";
@@ -106,6 +106,8 @@ export default function DashboardProfile() {
   const [newPassword, setNewPassword]= useState('')
   const [confirmPassword, setConfirmPassword]= useState('')
   const idUser = sessionStorage.getItem('dataItem');
+  const roleUser = sessionStorage.getItem('role');
+  let role = JSON.parse(roleUser) 
   const [Loading, setLoading] = useState(false);
   console.log("The User Item => ", idUser);
   const [file, setFile] = useState(null);
@@ -124,10 +126,11 @@ export default function DashboardProfile() {
       setLoading(true)
       try{
 
-        const userItem = await getUserById(idUser);
+
+        const userItem = role == "user" ?  await getUserById(idUser) :  await getStaffById(idUser);
 
   
-        if(userItem)
+        if(userItem && role == "user")
          {
            console.log("The User Item => ", userItem.users);
           // if(userItem)
@@ -142,6 +145,17 @@ export default function DashboardProfile() {
               setPhone(obj.phone)
             })
           setLoading(false)
+         }
+         else{
+          let roleData = JSON.stringify(userItem.role)
+          setRoleName(JSON.parse(roleData))
+          setUserDat(userItem)
+          setName(userItem.first_name)
+          setLastName(userItem.last_name)
+          setEmail(userItem.email)
+          setPhone(userItem.phone)
+          setLoading(false)
+
          }
       }
       catch(err)
@@ -164,10 +178,31 @@ export default function DashboardProfile() {
         formData.append('last_name', lastName)
         formData.append('phone', phone)
         formData.append('email', email)
-        const respone = await axiosInstance.put('/api/auth/edit/' + userDat.id, formData,{
-          headers: {
-            "Content-Type": "multipart/form-data", // Set the content type to multipart/form-data for file upload
-          },
+        const respone = await axiosInstance.put('/api/auth/edit/' + userDat.id, {
+          first_name: name,
+          last_name: lastName,
+          phone: phone,
+          email: email
+        });
+         if(respone)
+         {
+           console.log("The Response  => ", respone.data);
+           toast.success("User Updated")
+         }
+      }
+      catch(error){
+        console.log("The Error => ", error);
+      }
+  }
+  async function handleUpdateStaff () {
+      try{
+      
+
+        const respone = await axiosInstance.put('/api/staffs/' + userDat.id, {
+          first_name: name,
+          last_name: lastName,
+          phone: phone,
+          email: email
         });
          if(respone)
          {
@@ -200,6 +235,7 @@ export default function DashboardProfile() {
         console.error('Error updating image:', error);
     }
 };
+
   async function ChangePassw() {
     try{
       const token = sessionStorage.getItem('tokenData');
@@ -229,6 +265,7 @@ export default function DashboardProfile() {
       console.log("The Error => ",err);
     }
   }
+
   console.log("The Items of Product => ", file , " " , fileName);
 
 
@@ -240,6 +277,15 @@ export default function DashboardProfile() {
   //   )
   // }
 
+  const handleToggle = () => {
+    if(role == 'user')
+    {
+      handleUpdate()
+    }  
+    else{
+      handleUpdateStaff()
+    }
+  }
   const Image = file == null ? `${APIURL}/storage/${userDat.image}` : URL.createObjectURL(file)
   return (
 
@@ -254,7 +300,7 @@ export default function DashboardProfile() {
                 borderRadius: ".5rem",
               }}
             >
-              <Button onClick={handleUpdate}>Save</Button>
+              <Button onClick={handleToggle}>Save</Button>
             </div>
         </div>
 
@@ -286,9 +332,9 @@ export default function DashboardProfile() {
                                 {
                                   userDat.image == null
                                   ?
-                                  <img src="/public/avatar.png" height="100" width="150" alt="Profile" />
+                                  <img src="/public/avatar.png" height="100" width="150" alt="Profile" className='object-cover h-full'/>
                                   :
-                                  <img src={Image} height="100" width="150" alt="Profile" />
+                                  <img src={Image} height="100" width="150" alt="Profile" className='object-cover h-full' />
                                 }
                               </button>
                               <span className="name mt-3">{name + ' ' + lastName}</span>
@@ -357,11 +403,14 @@ export default function DashboardProfile() {
                     <label >Role:</label>
                     <Input value={roleName.name} className='my-3' placeholder='test' disabled/>
                 </div>
-                <div className='w-full md:w-full'>
-            <label className='block mb-3'>Photo :</label>
-            <Input id="example1" onChange={(e) => handleImageUpdate(e.target.files[0])} type="file" class="block w-full text-sm file:mr-4 file:rounded-md file:border-0 file:bg-neutral-500 file:py-2.5 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-700 focus:outline-none disabled:pointer-events-none disabled:opacity-60" />
+                {
+                  role == 'user' &&
+                  <div className='w-full md:w-full'>
+              <label className='block mb-3'>Photo :</label>
+              <Input id="example1" onChange={(e) => handleImageUpdate(e.target.files[0])} type="file" class="block w-full text-sm file:mr-4 file:rounded-md file:border-0 file:bg-neutral-500 file:py-2.5 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-700 focus:outline-none disabled:pointer-events-none disabled:opacity-60" />
 
-          </div>
+            </div>
+                }
             </div>
 
 
