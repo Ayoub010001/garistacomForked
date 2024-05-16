@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useEffect, useContext, createContext } from "react";
 import { Outlet, useNavigate ,Link} from "react-router-dom";
 import Sidebar, { SidebarContext, SidebarItem } from "../pages/SideBar.jsx";
@@ -11,6 +13,7 @@ import { CiBoxes } from "react-icons/ci";
 import { LiaGlassMartiniAltSolid } from "react-icons/lia";
 import { GrSort } from "react-icons/gr";
 import "../index.css";
+import SetUpDialog from "./src/SetupAccount/SetUpDialog.jsx";
 
 function Layout() {
   const [expanded, setExpanded] = useState(true);
@@ -40,7 +43,16 @@ function Layout() {
 
   console.log(expanded);
   return (
+
     <>
+      {/* <Dialog>
+        <DialogTrigger className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90">
+          setup account 
+        </DialogTrigger>
+        <DialogContent className="">
+          <SetUpDialog />
+        </DialogContent>
+      </Dialog> */}
       {/* <Login/> */}
       {/* {!authenticated && <Login onLogin={() => setAuthenticated(true)} />}
     {authenticated && ( */}
@@ -196,7 +208,6 @@ function Layout() {
               </Link>
 
             </Sidebar>
-
             {/* ${expanded ? "ml-64" : "ml-16"} */}
 
             {/* <main

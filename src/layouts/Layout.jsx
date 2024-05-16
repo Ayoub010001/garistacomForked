@@ -1,3 +1,12 @@
+import SetUpDialog from "../SetupAccount/SetUpDialog.jsx";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../components/ui/dialogV2.jsx"
 import React, { useState, useEffect, useContext, createContext } from "react";
 import { Outlet, Link, useNavigate} from "react-router-dom";
 import Sidebar, {  SidebarItem } from "../pages/SideBar.jsx";
@@ -84,6 +93,11 @@ function Layout() {
     }
   }, []);
 
+  const [isOpen, setIsOpen] = useState(true);
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
  
 
   return (
@@ -91,9 +105,15 @@ function Layout() {
       {/* <Login/> */}
       {/* {!authenticated && <Login onLogin={() => setAuthenticated(true)} />}
     {authenticated && ( */}
+      <Dialog open={isOpen}>
+          <DialogContent className="">
+            <SetUpDialog handleClose={handleClose}/>
+          </DialogContent>
+      </Dialog>
       <SidebarContext.Provider
         value={{ expanded, setExpanded, selectedItem, handleItemClick }}
       >
+
         <header>
           <div className="flex">
             <Sidebar>
