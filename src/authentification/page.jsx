@@ -74,6 +74,7 @@ function Login({ onLogin, className, ...props }) {
         if(response.data.user.id)
         {
           sessionStorage.setItem('dataItem', role == 'user' ? JSON.stringify(response.data.user.id) : JSON.stringify(response.data.user.user.id));
+          sessionStorage.setItem('dataStaff', JSON.stringify(response.data.user))
           sessionStorage.setItem('tokenData', JSON.stringify(response.data));
           sessionStorage.setItem('role', JSON.stringify(response.data.role));
           sessionStorage.setItem('isLoggedIn', "loggin");

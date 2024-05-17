@@ -142,7 +142,7 @@ export function DataTable({
             </div>
     
     
-            <UpdateForm handleImageUpdate={handleImageUpdate} isDialogOpen={updateFormState} setIsDialogOpen={setUpdateFormState} id={row.original.id} handleUpdate={handleUpdate}/>
+            <UpdateForm handleImageUpdate={handleImageUpdate} categories={categories} isDialogOpen={updateFormState} setIsDialogOpen={setUpdateFormState} id={row.original.id} handleUpdate={handleUpdate}/>
             </>
           )
         },

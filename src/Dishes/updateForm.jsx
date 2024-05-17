@@ -20,9 +20,9 @@ import { FormAdd } from "./FormAdd";
 import { axiosInstance } from "../../axiosInstance";
 
 import Spinner from "react-spinner-material";
-export default function UpdateForm({isDialogOpen, setIsDialogOpen, id, handleUpdate, handleImageUpdate}) {
+export default function UpdateForm({isDialogOpen, setIsDialogOpen, id, handleUpdate, handleImageUpdate, categories}) {
     const [isLoading, setIsLoading] = useState(false)
-    const [categories, setCategories] = useState([]);
+    // const [categories, setCategories] = useState([]);
 
     console.log("The Id => ", id);
     const handleDialogClose = () => {
@@ -53,23 +53,7 @@ export default function UpdateForm({isDialogOpen, setIsDialogOpen, id, handleUpd
                 setIsLoading(false)
             }
         }
-        const fetchCategories = async () => {
-          try{
-            
-            const respone = await axiosInstance.get("/api/categories")
-            console.log("The Response Data => ",respone.data);
-            if(respone)
-            {
-              setCategories(respone.data)
-            }
-          }
-          catch(err)
-          {
-            console.log("The Error => ", err.message);
 
-          }
-        }
-        fetchCategories()
         fetchUpdate()
     }, [])
     console.log("The Table Name => ",tableNames);

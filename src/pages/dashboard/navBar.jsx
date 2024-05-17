@@ -14,12 +14,15 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "../../components/ui/avatar";
+
 import { MdRestaurantMenu } from "react-icons/md";
 import { Button } from "../../components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
+
 } from "../../components/ui/dropdown-menu";
 import TeamSwitcher from "../../pages/dashboard/components/team-switcher";
 import UserNav from "../../pages/dashboard/components/user-nav";
@@ -30,6 +33,7 @@ import { getRestaurant } from "../../../actions/Restaurant/Restaurant";
 import { useEffect } from "react";
 import { getUserById } from "../../../actions/User/CreateUser";
 import { axiosInstance } from "../../../axiosInstance";
+import Pusher from 'pusher-js';
 
 export default function NavBar({ }) {
   const defaultPageURL = "https://votre-domaine.com/page";
@@ -71,21 +75,39 @@ export default function NavBar({ }) {
         // })
     };
   
+    
     getUserData();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchValue = async () => {
-  //     let Data = JSON.parse(usersData);
-  //     let Slug = "";
-  //     Data.map((item) => {
-  //       Slug = item.slug
-  //     })
-  //     setQRCodeURL(`http://192.168.11.115:3000/theme/${Slug}`)
-  //   }
+  const [notifications, setNotifications] = useState([]);
 
-  //   fetchValue();
-  // }, [])
+  useEffect(() => {
+    // Initialize Pusher
+    const pusher = new Pusher('84cd32aea0c4b858f18e', {
+      cluster: 'eu',
+      encrypted: true,
+    });
+
+    // Subscribe to the channel
+    const channel = pusher.subscribe('my-channel');
+    channel.bind('form-submited', function(data) {
+      // Update notifications state
+      let Dates = [];
+      // Dates = data
+      // Dates.length > 0 && Dates.map(item => {
+      // })
+      console.log("The Item of The Data => ", Dates.post);
+      setNotifications((prevNotifications) => [data, ...prevNotifications]);
+    });
+
+    // Cleanup
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, []);
+
+  console.log("The Notification => ", notifications);
   const baseUrl = `https://admin.garista.com/theme/${restoInfo.slug}?table_id=2`;
   // Data you want to send, e.g., an ID, other parameters
   const qrData = {
@@ -164,7 +186,57 @@ export default function NavBar({ }) {
               </div>
             </DialogContent>
           </Dialog>
-
+          <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button className="relative" size="icon" variant="ghost">
+              <BellIcon className="h-6 w-6" />
+              <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-70 p-4">
+            <DropdownMenuLabel className="mb-2 text-lg font-medium">Notifications</DropdownMenuLabel>
+            <div className="space-y-4">
+                {notifications.map((notification, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
+                    <CalendarCheck2Icon className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">{notification.title}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{notification.status}</p>
+                  </div>
+                </div>
+              ))}
+              {/* <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
+                  <CalendarCheck2Icon className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Your call has been confirmed</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">5 minutes ago</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
+                  <UsersIcon className="h-5 w-5 text-green-500 dark:text-green-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">You have a new message</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">1 minute ago</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100 dark:bg-yellow-900">
+                  <CalendarIcon className="h-5 w-5 text-yellow-500 dark:text-yellow-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Your subscription is expiring soon</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">2 hours ago</p>
+                </div>
+              </div> */}
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
           {/* <TeamSwitcher /> */}
           {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -202,4 +274,93 @@ export default function NavBar({ }) {
       </div>
     </div>
   );
+}
+
+function BellIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+      <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+    </svg>
+  )
+}
+
+
+function CalendarCheck2Icon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M8 2v4" />
+      <path d="M16 2v4" />
+      <path d="M21 14V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8" />
+      <path d="M3 10h18" />
+      <path d="m16 20 2 2 4-4" />
+    </svg>
+  )
+}
+
+
+function CalendarIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M8 2v4" />
+      <path d="M16 2v4" />
+      <rect width="18" height="18" x="3" y="4" rx="2" />
+      <path d="M3 10h18" />
+    </svg>
+  )
+}
+
+function UsersIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  )
 }

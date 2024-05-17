@@ -120,14 +120,17 @@ export default function DashboardProfile() {
         setFileName(selectedFile.name);
         // setError('file', { type: 'manual', message: '' }); // Clear any previous error message
     }
-};
-  useEffect(() => {
-    const getUserData = async () => {
-      setLoading(true)
-      try{
+};  
+const userStaff = sessionStorage.getItem('dataStaff')
 
+    useEffect(() => {
+      const getUserData = async () => {
+        setLoading(true)
+        try{
+          
+          let userParss = JSON.parse(userStaff)
 
-        const userItem = role == "user" ?  await getUserById(idUser) :  await getStaffById(idUser);
+        const userItem = role == "user" ?  await getUserById(idUser) :  await getStaffById(userParss.id);
 
   
         if(userItem && role == "user")

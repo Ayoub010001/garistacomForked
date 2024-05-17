@@ -28,13 +28,14 @@ function UserNav() {
   const { getUser, logout } = useLogin();
   const idUser = sessionStorage.getItem('dataItem');
   const roleUser = sessionStorage.getItem('role');
-
+  const userStaff = sessionStorage.getItem('dataStaff')
   console.log("The user Role => ");
   useEffect(() => {
     const getUserData = async () => {
       let role = JSON.parse(roleUser) 
-      const userItem = role == "user" ?  await getUserById(idUser) :  await getStaffById(idUser);
-      console.log("The User Item => ", userItem, idUser);
+      let userParss = JSON.parse(userStaff)
+      const userItem = role == "user" ?  await getUserById(idUser) :  await getStaffById(userParss.id);
+      console.log("The User Item => ", userItem, idUser, userParss);
       if(role == "user")
       {
         userItem.map(obj =>  {
