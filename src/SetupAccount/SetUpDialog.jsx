@@ -114,9 +114,9 @@ function SetUpDialog({handleClose}) {
       };
     
       return (
-        <main className="flex flex-col items-center justify-center">
-          <Card className="flex flex-col gap-4 px-12 py-6 ">
-            <div className="mb-2 flex flex-col ms- h-10 relative w-[80%] m-auto">
+        <main className="flex flex-col items-center justify-center relative lg:w-[780px]">
+          <Card className="flex flex-col w-full h-full gap-4 px-12 py-6">
+            <div className="mb-2 flex flex-col h-8 relative w-[50%] m-auto">
               <Pagination pageNumber={1} currentPage={currentPage}/>
               <Pagination pageNumber={2} currentPage={currentPage}/>
               <Pagination pageNumber={3} currentPage={currentPage}/>
@@ -124,8 +124,10 @@ function SetUpDialog({handleClose}) {
             </div>
             <div className="flex justify-between gap-8">
               <div className=" hidden md:flex w-[250px] relative  flex-col items-center justify-center">
-                <div className=" w-[240px] h-[450px]  mockup overflow-y-scroll no-scrollbar bg-white rounded-3xl border-8 border-slate-950 mt-2">
-                  <MockUp restInfo={restInfo}/>
+                <div className="w-[255px] h-[464px] shadow-md overflow-hidden rounded-3xl border-8 border-slate-950 bg-slate-950">
+                  <div className=" w-[240px] h-[450px]  mockup overflow-y-scroll no-scrollbar bg-white ">
+                    <MockUp restInfo={restInfo}/>
+                  </div>
                 </div>
               </div>
               <div className="flex flex-col justify-between gap-4 w-[340px]">
@@ -142,6 +144,7 @@ function SetUpDialog({handleClose}) {
                 </div>
               </div>
             </div>
+            <Button onClick={handleClose} id="skip-process" variant="ghost" className=" w-8 h-8 absolute top-4 right-4">X</Button>
           </Card> 
         </main>
       );

@@ -19,7 +19,7 @@ function Pagination({pageNumber,currentPage}) {
 
 
   return (
-    <div className={`${percentage} cursor-pointer font-medium absolute z-10 ${current} w-10 h-10 rounded-full flex justify-center items-center text-2xl`}>{pageNumber}</div>
+    <div className={`${percentage} cursor-pointer font-medium absolute z-10 ${current} w-8 h-8 rounded-full flex justify-center items-center text-xl`}>{pageNumber}</div>
   );
 }
 

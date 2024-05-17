@@ -4,9 +4,9 @@
 
 .mockup::-webkit-scrollbar {
     width: 6px; /* Set the width of the scrollbar */
-}
+  }
 
-/* Handle */
+
 .mockup::-webkit-scrollbar-thumb {
     background: #0F172A; /* Color of the scrollbar handle */
     border-radius: 4px; /* Rounded corners */
@@ -20,6 +20,6 @@
   /* Track */
   .mockup::-webkit-scrollbar-track {
     border-radius: 50px;
-    background: #FBFBFB; /* Color of the scrollbar track */
+    background: #a8a7ac; /* Color of the scrollbar track */
 
   }
