@@ -1,9 +1,6 @@
 import { FaFacebook, FaSnapchat, FaInstagram, FaTiktok } from "react-icons/fa";
-import { GiInfo } from "react-icons/gi";
-import { BiSolidFoodMenu } from "react-icons/bi";
-import { PiCallBell } from "react-icons/pi";
-import { VscFeedback } from "react-icons/vsc";
-import { TbMessage2Cog } from "react-icons/tb";
+import { TbMessageQuestion } from "react-icons/tb";
+import { HomeIcon, InfoIcon, ShoppingBagIcon, StarIcon } from "lucide-react";
 
 export const backgroundColors = [
   { color: "#E72929", colorName: "Red" },
@@ -455,15 +452,23 @@ export const themeContent = {
 
 export const menuButtons = [
   {
-    name: "menu",
-    icon: BiSolidFoodMenu,
+    name: "Home",
+    icon: HomeIcon,
   },
   {
-    name: "feedback",
-    icon: TbMessage2Cog,
+    name: "Rating",
+    icon: StarIcon,
   },
   {
-    name: "call",
-    icon: PiCallBell,
+    name: "Claims",
+    icon: TbMessageQuestion,
+  },
+  {
+    name: "Cart",
+    icon: ShoppingBagIcon,
+  },
+  {
+    name: "Info",
+    icon: InfoIcon,
   },
 ];

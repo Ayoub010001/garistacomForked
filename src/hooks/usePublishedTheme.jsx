@@ -11,3 +11,16 @@ export const publishedThemeAtom = atomWithStorage("publishedTheme", {
 });
 
 export const usePublishedTheme = () => useAtom(publishedThemeAtom);
+
+export const useSelectedPublishedTheme = () => {
+  const [publishedTheme] = usePublishedTheme();
+
+  return {
+    selectedTheme: publishedTheme.selectedTheme,
+    selectedLayout: publishedTheme.selectedLayout,
+    selectedHeader: publishedTheme.selectedHeader,
+    selectedBgColor: publishedTheme.selectedBgColor,
+    selectedPrimaryColor: publishedTheme.selectedPrimaryColor,
+    selectedSecondaryColor: publishedTheme.selectedSecondaryColor,
+  };
+};

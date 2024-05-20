@@ -182,25 +182,31 @@ const ThemeThree = ({
           )}
         </div>
 
-        {/* Menu Buttons */}
+        {/* Menu Footer Buttons */}
         <div className="flex flex-col justify-center items-center max-w-full">
-          <div
-            style={{ backgroundColor: `${selectedPrimaryColor}` }}
-            className="bottom-2 rounded-2xl absolute"
+          <footer
+            style={{ backgroundColor: `${selectedBgColor}` }}
+            className="absolute px-1 py-2 flex w-full items-center justify-around mx-auto shadow-lg bottom-0 rounded-b-2xl"
           >
-            <ul className="flex flex-row items-center justify-between gap-5 px-5 py-1">
-              {menuButtons.map((item) => (
-                <li key={item.name}>
-                  <button type="button" className="py-2">
-                    <item.icon
-                      size={25}
-                      style={{ color: `${selectedSecondaryColor}` }}
-                    />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
+            {menuButtons.map((item, id) => (
+              <Link
+                to={`#`}
+                key={id}
+                className="flex flex-col items-center justify-center gap-1"
+              >
+                <item.icon
+                  style={{ color: `${selectedSecondaryColor}` }}
+                  className="h-5 w-5"
+                />
+                <span
+                  style={{ color: `${selectedSecondaryColor}` }}
+                  className="text-xs font-medium"
+                >
+                  {item.name}
+                </span>
+              </Link>
+            ))}
+          </footer>
         </div>
       </div>
     </section>

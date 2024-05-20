@@ -1,14 +1,6 @@
 import { Link } from "react-router-dom";
-import Logo from "../../Theme/Footer/negative-feedback-icon.svg";
 import { themeContent, menuButtons } from "../constants";
-import {
-  ArrowRight,
-  HomeIcon,
-  InfoIcon,
-  Search,
-  ShoppingBagIcon,
-  StarIcon,
-} from "lucide-react";
+import { Search } from "lucide-react";
 import { FaFacebook, FaInstagram, FaSnapchat } from "react-icons/fa";
 import { useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -22,6 +14,17 @@ const ThemeOne = ({
   selectedTheme,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
+  // Tab Hover Effect
+  const handleHoverActive = (e) => {
+    e.currentTarget.style.backgroundColor = selectedPrimaryColor;
+    e.currentTarget.style.color = selectedBgColor;
+  };
+
+  // Tab Hover Effect
+  const handleHoverInactive = (e) => {
+    e.currentTarget.style.backgroundColor = "";
+    e.currentTarget.style.color = selectedSecondaryColor;
+  };
   return (
     <section
       style={{ backgroundColor: `${selectedBgColor}` }}
@@ -33,10 +36,10 @@ const ThemeOne = ({
           {/* Banner */}
           <div className="bg-secondary-gray overflow-hidden">
             <img
-              src={themeContent[1].bannerImage}
+              src={themeContent[selectedTheme].bannerImage}
               loading="lazy"
               className="max-h-44 bg-secondary-gray object-cover w-full h-screen"
-              alt={themeContent[1].name}
+              alt={themeContent[selectedTheme].name}
             />
           </div>
 
@@ -44,7 +47,7 @@ const ThemeOne = ({
           <div className="bg-black/40 absolute inset-0 z-10"></div>
           <div className="bottom-16 absolute inset-x-0 z-20 p-4 text-center">
             <h3 className="text-xl font-medium text-white">
-              {themeContent[1].name}
+              {themeContent[selectedTheme].name}
             </h3>
           </div>
 
@@ -71,21 +74,21 @@ const ThemeOne = ({
         <div className="flex flex-col gap-3 px-2 py-4">
           {/* Categories */}
           <div className="scrollbar-hide overflow-x-scroll gap-2 flex items-center">
-            {themeContent[1].categories.map((item, idx) => (
+            {themeContent[selectedTheme].categories.map((item, idx) => (
               <div
                 key={idx}
                 className={`flex items-center justify-center gap-1 px-2 py-1  rounded-full cursor-pointer border border-gray-300 shadow-md`}
                 style={{
                   backgroundColor:
-                    item.id.trim() === selectedCategory.trim()
-                      ? selectedPrimaryColor
-                      : "",
+                    item.id === selectedCategory ? selectedPrimaryColor : "",
                   color:
-                    item.id.trim() === selectedCategory.trim()
+                    item.id === selectedCategory
                       ? selectedBgColor
                       : selectedSecondaryColor,
                 }}
-                onClick={() => setSelectedCategory(item.id.trim())}
+                onClick={() => setSelectedCategory(item.id)}
+                onMouseOver={item.id !== selectedCategory && handleHoverActive}
+                onMouseOut={item.id !== selectedCategory && handleHoverInactive}
               >
                 <p className="text-xs font-medium">{item.name}</p>
               </div>
@@ -113,7 +116,7 @@ const ThemeOne = ({
               className="text-base font-medium"
             >
               {
-                themeContent[1].categories.filter(
+                themeContent[selectedTheme].categories.filter(
                   (cat) => cat.id === selectedCategory
                 )[0]?.name
               }
@@ -123,19 +126,22 @@ const ThemeOne = ({
           {/* Categories Grid */}
           {selectedLayout === "theme-grid" && (
             <div className="grid grid-cols-2 gap-3 px-2 py-4">
-              {themeContent[1].categories.map(
+              {themeContent[selectedTheme].categories.map(
                 ({ name, catImage, id, price }) => (
                   <div
                     key={id}
                     className="relative shadow-md rounded-[10px] w-full border-gray-300 border inline-block"
                   >
-                    <div className="tab items-center justify-center h-full w-full overflow-hidden p-1.5 text-lg font-semibold rounded-[8px] cursor-pointer transition-colors">
+                    <div className="group items-center justify-center h-full w-full overflow-hidden p-1.5 text-lg font-semibold rounded-[8px] cursor-pointer transition-colors">
                       <img
                         src={catImage}
                         alt="Menu Icon"
-                        className="w-full object-contain rounded-[10px] h-20"
+                        className="w-full group-hover:scale-105 transition object-contain rounded-[10px] h-20"
                       />
-                      <div className="flex items-center justify-between px-1 py-2 text-black gap-2">
+                      <div
+                        style={{ color: selectedSecondaryColor }}
+                        className="flex items-center justify-between px-1 py-2 gap-2"
+                      >
                         <div>
                           <h2 className="text-sm mb-0 ">{name}</h2>
                           <p className="text-xs">{price}.00</p>
@@ -165,33 +171,48 @@ const ThemeOne = ({
 
           {/* Categories List */}
           {selectedLayout === "theme-list" && (
-            <div className="flex-col w-full gap-3 px-2 py-4">
+            <div className="w-full grid grid-cols-1 gap-4 px-2 py-4">
               {themeContent[selectedTheme].categories.map(
                 ({ name, description, catImage, id, price }) => (
                   <Link
                     to={"#"}
                     key={id}
-                    className="group grid items-start grid-cols-2 gap-5"
+                    className="group grid items-start grid-cols-2 place-items-end gap-5 ps-2"
                   >
                     <div className="w-full">
-                      <h1
-                        style={{ color: `${selectedPrimaryColor}` }}
-                        className="text-base font-medium"
-                      >
-                        {name}
-                      </h1>
-                      <p
-                        style={{ color: `${selectedPrimaryColor}` }}
-                        className="text-[10px] leading-snug opacity-80"
-                      >
-                        {description}
-                      </p>
-                      <p
-                        style={{ color: `${selectedPrimaryColor}` }}
-                        className="pt-3 text-sm font-semibold opacity-70"
-                      >
-                        {price} MAD
-                      </p>
+                      <div className="flex flex-col gap-3 text-start">
+                        {/* Item Name */}
+                        <h2
+                          style={{ color: `${selectedSecondaryColor}` }}
+                          className="text-base"
+                        >
+                          {name.length > 20 ? name.slice(0, 20) + "..." : name}
+                        </h2>
+
+                        {/* Item Price */}
+                        <p
+                          style={{ color: `${selectedSecondaryColor}` }}
+                          className="text-base font-semibold opacity-80"
+                        >
+                          {price}.00
+                        </p>
+
+                        {/* Add to cart */}
+                        <button
+                          type="button"
+                          style={{
+                            backgroundColor: selectedPrimaryColor,
+                            color: selectedBgColor,
+                          }}
+                          className="leading-0 w-full px-2 py-2 mt-auto flex items-center justify-center rounded-[8px]"
+                        >
+                          <AiOutlinePlus
+                            style={{
+                              color: selectedBgColor,
+                            }}
+                          />
+                        </button>
+                      </div>
                     </div>
 
                     <div className="w-[100px] h-[100px] bg-black/50 group-hover:bg-black/70 rounded-lg border border-gray-200">
@@ -214,52 +235,24 @@ const ThemeOne = ({
             style={{ backgroundColor: `${selectedBgColor}` }}
             className="absolute px-1 py-2 flex w-full items-center justify-around mx-auto shadow-lg bottom-0 rounded-b-2xl"
           >
-            <Link
-              to={`#`}
-              className="flex flex-col items-center justify-center gap-1"
-            >
-              <HomeIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                Home
-              </span>
-            </Link>
-            <Link
-              to={`#`}
-              className="flex flex-col items-center justify-center gap-1"
-            >
-              <StarIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                Rating
-              </span>
-            </Link>
-            <Link
-              to={`#`}
-              className="flex flex-col items-center justify-center gap-1"
-            >
-              {/* <FileIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" /> */}
-              <img src={Logo} alt="claims" className="h-5 w-5 " />
-              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                Claims
-              </span>
-            </Link>
-            <Link
-              to={`#`}
-              className="flex flex-col items-center justify-center gap-1"
-            >
-              <ShoppingBagIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                Cart
-              </span>
-            </Link>
-            <Link
-              to={`#`}
-              className="flex flex-col items-center justify-center gap-1"
-            >
-              <InfoIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                Info
-              </span>
-            </Link>
+            {menuButtons.map((item, id) => (
+              <Link
+                to={`#`}
+                key={id}
+                className="flex flex-col items-center justify-center gap-1"
+              >
+                <item.icon
+                  style={{ color: `${selectedSecondaryColor}` }}
+                  className="h-5 w-5"
+                />
+                <span
+                  style={{ color: `${selectedSecondaryColor}` }}
+                  className="text-xs font-medium"
+                >
+                  {item.name}
+                </span>
+              </Link>
+            ))}
           </footer>
         </div>
       </div>

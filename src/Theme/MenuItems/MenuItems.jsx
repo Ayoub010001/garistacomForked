@@ -15,10 +15,22 @@ import {
 } from "@/components/ui/credenza";
 import { useSelector, useDispatch } from "react-redux";
 import { addItem, removeAll } from "../../lib/cartSlice";
+import placeholderImage from "/assets/placeholder-image.png";
+import ThemeGridMenuItem from "./ThemeGridMenuItem";
+import ThemeListMenuItems from "./ThemeListMenuItems";
 
 import Dettaille from "./Dettaille";
 import { APIURL } from "../../../lib/ApiKey";
+import { useSelectedPublishedTheme } from "../../hooks/usePublishedTheme";
 function MenuItems({ dishes, selectedTab, restoId }) {
+  // Get the selected published theme
+  const {
+    selectedBgColor,
+    selectedPrimaryColor,
+    selectedSecondaryColor,
+    selectedLayout,
+  } = useSelectedPublishedTheme();
+
   const [selectedProp, setSelectedProp] = useState(0); // initialisation de l'état avec 0
   const [searchTerm, setSearchTerm] = useState(""); // état pour stocker la valeur de la recherche
   const [updateFormState, setUpdateFormState] = useState(false);
@@ -105,6 +117,7 @@ function MenuItems({ dishes, selectedTab, restoId }) {
     setIsModalOpen(!isModalOpen);
     console.log("Selected Item: ", item);
   };
+
   useEffect(() => {
     tabAchat.length = 0;
     tabAchat.push(...newtab);
@@ -132,6 +145,7 @@ function MenuItems({ dishes, selectedTab, restoId }) {
   return (
     <>
       <div className="pt-6 max-w-[520px] mx-auto">
+        {/* Search Component */}
         <form className="max-w-md px-4 pb-4 mx-auto">
           <label
             htmlFor="default-search"
@@ -160,7 +174,7 @@ function MenuItems({ dishes, selectedTab, restoId }) {
             <input
               type="search"
               id="default-search"
-              className="block w-full px-2 py-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-[.5rem] bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 input-height-small"
+              className="block w-full px-2 py-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-[.5rem] bg-gray-50 input-height-small"
               placeholder="Search menu..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -168,15 +182,28 @@ function MenuItems({ dishes, selectedTab, restoId }) {
             />
           </div>
         </form>
+        {/* Search Component Ends Here */}
 
+        {/* Filtered Categories */}
         <div className="px-3 mx-auto overflow-x-auto">
-          <h1 className="pb-2 text-lg font-semibold text-black">
+          <h1
+            style={{ color: selectedSecondaryColor }}
+            className="pb-2 text-lg font-semibold capitalize"
+          >
             {selectedTab}
           </h1>
-          <div className="grid grid-cols-2  gap-5 mb-[100px] lg:mb-[150px]">
+
+          <div
+            className={`grid ${
+              selectedLayout === "theme-grid" ? "grid-cols-2" : "grid-cols-1"
+            } gap-5 ${
+              filteredCategories.length > 0 && "mb-[100px] lg:mb-[150px]"
+            }`}
+          >
             {filteredCategories.length > 0 &&
               filteredCategories.map((item, index) => (
                 <div className="tabs-container overflow-x-auto" key={index}>
+                  {/* Modal Trigger */}
                   <div className="flex gap-4">
                     <Credenza
                       key={item.id}
@@ -185,91 +212,67 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                       onOpenChange={setIsModalOpen}
                     >
                       <CredenzaTrigger
+                        style={{ backgroundColor: selectedBgColor }}
                         asChild
-                        className="h-auto w-full !py-0 !bg-white"
+                        className="h-auto w-full !py-0"
                       >
                         <Button className="px-0">
                           <div
                             key={item.id}
                             className="relative shadow-md rounded-[10px] w-full border-gray-300 border inline-block"
                           >
-                            <div
-                              onClick={() => setSelectedItem(item)}
-                              className="tab items-center justify-center h-full w-full overflow-hidden p-1.5 text-lg font-semibold rounded-[8px] cursor-pointer transition-colors"
-                            >
-                              <img
-                                src={
-                                  item.image
-                                    ? `${APIURL}/storage/${item.image}`
-                                    : ""
-                                }
-                                alt="Menu Icon"
-                                className="w-full object-cover rounded-[10px] h-32"
+                            {selectedLayout === "theme-grid" ? (
+                              <ThemeGridMenuItem
+                                setSelectedItem={setSelectedItem}
+                                placeholderImage={placeholderImage}
+                                item={item}
                               />
-                              <div className="flex items-center justify-between px-3 py-2 text-black">
-                                <div>
-                                  <h2 className="text-[16px] mb-0 ">
-                                    {item.name.slice(0, 7)}..
-                                  </h2>
-                                  <p className="text-sm">{item.price}</p>
-                                </div>
-
-                                <button
-                                  type="button"
-                                  onClick={handleAddItem}
-                                  className="text-white leading-0 bg-primary-blue hover:bg-primary-blue w-[30px] h-[30px] flex items-center justify-center rounded-[8px]"
-                                >
-                                  <AiOutlinePlus
-                                    style={{
-                                      color: "#ffffff",
-                                    }}
-                                  />
-                                </button>
-                              </div>
-                            </div>
+                            ) : (
+                              <ThemeListMenuItems
+                                setSelectedItem={setSelectedItem}
+                                placeholderImage={placeholderImage}
+                                item={item}
+                              />
+                            )}
                           </div>
                         </Button>
                       </CredenzaTrigger>
-                      <CredenzaContent className=" flex max-h-screen bg-white">
+
+                      {/* Item Content Modal */}
+                      <CredenzaContent
+                        style={{ backgroundColor: selectedBgColor }}
+                        className=" flex max-h-screen"
+                      >
                         {selectedItem != null && (
                           <>
+                            {/* Modal Content Header */}
                             <CredenzaHeader
                               photo={
-                                selectedItem?.image
-                                  ? `${APIURL}/storage/${selectedItem.image}`
-                                  : ""
+                                `${APIURL}/storage/${selectedItem.image}` ??
+                                placeholderImage
                               }
                               className="p-0"
-                            >
-                              {/* <CredenzaClose asChild>
-                                <div className="close-icon" onClick={toggleModal}>
-                                  
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="w-6 h-6 text-lg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M6 18L18 6M6 6l12 12"
-                                    />
-                                  </svg>
-                                </div>
-                                
-                              </CredenzaClose> */}
-                            </CredenzaHeader>
+                            ></CredenzaHeader>
+
+                            {/* Modal Content Body */}
                             <CredenzaBody className="sm:pb-0 sm:text-left mt-5 space-y-4 text-sm text-center">
-                              <CredenzaTitle>{selectedItem.name}</CredenzaTitle>
-                              <p className="text-neutral-400 m-0">
+                              <CredenzaTitle
+                                style={{ color: selectedSecondaryColor }}
+                              >
+                                {selectedItem.name}
+                              </CredenzaTitle>
+                              <p
+                                style={{
+                                  color: selectedSecondaryColor,
+                                  opacity: 0.7,
+                                }}
+                                className=" m-0"
+                              >
                                 {selectedItem.desc.length > 20
                                   ? selectedItem.desc.slice(0, 30) + "..."
                                   : selectedItem.desc}
                               </p>
-                              <div className=" flex items-center justify-center">
+                              <div className="flex items-center justify-center">
                                 <div className="flex items-center gap-2">
                                   <Button
                                     size="icon"
@@ -280,9 +283,14 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                                   >
                                     <MinusIcon className="w-4 h-4" />
                                   </Button>
-                                  <span className="dark:text-gray-50 text-base font-medium text-gray-900">
+
+                                  <span
+                                    style={{ color: selectedSecondaryColor }}
+                                    className="text-base font-medium"
+                                  >
                                     {quantity}
                                   </span>
+
                                   <Button
                                     size="icon"
                                     variant="outline"
@@ -293,6 +301,7 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                                     <PlusIcon className="w-4 h-4" />
                                   </Button>
                                 </div>
+
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="30"
@@ -300,32 +309,38 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                                   fill="currentColor"
                                   className="bi bi-dot mx-1"
                                   viewBox="0 0 16 16"
-                                  style={{ color: "#28509E" }}
+                                  style={{ color: selectedPrimaryColor }}
                                 >
                                   <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
                                 </svg>
-                                <span>
+
+                                <span style={{ color: selectedSecondaryColor }}>
                                   {(selectedItem.price * quantity).toFixed(2)}
                                 </span>
                               </div>
                             </CredenzaBody>
+
                             <CredenzaFooter>
                               <button
                                 type="button"
                                 onClick={() => {
                                   handleAddItem(selectedItem, quantity);
                                 }}
+                                style={{
+                                  backgroundColor: isClicked
+                                    ? selectedSecondaryColor
+                                    : selectedPrimaryColor,
+                                }}
                                 // onClick={()=>{setIsClicked(!isClicked)}}
-                                className={`rounded-[1rem] p-2  ${
-                                  isClicked ? "bg-white" : "bg-primary-blue"
-                                } transition-all duration-300 border border-primarbg-primary-blue font-medium text-xs md:text-sm flex items-center justify-center gap-1 `}
+                                className={`rounded-[1rem] p-2 transition-all duration-300 border border-primary font-medium text-xs md:text-sm flex items-center justify-center gap-1 `}
                               >
                                 <div
-                                  className={`text-lg font-semibold ${
-                                    isClicked
-                                      ? "text-primarbg-primary-blue"
-                                      : "text-white"
-                                  } `}
+                                  style={{
+                                    color: isClicked
+                                      ? selectedPrimaryColor
+                                      : selectedBgColor,
+                                  }}
+                                  className={`text-lg font-semibold`}
                                 >
                                   {isClicked
                                     ? "Added To Your Cart"
@@ -335,7 +350,10 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                                 </div>
                               </button>
                               <CredenzaClose asChild>
-                                <Button variant="outline bg-black text-white">
+                                <Button
+                                  style={{ color: selectedSecondaryColor }}
+                                  variant="outline bg-black text-white"
+                                >
                                   Close
                                 </Button>
                               </CredenzaClose>
@@ -349,6 +367,18 @@ function MenuItems({ dishes, selectedTab, restoId }) {
               ))}
           </div>
         </div>
+
+        {/* Display no items message  */}
+        {!(filteredCategories.length > 0) && (
+          <div className="pt-5 w-full text-center">
+            <p
+              style={{ color: selectedSecondaryColor }}
+              className="text-lg font-semibold"
+            >
+              No items available for this category
+            </p>
+          </div>
+        )}
       </div>
       {/* <div className="dishes-container">
           {dishes.length > 0 && dishes.map(dish => (
