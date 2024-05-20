@@ -1,8 +1,8 @@
-import React, { useState ,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { AiOutlinePlus } from "react-icons/ai";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { IoIosAdd ,IoIosRemove } from "react-icons/io";
-import {tabAchat} from '../constant/page'
+import { IoIosAdd, IoIosRemove } from "react-icons/io";
+import { tabAchat } from '../constant/page';
 import {
   Credenza,
   CredenzaBody,
@@ -15,28 +15,32 @@ import {
 } from "@/components/ui/credenza";
 import { useSelector, useDispatch } from 'react-redux';
 import { addItem, removeAll } from '../../lib/cartSlice';
+import Logo from './waiter-svgrepo-com.svg';
 
 import Dettaille from './Dettaille';
 import { APIURL } from '../../../lib/ApiKey';
-<<<<<<< HEAD
-// import Logo from './waiter-svgrepo-com.svg';
-import Logo from './servant-outline.svg';
-function MenuItems({dishes, selectedTab }) {
-=======
-function MenuItems({dishes, selectedTab, restoId }) {
->>>>>>> 93a5acf9 (Init)
+
+function MenuItems({ dishes, selectedTab, restoId }) {
   const [selectedProp, setSelectedProp] = useState(0); // initialisation de l'état avec 0
   const [searchTerm, setSearchTerm] = useState(""); // état pour stocker la valeur de la recherche
   const [updateFormState, setUpdateFormState] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [newtab, setNewtab] = useState([...tabAchat]);
-  const [selectedItem, setSelectedItem ]=useState(null);
-  const [quantity, setQuantity] = useState(1)
-<<<<<<< HEAD
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isClicked, setIsClicked] = useState(false);
+  const [quantities, setQuantities] = useState({});
   const [credenzaOpen, setCredenzaOpen] = useState(false);
 
-=======
->>>>>>> 93a5acf9 (Init)
+  // Initial quantity
+  const getQuantity = (itemId) => quantities[itemId] || 1;
+
+  const setQuantity = (itemId, value) => {
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [itemId]: value > 0 ? value : 1,
+    }));
+  };
+
   const Cat = [
     {
       type: "Burgers",
@@ -53,50 +57,45 @@ function MenuItems({dishes, selectedTab, restoId }) {
 
   // Filtrer les éléments en fonction du terme de recherche
   const filteredCategories = dishes.length > 0 && dishes.filter(item =>
-    // category.some(item =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase())
-    // )
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
   const toggleModal = (item) => {
     setSelectedItem(item); 
     setIsModalOpen(!isModalOpen);
-<<<<<<< HEAD
     setCredenzaOpen(!credenzaOpen);
+    console.log("Selected Item: ", item);
   };
-  
-=======
-  };
->>>>>>> 93a5acf9 (Init)
+
   useEffect(() => {
     tabAchat.length = 0;
     tabAchat.push(...newtab);
   }, [newtab]);
+
   const listAchat = (id) => {
     setNewtab((prevTab) => [...prevTab, Cat[id - 1]]);
     setCartCount((prevCount) => prevCount + 1);
   };
 
-  // const { addToCart, cartItems } = useCart();
   const cartItems = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
+
   const handleAddItem = (product, quantity) => {
-<<<<<<< HEAD
-    dispatch(addItem({ product, quantity: quantity, volume: 'default' }));
-=======
     dispatch(addItem({ product, quantity: quantity, resto_id: restoId }));
->>>>>>> 93a5acf9 (Init)
+    setIsModalOpen(false); // Close the credenza after adding the item
+  setCredenzaOpen(false);
+  // setIsModalOpen(!isModalOpen);
   };
-  const handleRemoveAll  = product => {
+
+  const handleRemoveAll = product => {
     dispatch(removeAll());
   };
-  // const onPreview = (item) => {
-  //   previewModal.onOpen(item);
-  // };
 
   console.log("The Cart => ", cartItems);
+
   return (
     <>
-      <div className='pt-6'>
+      <div className='pt-4 max-w-[520px] mx-auto'>
         <form className="max-w-md mx-auto px-4 pb-4">   
           <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
           <div className="relative">
@@ -109,78 +108,54 @@ function MenuItems({dishes, selectedTab, restoId }) {
           </div>
         </form>
 
-        <div className='overflow-x-auto pl-4 '>
+        <div className='overflow-x-auto px-3 mx-auto'>
           <h1 className='pb-2 text-lg text-black font-semibold'>{selectedTab}</h1>
-          <div className='grid grid-cols-2'>
+          <div className='grid grid-cols-2 gap-5 mb-[100px] lg:mb-[150px]'>
             {filteredCategories.length > 0 && filteredCategories.map((item, index) => (
-                <div className="tabs-container overflow-x-auto pl-4" key={index}>
-                  <div className="flex gap-4">
-                <Credenza key={item.id} className={"!bg-white"} open={isModalOpen} onOpenChange={setIsModalOpen} >
-                        <CredenzaTrigger asChild className="h-auto !bg-white">
-                          <Button className="px-0" >
-                        <div key={item.id} className="relative shadow-md rounded-[10px] border-gray-300 border inline-block">
+              <div className="tabs-container overflow-x-auto" key={index}>
+                <div className="flex gap-4">
+                  <Credenza key={item.id} className={"!bg-white !py-0"} open={isModalOpen} onOpenChange={setIsModalOpen}>
+                    <CredenzaTrigger asChild className="h-auto w-full !py-0 !bg-white">
+                      <Button className=" px-0">
+                        <div key={item.id} className="relative shadow-md rounded-[10px] w-full border-gray-300 border inline-block">
                           <div
                             onClick={() => setSelectedItem(item)}
-                            className="tab items-center justify-center h-auto w-[150px] overflow-hidden p-1.5 text-lg font-semibold rounded-[8px] cursor-pointer transition-colors"
+                            className="tab items-center justify-center h-full w-full overflow-hidden p-1.5 text-lg font-semibold rounded-[8px] cursor-pointer transition-colors"
                           >
                             <img src={`${APIURL}/storage/${item.image}`} alt="Menu Icon" className="w-full object-cover rounded-[10px] h-32" />
                             <div className='text-black flex justify-between items-center py-2 px-3'>
                               <div>
-                                <h2 className="text-[16px] mb-0 ">{item.name}</h2>
-                                <p className='text-sm'>{item.price}</p>
+                                <h2 className="text-[12px] mb-0 ">{item.name.slice(0, 12)}</h2>
+                                <p className='text-[12px] text-left'>{item.price}</p>
                               </div>
                               
-                              <button type="button" onClick={handleAddItem} className="text-white leading-0 bg-[#28509E] hover:bg-[#28509E] w-[30px] h-[30px] flex items-center justify-center rounded-[8px]">
-                                  <AiOutlinePlus
-                                    style={{
-                                      color: "#ffffff",
-                                    }}
-                                  />
-                                </button>
-                                
+                              <button type="button" onClick={() => handleAddItem(item, 1)} className="text-white leading-0 bg-[#28509E] hover:bg-[#28509E] w-[30px] h-[30px] flex items-center justify-center rounded-[8px]">
+                                <AiOutlinePlus style={{ color: "#ffffff" }} />
+                              </button>
                             </div>
                           </div>
                         </div>
-                        </Button>
-                      </CredenzaTrigger>
-                      <CredenzaContent className=" flex max-h-screen bg-white ">
-                    {
-                      selectedItem != null &&
-                      (
+                      </Button>
+                    </CredenzaTrigger>
+                    <CredenzaContent className="flex max-h-screen bg-white">
+                      {selectedItem != null && (
                         <>
-                        <CredenzaHeader photo={`${APIURL}/storage/${selectedItem.image}`} className="p-0">
-                            
-                              <CredenzaClose asChild>
-                                
-                                <div className="close-icon" onClick={toggleModal}>
-                                  
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-6 w-6 text-lg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M6 18L18 6M6 6l12 12"
-                                    />
-                                  </svg>
-                                </div>
-                                
-                              </CredenzaClose>
-                              
-
-                            </CredenzaHeader>
-                          <CredenzaBody className="space-y-4 text-center text-sm sm:pb-0 sm:text-left">
+                          <CredenzaHeader photo={`${APIURL}/storage/${selectedItem.image}`} className="p-0" />
+                          <CredenzaBody className="space-y-4 text-center mt-5 text-sm sm:pb-0 sm:text-left">
                             <CredenzaTitle>{selectedItem.name}</CredenzaTitle>
-                            <p className="m-0 text-neutral-400">{selectedItem.description}</p>
+                            <p className="m-0 text-neutral-400 hyphens-auto">{selectedItem.desc.length > 20 ? selectedItem.desc + '...' : selectedItem.desc}</p>
                             <div className='flex items-center justify-center '>
-                              <span className='grid grid-cols-3 font-bold '><IoIosAdd size={22}/><span className=' text-lg'>{quantity}</span><IoIosRemove size={22}/></span>
+                              <div className="flex items-center gap-2">
+                                <Button size="icon" variant="outline" onClick={() => setQuantity(selectedItem.id, getQuantity(selectedItem.id) - 1)}>
+                                  <MinusIcon className="w-4 h-4" />
+                                </Button>
+                                <span className="text-base font-medium text-gray-900 dark:text-gray-50">{getQuantity(selectedItem.id)}</span>
+                                <Button size="icon" variant="outline" onClick={() => setQuantity(selectedItem.id, getQuantity(selectedItem.id) + 1)}>
+                                  <PlusIcon className="w-4 h-4" />
+                                </Button>
+                              </div>
                               <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-dot mx-1 " viewBox="0 0 16 16" style={{ color: '#28509E' }}>
-                                <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
+                                <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
                               </svg>
                               <span>{selectedItem.price}</span>
                             </div>
@@ -188,69 +163,35 @@ function MenuItems({dishes, selectedTab, restoId }) {
                           <CredenzaFooter>
                             <button
                               type="button"
-                              onClick={()=>handleAddItem(selectedItem, quantity)}
-                              className="rounded-[1rem] p-2 text-black bg-[#28509E] hover:bg-[#28509E] font-medium text-xs md:text-sm flex items-center justify-center gap-1 "
+                              onClick={() => { handleAddItem(selectedItem, getQuantity(selectedItem.id)) }}
+                              className={`rounded-[1rem] p-2 ${isClicked ? "bg-white" : "bg-[#28509E]"} transition-all duration-300 border border-[#28509E] font-medium text-xs md:text-sm flex items-center justify-center gap-1 `}
                             >
-                              <div className="text-lg font-semibold text-white">Add to selected: {selectedItem.price}</div>
+                              <div className={`text-lg font-semibold ${isClicked ? "text-[#28509E]" : "text-white"} `}>{isClicked ? "Added To Your Cart" : `Add to selected: ${(selectedItem.price * getQuantity(selectedItem.id)).toFixed(2)}`}</div>
                             </button>
                             <CredenzaClose asChild>
                               <Button variant="outline bg-black text-white">Close</Button>
                             </CredenzaClose>
                           </CredenzaFooter>
-<<<<<<< HEAD
-                          
-=======
->>>>>>> 93a5acf9 (Init)
                         </>
-
-                      )
-                    }
-                  </CredenzaContent>
-                    </Credenza>
-                    
-                  </div>
+                      )}
+                    </CredenzaContent>
+                  </Credenza>
                 </div>
+              </div>
             ))}
           </div>
-
-          </div>
+        </div>
       </div>
-          {/* <div className="dishes-container">
-          {dishes.length > 0 && dishes.map(dish => (
-            <div key={dish.id} className="dish">
-              <img src={dish.image} alt={dish.title} />
-              <div>
-                <h3>{dish.name}</h3>
-                <p>{dish.desc}</p>
-                <p>{dish.price}</p>
-              </div>
-            </div>
-          ))}
-        </div> */}
-       {/* <Dettaille updateFormState={updateFormState} setUpdateFormState={setUpdateFormState} /> */}
-<<<<<<< HEAD
-       {/* <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-950 py-4 px-6 shadow-lg">
-        <Button className="fixed bottom-4 right-4 h-16 w-16 rounded-full bg-green-500 text-white shadow-lg flex items-center justify-center">
-          <PhoneIcon className="h-8 w-8" />
+      <div className={`mb-1 fixed bottom-16 right-2 flex items-center justify-center ${credenzaOpen ? 'hidden' : ''}`}>
+        <Button className="h-16 w-16 rounded-full bg-[#28509E] text-white shadow-lg flex items-center justify-center" size="icon" variant="outline">
+          <img src={Logo} alt="Waiter Icon" className="h-8 w-8 text-white fill-[#fff]" />
         </Button>
-      </div> */}
-    <div className={`mb-1 fixed bottom-16 right-2 flex items-center justify-center ${credenzaOpen ? 'hidden' : ''}`}>
-  <Button className="h-16 w-16 rounded-full bg-blue-500 text-white shadow-lg flex items-center justify-center"  size="icon"
-                variant="outline">
-  {/* <BellIcon className="h-8 w-8" /> */}
-  <img src={Logo} alt="Waiter Icon" className="h-8 w-8 text-white fill-[#fff]"  />
-  </Button>
-</div>
-
-
-=======
->>>>>>> 93a5acf9 (Init)
+      </div>
     </>
   );
 }
 
-<<<<<<< HEAD
-function BellIcon(props) {
+function MinusIcon(props) {
   return (
     <svg
       {...props}
@@ -264,11 +205,29 @@ function BellIcon(props) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-      <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+      <path d="M5 12h14" />
     </svg>
-  )
+  );
 }
-=======
->>>>>>> 93a5acf9 (Init)
+
+function PlusIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M5 12h14" />
+      <path d="M12 5v14" />
+    </svg>
+  );
+}
+
 export default MenuItems;

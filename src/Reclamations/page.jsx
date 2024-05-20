@@ -10,13 +10,11 @@ function Reclamations() {
 
 const getData  =async ()=>{
     try{
-<<<<<<< HEAD
-        const respone = await axiosInstance.get("/api/claims")
-=======
 
         const restoInfo = sessionStorage.getItem('RestoInfo');
         let Data = [];
         Data = JSON.parse(restoInfo)
+        console.log("The Items => ",restoInfo, Data);
         let id;
         Data.map(item => {
           //  setRestoInfo(item)
@@ -24,11 +22,10 @@ const getData  =async ()=>{
            id = item.id;
         })
         const respone = await axiosInstance.get("/api/claims/"+id)
->>>>>>> 93a5acf9 (Init)
         console.log("The claims is => ",respone.data);
         if(respone){
-            setClaims(respone.data)
-               }
+        setClaims(respone.data)
+         }
 
     }catch(err){
 
@@ -54,7 +51,7 @@ getData();
 
     return (
         <>
-            <div className="flex-1 space-y-4 p-8 pt-6">
+            <div className="flex-1 space-y-4 p-8 pt-20">
                 <div className="flex items-center justify-between space-y-2">
                     <h2 className="text-3xl font-bold tracking-tight">Reclamations</h2>
                     {/* <div className="flex items-center space-x-2">

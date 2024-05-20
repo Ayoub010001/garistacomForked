@@ -54,15 +54,6 @@ import { getRoles } from "../../../actions/Role/getRoles";
 import { axiosInstance } from "../../../axiosInstance";
 import {  useNavigate } from "react-router-dom";
 import { useLogin } from "../../../actions/Authentification/LoginProvider";
-<<<<<<< HEAD
-function DashboardPage() {
-  const [qrValue, setQrValue] = useState();
-  const navigate = useNavigate();
-
-  const [userDat, setUserDat] = useState([])
-  const idUser = sessionStorage.getItem('dataItem');
-  const [isLoggedIn, setIsLoggedIn] = useState("not login");
-=======
 import Spinner from "react-spinner-material";
 function DashboardPage() {
   const [qrValue, setQrValue] = useState();
@@ -76,30 +67,46 @@ function DashboardPage() {
   const [isLoggedIn, setIsLoggedIn] = useState("not login");
   const [loading, setLoading] = useState(false)
   const [orders, setOrders] = useState([]); // State to hold orders data
->>>>>>> 93a5acf9 (Init)
 
   // Check if user is logged in by verifying session storage
   // You may customize this based on how you handle authentication
   const checkLoginStatus = () => {
     const userLoggedIn = sessionStorage.getItem('isLoggedIn');
     setIsLoggedIn(userLoggedIn);
-  };
-<<<<<<< HEAD
-
+  };  
   
+  async function fetchOrderDetails(orders) {
+    setLoading(true)
 
-  // Call checkLoginStatus on initial render
-  useEffect(() => {
-    checkLoginStatus();
- 
+    const itemCounts = {};
 
-  }, []);
+    for (const order of orders) {
+      try {
+        const response = await axiosInstance.get(`/api/order/${order.id}`);
+        const { dishes } = response.data;
 
+        dishes.forEach(dish => {
+          if (itemCounts[dish.name]) {
+            itemCounts[dish.name].count += dish.quantity;
+          } else {
+            itemCounts[dish.name] = {
+              name: dish.name,
+              image: dish.image,
+              count: dish.quantity,
+            };
+          }
+        });
+      } catch (error) {
+        console.error(`Error fetching details for order ${order.id}:`, error);
+      }
+      finally{
+        setLoading(false)
+      }
+    }
 
-
-
-  const defaultPageURL = "https://votre-domaine.com/page-par-defaut";
-=======
+    const sortedItems = Object.values(itemCounts).sort((a, b) => b.count - a.count);
+    setItems(sortedItems);
+  }
   const [restos, setRestos] = useState([])
 
   const getOrders = async (id) => {
@@ -109,8 +116,8 @@ function DashboardPage() {
        if(res)
        {
         console.log('The Response of Order Resto => ', res.data);
+        fetchOrderDetails(res.data)
         setOrders(res.data);
-
        }
 
     } 
@@ -165,6 +172,7 @@ function DashboardPage() {
           })
           getOrders(id)
           fetchData(id)
+          
       }
       catch(err)
       {
@@ -181,7 +189,13 @@ function DashboardPage() {
 
     getUserData();
   }, []);
+  const [items, setItems] = useState([]);
 
+
+  // useEffect(() => {
+    
+
+  // }, []);
   // Call checkLoginStatus on initial render
   useEffect(() => {
     checkLoginStatus();
@@ -198,7 +212,6 @@ function DashboardPage() {
     </div>
     )
   }
->>>>>>> 93a5acf9 (Init)
   return (
     <div className="">
       <div className="md:hidden">
@@ -216,7 +229,7 @@ function DashboardPage() {
 
       <div className="hidden flex-col md:flex">
 
-        <div className="flex-1 space-y-4 p-8 pt-6">
+        <div className="flex-1 space-y-4 p-8 pt-20">
           <div className="flex items-center justify-between space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
 
@@ -283,11 +296,7 @@ function DashboardPage() {
                     <RiListUnordered className="h-4 w-4 text-muted-foreground"/>
                   </CardHeader>
                   <CardContent>
-<<<<<<< HEAD
-                    <div className="text-2xl font-bold">2350</div>
-=======
                     <div className="text-2xl font-bold">{orderCount}</div>
->>>>>>> 93a5acf9 (Init)
                     {/* <p className="text-xs text-muted-foreground">
                       +180.1% from last month
                     </p> */}
@@ -313,11 +322,7 @@ function DashboardPage() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-<<<<<<< HEAD
-                    <div className="text-2xl font-bold">12,234</div>
-=======
                     <div className="text-2xl font-bold">{totalItems}</div>
->>>>>>> 93a5acf9 (Init)
                     {/* <p className="text-xs text-muted-foreground">
                       +19% from last month
                     </p> */}
@@ -331,11 +336,7 @@ function DashboardPage() {
                     <IoQrCodeOutline className="h-4 w-4 text-muted-foreground"/>
                     </CardHeader>
                   <CardContent>
-<<<<<<< HEAD
-                    <div className="text-2xl font-bold">573</div>
-=======
                     <div className="text-2xl font-bold">{qrcodeLength}</div>
->>>>>>> 93a5acf9 (Init)
                     {/* <p className="text-xs text-muted-foreground">
                       +201 since last hour
                     </p> */}
@@ -348,11 +349,7 @@ function DashboardPage() {
                     <CardTitle>Last 30 days Orders</CardTitle>
                   </CardHeader>
                   <CardContent className="pl-2">
-<<<<<<< HEAD
-                    <Overview />
-=======
                     <Overview orders={orders.slice(-30)} />
->>>>>>> 93a5acf9 (Init)
                   </CardContent>
                 </Card>
                 <Card className="col-span-3">
@@ -363,7 +360,7 @@ function DashboardPage() {
                     </CardDescription> */}
                   </CardHeader>
                   <CardContent>
-                    <RecentSales />
+                    <RecentSales items={items}/>
                   </CardContent>
                 </Card>
               </div>
@@ -378,11 +375,7 @@ function DashboardPage() {
                   </CardHeader>
                   <CardContent>
 
-<<<<<<< HEAD
-                    <RecentSalesOrders />
-=======
                     <RecentSalesOrders orders={orders} />
->>>>>>> 93a5acf9 (Init)
 
 
                   </CardContent>

@@ -23,8 +23,6 @@ export const  getUserById = async (id) => {
       console.error('Error User:', error);
     }
   }
-<<<<<<< HEAD
-=======
 export const  getStaffById = async (id) => {
     
     try {
@@ -38,7 +36,6 @@ export const  getStaffById = async (id) => {
       console.error('Error User:', error);
     }
   }
->>>>>>> 93a5acf9 (Init)
 
 export const updateUser = async ({
   id,

@@ -103,6 +103,7 @@ export default function DashboardCompany() {
     const [currData, setCurrData] = useState([])
     const [name, setName] = useState('')
     const [slug, setSlug] = useState('')
+    const [phone,setPhone] = useState('');
     const [description, setDescription] = useState('')
     const [address, setAddress] = useState('')
     const [wifiPass, setWifiPass] = useState('')
@@ -177,6 +178,7 @@ export default function DashboardCompany() {
              setTiktok_pixel(item.tiktok_pixel)
              setAds_pixel(item.ads_pixel)
              setAnylytics(item.anylytics)
+             setPhone(item.phone)
          })
         }
     }
@@ -235,7 +237,8 @@ export default function DashboardCompany() {
                website_url,
                whatsapp,
                wifi_pass: wifiPass,
-               youtube
+               youtube,
+               phone,
            })
 
            handleImageUpdate(logo)
@@ -258,6 +261,7 @@ export default function DashboardCompany() {
     }
 
     const handleAdded = async () => {
+        console.log("infos ADDED djs", phone);
         try{
            const res = await postCompany({
                instgram,
@@ -279,7 +283,8 @@ export default function DashboardCompany() {
                youtube,
                cover_image,
                logo,
-               resto_id: restos.id
+               resto_id: restos.id,
+               phone,
            })
 
         //    handleImageUpdate(logo)
@@ -371,7 +376,7 @@ export default function DashboardCompany() {
 
     // <TooltipProvider>
     <>
-         <div className="flex items-center justify-between space-y-2 p-4 bg-muted/40">
+         <div className="flex items-center justify-between space-y-2 p-4 pt-20 bg-muted/40">
             <h2 className="text-3xl font-bold tracking-tight">Restaurant Settings</h2>
             <div
               className="flex items-center space-x-2 "
@@ -422,9 +427,50 @@ export default function DashboardCompany() {
                 <Input id="example1" onChange={(e) => setCover_image(e.target.files[0])}  type="file" class="block w-full text-sm file:mr-4 file:rounded-md file:border-0 file:bg-neutral-500 file:py-2.5 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-700 focus:outline-none disabled:pointer-events-none disabled:opacity-60" />
 
             </div>
+            <div className='flex flex-col md:flex-row w-full py-5 gap-5 items-center'>
+            <div className='w-full md:w-1/2'>
+                <label className='block mb-3'>Phone number :</label>
+                <Input
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    id="picture"
+                    type="text"
+                    className='mt-3'
+                    placeholder="Phone Number"
+                />
+            </div>
+            <div className='w-full md:w-1/2'>
+                <label className='block mb-3'>Languages :</label>
+                <Select 
+                // onValueChange={(e) => {setCurrValue(e); console.log("The Values Change => ",e);}}
+                >
+                <SelectTrigger className="w-full">
+                    <SelectValue 
+                    placeholder="Select Language"
+                    // placeholder={currValue} 
+                    />
+                </SelectTrigger>
+                <SelectContent className='cursor-pointer'>
+                    <SelectGroup>
+                    
+                    {/* {
+                        currData.map((item)=> (
+                            <SelectItem className='cursor-pointer' value={item.type}>{item.type}</SelectItem>
+                        ))
+                    } */}
+                      <SelectItem value="en">English</SelectItem>
+                <SelectItem value="es">Español</SelectItem>
+                <SelectItem value="fr">Français</SelectItem>
+                <SelectItem value="zh">العربية</SelectItem>
+
+                    </SelectGroup>
+                </SelectContent>
+                </Select>
+            </div>
+            </div>
             <div className='w-full md:w-full'>
-                <label className='block mb-3'>Adress :</label>
-                <Input value={address} onChange={(e) => setAddress(e.target.value)} className='mt-3' placeholder='Adress' type="text"/>
+                <label className='block mb-3'>Address :</label>
+                <Input value={address} onChange={(e) => setAddress(e.target.value)} className='mt-3' placeholder='Address' type="text"/>
             </div>
             <div className='flex flex-col md:flex-row w-full py-5 gap-5 items-center'>
             <div className='w-full md:w-1/2'>

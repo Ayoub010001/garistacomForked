@@ -7,10 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { CgEye } from "react-icons/cg";
 import { HiWifi } from "react-icons/hi";
 import Spinner from 'react-spinner-material';
-<<<<<<< HEAD
-=======
 import { APIURL } from '../../../lib/ApiKey';
->>>>>>> 93a5acf9 (Init)
 
 
 function Info({
@@ -27,21 +24,12 @@ function Info({
     }
   return (
    <>
-<<<<<<< HEAD
-           <ScrollArea className="h-[900px] w-auto rounded-md border p-4" style={{ height: '900px' }}>
-       <div className="container">
-         <div className="mt-8">
-            <div className='flex flex-col gap-2 items-center justify-center'>
-                <div className='w-24 h-24 rounded-full bg-black outline-2 outline outline-blue border border-1 border-white'></div>
-            
-=======
            <ScrollArea className="h-[900px] w-auto rounded-md border p-4">
        <div className="container">
          <div className="mt-8">
             <div className='flex flex-col gap-2 items-center justify-center'>
                 <div className='overflow-hidden'></div>
                    <img src={`${APIURL}/storage/${infoRes.logo}`} alt="Menu Icon" loading='lazy' className='w-24 h-24 rounded-full bg-black outline-2 outline outline-blue border border-1 border-white'/>
->>>>>>> 93a5acf9 (Init)
                 <div>
                     <h1>{items.name}</h1>
                 </div>

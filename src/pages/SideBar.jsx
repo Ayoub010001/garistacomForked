@@ -2,7 +2,8 @@ import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import "./SideBar.css";
 import { createContext, useContext, useState, useEffect } from "react";
 import { SidebarContext } from "../layouts/Layout";
-
+import Logo from "../../public/Logos/garista.svg"
+import LogoBig from "../../public/Logos/ompic.svg"
 // Fonction pour récupérer l'élément sélectionné du stockage local
 const getSelectedFromLocalStorage = () => {
   const storedItem = localStorage.getItem("selectedItem");
@@ -25,21 +26,26 @@ export default function Sidebar({ children }) {
   }, [selectedItem]);
 
   return (
-    <aside className="fixed h-screen top-0 left-0 z-10">
+    <aside className="fixed h-screen top-0 left-0 z-50">
       <nav
         className={`h-full transition-all duration-300 flex flex-col bg-white border-r shadow-sm ${
           expanded ? "w-64" : "w-16"
         }`}
       >
-        <div className="p-2 pb-4 flex justify-between items-center">
-          <h1
-            className={`overflow-hidden transition-all ${
-              expanded ? "w-32 text-4xl font-bold text-black" : "w-0"
-            }`}
-            style={{ lineHeight: "50px" }}
-          >
-            gar<span className="text-[#28509E]">i</span>sta
-          </h1>
+        <div className="p-2 pb-4 flex justify-center items-center">
+
+          {
+            expanded ?
+            (
+              <img src={LogoBig} height="180" width="180" alt="Profile" className='object-cover h-full' />
+            )
+            :
+            (
+              <img src={Logo} height="100" width="100" alt="Profile" className='object-cover h-full' />
+            )
+          }
+        </div>
+        <div className="absolute top-5 right-1.5">
           <button onClick={toggleExpanded} className="menu-btn bg-[#28509E]">
             {expanded ? <IoIosArrowBack /> : <IoIosArrowForward />}
           </button>

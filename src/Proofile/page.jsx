@@ -81,16 +81,12 @@ import { Separator } from '@radix-ui/react-dropdown-menu';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { getRolesById } from '../../actions/Role/getRoles';
-<<<<<<< HEAD
-import { getUserById } from '../../actions/User/CreateUser';
-=======
 import { getStaffById, getUserById } from '../../actions/User/CreateUser';
->>>>>>> 93a5acf9 (Init)
 import Spinner from 'react-spinner-material';
 import { axiosInstance } from '../../axiosInstance';
 import { toast } from "react-hot-toast";
 import { APIURL } from '../../lib/ApiKey';
-
+import { PasswordForm } from './PasswordForm';
 export const description =
   "A product edit page. The product edit page has a form to edit the product details, stock, product category, product status, and product images. The product edit page has a sidebar navigation and a main content area. The main content area has a form to edit the product details, stock, product category, product status, and product images. The sidebar navigation has links to product details, stock, product category, product status, and product images."
 
@@ -110,11 +106,8 @@ export default function DashboardProfile() {
   const [newPassword, setNewPassword]= useState('')
   const [confirmPassword, setConfirmPassword]= useState('')
   const idUser = sessionStorage.getItem('dataItem');
-<<<<<<< HEAD
-=======
   const roleUser = sessionStorage.getItem('role');
   let role = JSON.parse(roleUser) 
->>>>>>> 93a5acf9 (Init)
   const [Loading, setLoading] = useState(false);
   console.log("The User Item => ", idUser);
   const [file, setFile] = useState(null);
@@ -128,23 +121,19 @@ export default function DashboardProfile() {
         // setError('file', { type: 'manual', message: '' }); // Clear any previous error message
     }
 };
+const userStaff = sessionStorage.getItem('dataStaff')
+
   useEffect(() => {
     const getUserData = async () => {
       setLoading(true)
       try{
 
-<<<<<<< HEAD
-        const userItem = await getUserById(idUser);
+        let userParss = JSON.parse(userStaff)
 
-  
-        if(userItem)
-=======
-
-        const userItem = role == "user" ?  await getUserById(idUser) :  await getStaffById(idUser);
+        const userItem = role == "user" ?  await getUserById(idUser) :  await getStaffById(userParss.id);
 
   
         if(userItem && role == "user")
->>>>>>> 93a5acf9 (Init)
          {
            console.log("The User Item => ", userItem.users);
           // if(userItem)
@@ -160,8 +149,6 @@ export default function DashboardProfile() {
             })
           setLoading(false)
          }
-<<<<<<< HEAD
-=======
          else{
           let roleData = JSON.stringify(userItem.role)
           setRoleName(JSON.parse(roleData))
@@ -173,7 +160,6 @@ export default function DashboardProfile() {
           setLoading(false)
 
          }
->>>>>>> 93a5acf9 (Init)
       }
       catch(err)
       {
@@ -195,12 +181,6 @@ export default function DashboardProfile() {
         formData.append('last_name', lastName)
         formData.append('phone', phone)
         formData.append('email', email)
-<<<<<<< HEAD
-        const respone = await axiosInstance.put('/api/auth/edit/' + userDat.id, formData,{
-          headers: {
-            "Content-Type": "multipart/form-data", // Set the content type to multipart/form-data for file upload
-          },
-=======
         const respone = await axiosInstance.put('/api/auth/edit/' + userDat.id, {
           first_name: name,
           last_name: lastName,
@@ -226,7 +206,6 @@ export default function DashboardProfile() {
           last_name: lastName,
           phone: phone,
           email: email
->>>>>>> 93a5acf9 (Init)
         });
          if(respone)
          {
@@ -259,10 +238,7 @@ export default function DashboardProfile() {
         console.error('Error updating image:', error);
     }
 };
-<<<<<<< HEAD
-=======
 
->>>>>>> 93a5acf9 (Init)
   async function ChangePassw() {
     try{
       const token = sessionStorage.getItem('tokenData');
@@ -292,10 +268,7 @@ export default function DashboardProfile() {
       console.log("The Error => ",err);
     }
   }
-<<<<<<< HEAD
-=======
 
->>>>>>> 93a5acf9 (Init)
   console.log("The Items of Product => ", file , " " , fileName);
 
 
@@ -307,8 +280,6 @@ export default function DashboardProfile() {
   //   )
   // }
 
-<<<<<<< HEAD
-=======
   const handleToggle = () => {
     if(role == 'user')
     {
@@ -318,12 +289,11 @@ export default function DashboardProfile() {
       handleUpdateStaff()
     }
   }
->>>>>>> 93a5acf9 (Init)
   const Image = file == null ? `${APIURL}/storage/${userDat.image}` : URL.createObjectURL(file)
   return (
 
     <TooltipProvider>
-        <div className="flex items-center justify-between space-y-2 p-4 bg-muted/40">
+        <div className="flex items-center justify-between space-y-2 p-4 pt-20 bg-muted/40">
             <h2 className="text-3xl font-bold tracking-tight">Profile</h2>
             <div
               className="flex items-center space-x-2 "
@@ -333,11 +303,7 @@ export default function DashboardProfile() {
                 borderRadius: ".5rem",
               }}
             >
-<<<<<<< HEAD
-              <Button onClick={handleUpdate}>Save</Button>
-=======
               <Button onClick={handleToggle}>Save</Button>
->>>>>>> 93a5acf9 (Init)
             </div>
         </div>
 
@@ -369,15 +335,9 @@ export default function DashboardProfile() {
                                 {
                                   userDat.image == null
                                   ?
-<<<<<<< HEAD
-                                  <img src="/public/avatar.png" height="100" width="150" alt="Profile" />
-                                  :
-                                  <img src={Image} height="100" width="150" alt="Profile" />
-=======
                                   <img src="/public/avatar.png" height="100" width="150" alt="Profile" className='object-cover h-full'/>
                                   :
                                   <img src={Image} height="100" width="150" alt="Profile" className='object-cover h-full' />
->>>>>>> 93a5acf9 (Init)
                                 }
                               </button>
                               <span className="name mt-3">{name + ' ' + lastName}</span>
@@ -446,13 +406,6 @@ export default function DashboardProfile() {
                     <label >Role:</label>
                     <Input value={roleName.name} className='my-3' placeholder='test' disabled/>
                 </div>
-<<<<<<< HEAD
-                <div className='w-full md:w-full'>
-            <label className='block mb-3'>Photo :</label>
-            <Input id="example1" onChange={(e) => handleImageUpdate(e.target.files[0])} type="file" class="block w-full text-sm file:mr-4 file:rounded-md file:border-0 file:bg-neutral-500 file:py-2.5 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-700 focus:outline-none disabled:pointer-events-none disabled:opacity-60" />
-
-          </div>
-=======
                 {
                   role == 'user' &&
                   <div className='w-full md:w-full'>
@@ -461,7 +414,6 @@ export default function DashboardProfile() {
 
             </div>
                 }
->>>>>>> 93a5acf9 (Init)
             </div>
 
 
@@ -475,22 +427,7 @@ export default function DashboardProfile() {
                     <CardTitle className='border-b-2 pb-2'>Change password</CardTitle>
                   </CardHeader>
                   <CardContent>
-                  <div className=" mt-4 mb-4 flex justify-center bg-white">
-            {/* <div className=" p-4"> */}
-
-                      <div className='w-full  '>
-                          <label >Current Password:</label>
-                          <Input value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} className='my-3' placeholder='write password' />
-                          <label >New Password:</label>
-                          <Input value={newPassword} onChange={(e) => setNewPassword(e.target.value)}  className='my-3' placeholder='write password' />
-                          <label >Re-type New Password:</label>
-                          <Input value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className='my-3' placeholder='write password' />
-                          <div className='flex justify-end'>
-                              <Button onClick={ChangePassw}>Change password</Button>
-                          </div>
-
-                      </div>
-                  </div>
+                   <PasswordForm/>
                   </CardContent>
 
                 </Card>

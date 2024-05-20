@@ -30,7 +30,7 @@ export const FormAdd = ({ initialData, categories, selectedCategoryId, handleAdd
     : z.optional(z.instanceof(File))
       .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 2MB.`)
       .optional(),
-    desc: z.string().min(1,'Description is required'),
+    desc: z.string().min(1,'Description is required').max(150,"Description cannot exceed 150 characters"),
     price: z.coerce.number().min(1,'Price is required'),
     category_id: z.string().min(1,'Select a Category'),
   });
@@ -57,6 +57,7 @@ export const FormAdd = ({ initialData, categories, selectedCategoryId, handleAdd
         category_id: '',
       };
       const form = useForm({
+        mode: "onBlur",
         resolver: zodResolver(formSchema),
         defaultValues: {
           ...defaultValues,

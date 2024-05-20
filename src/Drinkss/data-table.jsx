@@ -317,7 +317,7 @@ export function DataTable({
         initialState: {
             pagination: {
                 pageIndex: 0,
-                pageSize: 5,
+                pageSize: 10,
             },
         },
         getCoreRowModel: getCoreRowModel(),
@@ -449,26 +449,6 @@ export function DataTable({
         </div>
 
          <div className="flex items-center justify-end space-x-2 py-4">
-<<<<<<< HEAD
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-          className="bg-zinc-500"
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-          className="bg-black"
-        >
-          Next
-        </Button>
-=======
          <Button
             variant="outline"
             size="sm"
@@ -487,7 +467,6 @@ export function DataTable({
           >
             Next
           </Button>
->>>>>>> 93a5acf9 (Init)
       </div>
       </div>
     </div>

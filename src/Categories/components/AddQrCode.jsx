@@ -43,6 +43,7 @@ function AddQrCode({props}) {
         setLoading(true)
         try {
             const restoInfo = sessionStorage.getItem('RestoInfo');
+            console.log("The RestoInfo => ", restoInfo);
             let Data = [];
             Data = JSON.parse(restoInfo)
             Data.map(item => {
@@ -102,6 +103,7 @@ function AddQrCode({props}) {
         const formData = new FormData();
           // Append each selected image to the formData
         //   for (let i = 0; i < fileName.length; i++) {
+            
             if(data.image)
                 {
                     formData.append("image", data.image);
@@ -186,7 +188,7 @@ function AddQrCode({props}) {
 
 
    
-    console.log("The Olded Category: ", Categories);
+    console.log("The Olded Category: ", resotInfo);
     
 
     console.log("cate ", fileName , " Images => ", file);

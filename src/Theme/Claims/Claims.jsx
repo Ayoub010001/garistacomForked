@@ -13,12 +13,8 @@ function Claims({
     try{
       const res = await axiosInstance.post('/api/claims',{
         description: desc,
-<<<<<<< HEAD
-        resto_id: items.id
-=======
         resto_id: items.id,
         clamer_name: "Younes"
->>>>>>> 93a5acf9 (Init)
       })
 
       if(res)

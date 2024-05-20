@@ -58,9 +58,6 @@ export function DataTable({
  
     const getOrders = async () => {
       try{
-<<<<<<< HEAD
-         const res = await axiosInstance.get('/api/orders')
-=======
         const restoInfo = sessionStorage.getItem('RestoInfo');
         let Data = [];
         Data = JSON.parse(restoInfo)
@@ -71,7 +68,6 @@ export function DataTable({
            id = item.id;
         })
          const res = await axiosInstance.get('/api/order_resto/'+id)
->>>>>>> 93a5acf9 (Init)
          if(res)
          {
           console.log('The Response => ', res.data);
@@ -97,7 +93,7 @@ export function DataTable({
         initialState: {
             pagination: {
                 pageIndex: 0,
-                pageSize: 5,
+                pageSize: 15,
             },
         },
         getCoreRowModel: getCoreRowModel(),
@@ -146,7 +142,7 @@ export function DataTable({
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
-              {[2, 5, 10, 15, 20].map((pageSize) => (
+              {[15, 20, 50 ,100].map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>
@@ -269,11 +265,7 @@ export function DataTable({
           size="sm"
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
-<<<<<<< HEAD
-          className="bg-zinc-800"
-=======
           className="bg-black text-white hover:bg-black hover:text-white"
->>>>>>> 93a5acf9 (Init)
         >
           Previous
         </Button>
@@ -282,11 +274,7 @@ export function DataTable({
           size="sm"
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
-<<<<<<< HEAD
-          className="bg-black"
-=======
           className="bg-black text-white hover:bg-black hover:text-white"
->>>>>>> 93a5acf9 (Init)
         >
           Next
         </Button>

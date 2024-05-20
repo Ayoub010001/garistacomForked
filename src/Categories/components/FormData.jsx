@@ -24,6 +24,17 @@ import { axiosInstance } from '../../../axiosInstance';
 
 const FormAdd = ({ initialData, handleAddUser, handleUpdate }) => {
     const MAX_FILE_SIZE = 2000000;
+    const transformInitialData = (data) => {
+      if (data && typeof data.visibility !== 'boolean') {
+          return {
+              ...data,
+              visibility: data.visibility === 1,
+          };
+      }
+      return data;
+  };
+
+  const transformedInitialData = transformInitialData(initialData);
 console.log("The Visibility => ", initialData);
     const formSchema = z.object({
         name: z.string().min(1, 'Name is required'),
@@ -55,14 +66,8 @@ console.log("The Visibility => ", initialData);
       const description = initialData ? 'Edit a product.' : 'Add a new product';
       const toastMessage = initialData ? 'Product updated.' : 'Product created.';
       const action = initialData ? 'Save changes' : 'Create';
-      const defaultValues = initialData ? {
-          ...initialData,
-        // images: null,
-<<<<<<< HEAD
-        // visibility : true,
-=======
-        visibility: initialData.visibility ?? true,
->>>>>>> 93a5acf9 (Init)
+      const defaultValues = transformedInitialData ? {
+        ...transformedInitialData,
       } : {
           name: '',
         // image: null,
@@ -173,7 +178,7 @@ console.log("The Visibility => ", initialData);
                             <FormField
                                     control={form.control}
                                     name="visibility"
-                                    render={({ field }) => (
+                                    render={({ field, formState }) => (
                                         <FormItem>
                                         <div className="flex gap-3 mt-5">
                                             <FormLabel style={{fontSize:"20px"}}>
@@ -182,14 +187,14 @@ console.log("The Visibility => ", initialData);
                                         <FormControl>
                                             <Switch
                                             checked={field.value}
-<<<<<<< HEAD
-                                            onCheckedChange={field.onChange}
-=======
                                             onCheckedChange={(value) => form.setValue('visibility', value)}
->>>>>>> 93a5acf9 (Init)
                                             />
                                             
                                         </FormControl>
+                                  {console.log("the boolean is",field.value)}
+                                        {formState.errors.visibility && (
+                                    <FormMessage error={formState.errors.visibility} />
+                                  )}
                                         </div>
                                         </FormItem>
                                     )}

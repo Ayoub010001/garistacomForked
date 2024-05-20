@@ -100,40 +100,64 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
     }
   };
   const onSubmit = async (data) => {
-    const usernameExists = await checkUsernameExists(data.username);
-    const emailExists = await checkEmailExists(data.email);
-    if (!usernameExists) {
-      form.setError('username', {
-        type: 'manual',
-        message: 'This username is already in use',
-      });
-    }
-    if (!emailExists) {
-      form.setError('email', {
-        type: 'manual',
-        message: 'This email is already in use',
-      });
-    }
-    if (!usernameExists || !emailExists) {
-      return;
-    }
-    console.log('Data : ', data , parseInt(data.role_id))
-    
-    if(initialData)
-    {
+    // Check if it's an update operation and if initialData exists
+    if (initialData) {
+        // If it's an update operation, check if username or email has changed
+        if (data.username !== initialData.username) {
+            const usernameExists = !await checkUsernameExists(data.username);
+            if (usernameExists) {
+                form.setError('username', {
+                    type: 'manual',
+                    message: 'This username is already in use',
+                });
+                return; // Stop further processing if username exists
+            }
+        }
+        if (data.email !== initialData.email) {
+            const emailExists = !await checkEmailExists(data.email);
+            if (emailExists) {
+                form.setError('email', {
+                    type: 'manual',
+                    message: 'This email is already in use',
+                });
+                return; // Stop further processing if email exists
+            }
+        }
+        // If neither username nor email exists, proceed with update
         handleUpdate({
             data,
             toastMessage,
-            id: initialData.id
-        })
-    }
-    else{
+            id: initialData.id,
+        });
+    } else {
+        // If it's an add operation, check both username and email existence
+        const usernameExists = !await checkUsernameExists(data.username);
+        const emailExists = !await checkEmailExists(data.email);
+        if (usernameExists) {
+            form.setError('username', {
+                type: 'manual',
+                message: 'This username is already in use',
+            });
+        }
+        if (emailExists) {
+            form.setError('email', {
+                type: 'manual',
+                message: 'This email is already in use',
+            });
+        }
+        // If either username or email exists, stop further processing
+        if (usernameExists || emailExists) {
+            return;
+        }
+        // If both username and email are unique, proceed with adding data
         handleData({
             data,
-            toastMessage
-        })
+            toastMessage,
+        });
     }
-  };
+};
+
+  
 
   const filteredRoles = roles.filter(role => role.name === 'Manager' || role.name === 'Waiter');
 
@@ -172,13 +196,14 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
                   />
               </div>
               <div className="flex gap-3">
+                
               <FormField
                     control={form.control}
                     name="username"
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input type="text" placeholder="Username" className="w-72 p-2 border border-gray-300 rounded-md" disabled={loading} {...field} />
+                          <Input type="text" placeholder="Username" className="w-72 p-2 border border-gray-300 rounded-md" disabled={loading || initialData} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -224,17 +249,10 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
                     )}
                   /> 
                   }
-<<<<<<< HEAD
-              </div>
-          </div>
-              <div className='max-w-[40%] mx-auto'>
-              <FormField
-=======
                   {initialData && 
                   <div className='w-72 '>
 
                     <FormField
->>>>>>> 93a5acf9 (Init)
                     control={form.control}
                     name="role_id"
                     render={({ field }) => (
@@ -260,9 +278,6 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
                       </FormItem>
                     )}
                     /> 
-<<<<<<< HEAD
-              </div>
-=======
                   </div>
                   }
               </div>
@@ -299,7 +314,6 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
                     /> 
               </div>
           }
->>>>>>> 93a5acf9 (Init)
               
         
           <Button disabled={loading} type="submit" variant="outline" className="justify-center !flex items-center max-w-max mx-auto w-full bg-black hover:bg-black text-white hover:text-white">

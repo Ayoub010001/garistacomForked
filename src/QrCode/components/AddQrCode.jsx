@@ -17,6 +17,10 @@ import { QRCode } from 'react-qrcode-logo';
 import { useEffect } from 'react';
 import { axiosInstance } from '../../../axiosInstance';
 import Spinner from 'react-spinner-material';
+import Logo from "../../../public/Logos/garista.svg"
+import { Button } from '../../components/ui/button';
+import { toast } from "react-hot-toast";
+import { DialogClose } from '@radix-ui/react-dialog';
 
 export const UserContext = createContext();
 
@@ -75,6 +79,21 @@ function AddQrCode({props}) {
 
     fetchValues()
   }, [])
+
+  const handleDelete = async (itemId,QrCode) => {
+     try{
+       const res = await axiosInstance.delete('/api/qrcodes/'+itemId)
+       if(res)
+       {
+        toast.success("QrCode deleted");
+        setQrCode(QrCode.filter(item => item.id !== itemId));  
+       }
+     }
+     catch(err)
+     {
+        console.log("the Error => ",err);
+     }
+  }
   const [qrValue,setQrValue] =useState()
 
 
@@ -88,21 +107,27 @@ function AddQrCode({props}) {
             </div>
             :
             <div className='grid grid-cols-6 gap-2'>
-                                <Card className="w-[250px] h-[250px]">
-                <CardHeader  className="text-center">
-                <CardTitle>Menu</CardTitle>
-                </CardHeader>
-                <CardContent>
-                <div className="m-5 ml-10 flex mt-0 gap-10 ">
-                <QRCode
-                    id="qrcode-id-unique"
-                    value={`https://admin.garista.com/theme/${restoInfo.slug}?table_id=2`}
-                    logoImage="/Logos/qrcode-logo.png"
-                    logoWidth={40}
-                    className="w-64 h-64"
-                />
-                </div>
-                </CardContent>
+               <Card className="w-[250px] h-[250px]">
+                        <CardHeader  className="text-center ">
+                             <CardTitle>Menu</CardTitle>
+
+                        </CardHeader>
+                    <CardContent>
+                    <div className="m-5 flex mt-0 gap-10 ">
+                    <QRCode
+                        id="qrcode-id-unique"
+                        value={`https://admin.garista.com/theme/${restoInfo.slug}?table_id=2`}
+                        logoImage={Logo}
+                        removeQrCodeBehindLogo={true}
+                        logoPaddingStyle="circle"
+                        qrStyle='squares'
+                        logoWidth={40}
+                        eyeRadius={5}
+                        eyeColor="#28509E"
+                        className="w-64 h-64"
+                    />
+                    </div>
+                    </CardContent>
             </Card>
 
                 {QrCode.length > 0 && QrCode.map((item, index) => {
@@ -111,25 +136,55 @@ function AddQrCode({props}) {
                       const urlWithParams = `${baseUrl}?table_id=${encodeURIComponent(item.table_id)}`;
                       return(
                         <div key={index}>
-                            <Dialog >
-                            <DialogTrigger asChild>
-                                <button>
                             <Card className="w-[250px] h-[250px]">
-                        <CardHeader  className="text-center">
-                        <CardTitle>{item.table.name}</CardTitle>
+                        <CardHeader  className="text-center relative">
+                           <CardTitle>{item.table.name}</CardTitle>
+                           <div className='absolute top-2 right-5'>
+                                <Dialog className="items-center justify-center">
+                                    <DialogTrigger asChild>
+                               <Button size="icon" variant="outline">
+                                 <TrashIcon className="w-4 h-4" />
+                                </Button>
+                                    </DialogTrigger>
+
+                                    <DialogContent className="sm:max-w-[425px] items-center justify-center ">
+                                        <DialogHeader className="items-center justify-center ">
+                                            <DialogTitle className="flex items-center text-[1.7rem]"> Are you sure ?</DialogTitle>
+                                        </DialogHeader>
+                                        <div className="pt-6 space-x-2 flex items-center justify-end w-full">
+                                            <DialogClose>
+                                                <Button variant="outline">
+                                                Cancel
+                                                </Button>
+                                            <Button className="bg-black text-white" variant="darkBlack" onClick={() => handleDelete(item.id, QrCode)}>Continue</Button>
+                                            </DialogClose>
+                                        </div>
+                                    </DialogContent>
+
+
+                                </Dialog>
+                             </div>
                         </CardHeader>
                         <CardContent>
-                        <div className="m-5 ml-10 flex mt-0 gap-10 ">
+                        <div className="m-5  flex mt-0 gap-10 ">
                         <QRCode
                             id="qrcode-id-unique"
                             value={urlWithParams}
-                            logoImage="/Logos/qrcode-logo.png"
+                            logoImage={Logo}
+                            removeQrCodeBehindLogo={true}
+                            logoPaddingStyle="circle"
+                            qrStyle='squares'
                             logoWidth={40}
+                            eyeRadius={5}
+                            eyeColor="#28509E"
                             className="w-64 h-64"
                         />
                         </div>
                         </CardContent>
                     </Card>
+                            {/* <Dialog >
+                            <DialogTrigger asChild>
+                                <button>
                     </button>
                     </DialogTrigger >
                     <DialogContent className="max-w-[85rem]">
@@ -141,7 +196,7 @@ function AddQrCode({props}) {
                                 </div>
                             </div>
                     </DialogContent>
-                           </Dialog>
+                           </Dialog> */}
                         </div>
                       )
 
@@ -153,7 +208,7 @@ function AddQrCode({props}) {
                         <CardHeader className="text-center">
                         <CardTitle>Add a QrCode</CardTitle>
                         <CardDescription>
-                            You made 265 sales this month.
+                            Add a specific QrCode for you tables
                         </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -194,4 +249,25 @@ function AddQrCode({props}) {
   );
 }
 
+
+function TrashIcon(props) {
+    return (
+      <svg
+        {...props}
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M3 6h18" />
+        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+      </svg>
+    );
+  }
 export default AddQrCode;

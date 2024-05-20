@@ -4,25 +4,15 @@ import {tabAchat} from './constant/page'
 import Banner from "./Banner/Banner";
 import Tab from "./Tabs/Tab";
 import MenuItems from "./MenuItems/MenuItems";
-<<<<<<< HEAD
 import Info from "./Info/infov2";
 import Footer from "./Footer/Footerv2";
 import Achat from "./Achat/Achatv2";
 import Claims from "./Claims/Claimsv2";
-import Spinner from "react-spinner-material";
-import { axiosInstance } from "../../axiosInstance";
-import { APIURL } from "../../lib/ApiKey";
 import Rate from './Rating/Rate';
-=======
-import Info from "./Info/Info";
-import Footer from "./Footer/Footer";
-import Achat from "./Achat/Achat";
-import Claims from "./Claims/Claims";
 import Spinner from "react-spinner-material";
 import { axiosInstance } from "../../axiosInstance";
 import { APIURL } from "../../lib/ApiKey";
 
->>>>>>> 93a5acf9 (Init)
 function App() {
   const [cartCount, setCartCount] = useState(tabAchat.length);
   const [validSlug, setValidSlug] = useState(false); // State to track the validity of the resto slug
@@ -47,16 +37,6 @@ function App() {
     try{
       const res = await fetch(`${APIURL}/api/getCategorieByResto/${id}`);
       const data = await res.json();
-<<<<<<< HEAD
-      if(data)
-      {
-        console.log("The Response of The categories => ", data);
-        setCategories(data)
-      }
-
-      return data;
-
-=======
       if (data && data.length) {
         const visibleCategories = data.filter(cat => cat.visibility === 1);
         console.log("The Response of The categories => ", visibleCategories);
@@ -66,7 +46,6 @@ function App() {
         setCategories([]); // Set to empty if no visible categories
       }
 
->>>>>>> 93a5acf9 (Init)
     }catch(err)
     {
       console.log("the Error => ", err);
@@ -77,68 +56,52 @@ function App() {
   }
 
   const fetchDishes = async (restoId) => {
+    if (!restoId) return;
+    setLoading(true);
     try {
-        let dishesUrl = `${APIURL}/api/getdishes/${restoId}`;
-        let drinksUrl = `${APIURL}/api/getdrinks/${restoId}`;
-
-        if (selectedTab !== "All") {
-            const categoryQuery = `?category=${selectedTab}`;
-            dishesUrl += categoryQuery;
-            drinksUrl += categoryQuery;
-        }
-
-        // Execute both fetch calls concurrently
-        const [dishesResponse, drinksResponse] = await Promise.all([
-            fetch(dishesUrl),
-            fetch(drinksUrl)
-        ]);
-
-        // Parse responses
-        const dishesData = await (dishesResponse.ok ? dishesResponse.json() : dishesResponse.json().then(data => data));
-        const drinksData = await (drinksResponse.ok ? drinksResponse.json() : drinksResponse.json().then(data => data));
-
-        // Handle possible empty arrays or specific messages like "No Dishes found"
-<<<<<<< HEAD
-        let combinedData = [];
-        if (dishesData && dishesData.length) combinedData.push(...dishesData);
-        if (drinksData && drinksData.length) combinedData.push(...drinksData);
-=======
-
-        // const typedDishes = dishesData.length > 0 && dishesData.map(item => ({ ...item, type: 'dish' }));
-        // const typedDrinks = drinksData.length > 0 &&  drinksData.map(item => ({ ...item, type: 'drink' }));
-
-        let combinedData = [];
-        if (dishesData && dishesData.length) {
-          combinedData.push(...dishesData.map(item => ({ ...item, type: 'dish' })));
+      // Fetch visible categories first
+      const categoryResponse = await fetch(`${APIURL}/api/getCategorieByResto/${restoId}`);
+      const categoriesData = await categoryResponse.json();
+      const visibleCategories = categoriesData.filter(cat => cat.visibility === 1);
+      const visibleCategoryIds = visibleCategories.map(cat => cat.id);
+  
+      // Fetch dishes and drinks
+      const [dishesResponse, drinksResponse] = await Promise.all([
+        fetch(`${APIURL}/api/getdishes/${restoId}${selectedTab !== "All" ? `?category=${selectedTab}` : ""}`),
+        fetch(`${APIURL}/api/getdrinks/${restoId}${selectedTab !== "All" ? `?category=${selectedTab}` : ""}`)
+      ]);
+  
+      const dishesData = await dishesResponse.json();
+      const drinksData = await drinksResponse.json();
+  
+      // Filter dishes and drinks based on visible categories
+      const filteredDishes = dishesData.filter(dish => visibleCategoryIds.includes(dish.category_id));
+      const filteredDrinks = drinksData.filter(drink => visibleCategoryIds.includes(drink.category_id));
+  
+      // Combine and set the filtered data
+      let combinedData = [];
+      if (filteredDishes.length) {
+        combinedData.push(...filteredDishes.map(item => ({ ...item, type: 'dish' })));
       }
-      
-      // Properly adding 'type' property to each drink
-      if (drinksData && drinksData.length) {
-          combinedData.push(...drinksData.map(item => ({ ...item, type: 'drink' })));
+      if (filteredDrinks.length) {
+        combinedData.push(...filteredDrinks.map(item => ({ ...item, type: 'drink' })));
       }
->>>>>>> 93a5acf9 (Init)
-
-        setDishes(combinedData);
-
-        if (combinedData.length === 0 || dishesData.message || drinksData.message) {
-            console.log('No matching dishes or drinks found or specific message received.');
-            // Optionally set a state to show this message in the UI
-            setMessage(dishesData.message || drinksData.message || 'No items found.');
-        }
-
+  
+      setDishes(combinedData);
+      if (!combinedData.length) {
+        setMessage('No items found.');
+      }
     } catch (error) {
-        console.error('Error fetching dishes and drinks:', error.message);
-        setMessage('Failed to fetch data. Please try again.');
+      console.error('Error fetching dishes and drinks:', error);
+      setMessage('Failed to fetch data. Please try again.');
+    } finally {
+      setLoading(false);
     }
-};
+  };
+  
 
 
-
-<<<<<<< HEAD
-console.log("The Resto Id => ", restoId);
-=======
 console.log("The Resto Id => ", dishes);
->>>>>>> 93a5acf9 (Init)
 
 const fetchInfo = async (id) => {
   try{ 
@@ -179,21 +142,6 @@ const fetchInfo = async (id) => {
           fetchCategories(item.id)
           setRestoId(item.id)
           fetchDishes(item.id)
-<<<<<<< HEAD
-          // fetchInfo(item.id)
-        })
-        // setLoading(true)
-
-        if(res)
-          {
-            console.log("The data of Info => ", res);
-            let Data = [];
-            Data = res.data;
-            Data.map(item => {
-              setResInfo(item)
-            })
-          }
-=======
           fetchInfo(item.id)
         })
         // setLoading(true)
@@ -206,7 +154,6 @@ const fetchInfo = async (id) => {
         //       setResInfo(item)
         //     })
         //   }
->>>>>>> 93a5acf9 (Init)
       }
       // const isValidSlug = useValidateSlug(restoSlug, Data.map(item => item.slug));
 
@@ -269,28 +216,21 @@ useEffect(() => {
                 </>
               }
             />
-<<<<<<< HEAD
-             <Route path={`/theme/:restoSlug/Rating`}  element={
-              <>
-              <Rate/>
-              <Footer slug={restoSlug}  table_id={extraInfo}/>
-              </>
-            } />
-=======
->>>>>>> 93a5acf9 (Init)
             <Route path={`/theme/:restoSlug/info`} element={
               <>
               <Info items={restos} infoRes={resInfo}/>
               <Footer slug={restoSlug}  table_id={extraInfo}/>
               </>
             } />
+             <Route path={`/theme/:restoSlug/Rating`}  element={
+              <>
+              <Rate/>
+              <Footer slug={restoSlug}  table_id={extraInfo}/>
+              </>
+            } />
             <Route path={`/theme/:restoSlug/Achat`}  element={
               <>
-<<<<<<< HEAD
-              <Achat resto_id={restoId} tabel_id={extraInfo} />
-=======
               <Achat resto_id={restoId} tabel_id={extraInfo} restoId={restoId}/>
->>>>>>> 93a5acf9 (Init)
               <Footer slug={restoSlug}  table_id={extraInfo}/>
               </>
             } />

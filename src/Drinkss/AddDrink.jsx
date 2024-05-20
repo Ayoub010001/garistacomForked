@@ -28,11 +28,7 @@ const AddDiche = ({
     <>
     <Dialog  className=" p-8 shadow-lg h-[45rem] w-[65rem] rounded-xl">
 <DialogTrigger className="flex justify-center">
-<<<<<<< HEAD
-                <Button variant="ghost" className="relative  rounded-md bg-black ">
-=======
                 <Button variant="ghost" className="relative  rounded-md bg-black text-white">
->>>>>>> 93a5acf9 (Init)
                         Add Drinks
                 </Button>
                 </DialogTrigger>
