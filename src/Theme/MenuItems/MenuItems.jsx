@@ -201,7 +201,7 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                                 src={
                                   item.image
                                     ? `${APIURL}/storage/${item.image}`
-                                    : "https://source.unsplash.com/random"
+                                    : ""
                                 }
                                 alt="Menu Icon"
                                 className="w-full object-cover rounded-[10px] h-32"
@@ -237,7 +237,7 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                               photo={
                                 selectedItem?.image
                                   ? `${APIURL}/storage/${selectedItem.image}`
-                                  : "https://source.unsplash.com/random"
+                                  : ""
                               }
                               className="p-0"
                             >

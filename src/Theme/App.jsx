@@ -27,7 +27,7 @@ function App() {
   const [restosSlug, setRestosSlug] = useState([]);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [restoId, setRestoId] = useState(1);
+  const [restoId, setRestoId] = useState(null);
   const [dishes, setDishes] = useState([]);
   const [selectedTab, setSelectedTab] = useState("All");
   const [resInfo, setResInfo] = useState([]);
@@ -160,10 +160,10 @@ function App() {
       if (data) {
         Data.map((item) => {
           setRestos(item);
-          fetchCategories(item.id || 1);
-          setRestoId(item.id || 1);
-          fetchDishes(item.id || 1);
-          fetchInfo(item.id || 1);
+          fetchCategories(item.id);
+          setRestoId(item.id);
+          fetchDishes(item.id);
+          fetchInfo(item.id);
         });
         // setLoading(true)
         // if(res)

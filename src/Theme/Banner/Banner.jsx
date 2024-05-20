@@ -21,7 +21,7 @@ function Banner({ items, infoRes }) {
               src={
                 infoRes?.cover_image
                   ? `${APIURL}/storage/${infoRes.cover_image}`
-                  : "/assets/menu-banner-3.jpg"
+                  : "/assets/menu-banner-3.jpgg"
               }
               loading="lazy"
               className="max-h-44 bg-secondary-gray object-cover w-full h-screen"
