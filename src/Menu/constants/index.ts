@@ -68,7 +68,7 @@ export const menuItems = {
 
 export const themeContent = {
   1: {
-    name: "Theme 1",
+    name: "KFC Menu",
     description: "This is theme 1",
     image: "/Themes/theme-1.png",
     bannerImage: "/assets/menu-banner-1.jpg",
@@ -100,6 +100,14 @@ export const themeContent = {
       {
         discount: Math.floor(Math.random() * 100),
         price: Math.floor(Math.random() * 80),
+        description: "All Toppings",
+        name: "All",
+        catImage: `/RecentSales/${Math.floor(Math.random() * 5)}.png`,
+        id: "all",
+      },
+      {
+        discount: Math.floor(Math.random() * 100),
+        price: Math.floor(Math.random() * 80),
         description: "Delicious pizzas with a variety of toppings",
         name: "Pizza",
         catImage: "/RecentSales/4.png",
@@ -109,7 +117,7 @@ export const themeContent = {
         discount: Math.floor(Math.random() * 100),
         price: Math.floor(Math.random() * 80),
         description: "Crispy and flavorful fried chicken",
-        name: "Fried Chicken",
+        name: "Chicken",
         catImage: "/RecentSales/5.png",
         id: "fried-chicken",
       },
@@ -185,6 +193,14 @@ export const themeContent = {
     ],
     infoButton: "/assets/info-button.png",
     categories: [
+      {
+        discount: Math.floor(Math.random() * 100),
+        price: Math.floor(Math.random() * 80),
+        description: "All Toppings",
+        name: "All",
+        catImage: `/RecentSales/${Math.floor(Math.random() * 5)}.png`,
+        id: "all",
+      },
       {
         discount: Math.floor(Math.random() * 100),
         price: Math.floor(Math.random() * 80),
@@ -276,6 +292,14 @@ export const themeContent = {
       {
         discount: Math.floor(Math.random() * 100),
         price: Math.floor(Math.random() * 80),
+        description: "All Toppings",
+        name: "All",
+        catImage: `/RecentSales/${Math.floor(Math.random() * 5)}.png`,
+        id: "all",
+      },
+      {
+        discount: Math.floor(Math.random() * 100),
+        price: Math.floor(Math.random() * 80),
         description: "Delicious pizzas with a variety of toppings",
         name: "Pizza",
         catImage: "/RecentSales/4.png",
@@ -361,6 +385,14 @@ export const themeContent = {
     ],
     infoButton: "/assets/info-button.png",
     categories: [
+      {
+        discount: Math.floor(Math.random() * 100),
+        price: Math.floor(Math.random() * 80),
+        description: "All Toppings",
+        name: "All",
+        catImage: `/RecentSales/${Math.floor(Math.random() * 5)}.png`,
+        id: "all",
+      },
       {
         description: "Delicious pizzas with a variety of toppings",
         name: "Pizza",

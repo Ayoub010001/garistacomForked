@@ -19,8 +19,10 @@ import Rate from "./Rating/Rate";
 import Spinner from "react-spinner-material";
 import { axiosInstance } from "../../axiosInstance";
 import { APIURL } from "../../lib/ApiKey";
+import { usePublishedTheme } from "../hooks/usePublishedTheme";
 
 function App() {
+  const [publishedTheme, _] = usePublishedTheme();
   const [cartCount, setCartCount] = useState(tabAchat.length);
   const [validSlug, setValidSlug] = useState(false); // State to track the validity of the resto slug
   const [restos, setRestos] = useState([]);
@@ -32,7 +34,6 @@ function App() {
   const [selectedTab, setSelectedTab] = useState("All");
   const [resInfo, setResInfo] = useState([]);
   const [message, setMessage] = useState("");
-
   const restoSlug = window.location.pathname.split("/")[2];
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -230,7 +231,10 @@ function App() {
   console.log("The Resto Infos => ", resInfo);
   return (
     // <Router>
-    <div className="h-screen">
+    <div
+      className="h-screen"
+      style={{ backgroundColor: publishedTheme.selectedBgColor }}
+    >
       <Routes>
         <Route
           path={`/*`}
@@ -243,6 +247,7 @@ function App() {
                 dishes={dishes}
                 selectedTab={selectedTab}
                 setSelectedTab={setSelectedTab}
+                publishedTheme={publishedTheme}
               />
               <Footer slug={restoSlug} table_id={extraInfo} />
             </>

@@ -14,7 +14,7 @@ function Banner({ items, infoRes }) {
   console.log("The Items => ", items);
   return (
     <>
-      <div className=" p-4">
+      <div className="p-4">
         <div className="relative mx-auto h-[170px] max-w-md overflow-hidden rounded-[.5rem] bg-white shadow">
           <div className="bg-secondary-gray overflow-hidden">
             <img

@@ -2,9 +2,16 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import MenuItems from "../MenuItems/MenuItems";
 
-function Tab({ categories, dishes, setSelectedTab, selectedTab, resto }) {
+function Tab({
+  categories,
+  dishes,
+  setSelectedTab,
+  selectedTab,
+  resto,
+  publishedTheme,
+}) {
   return (
-    <div className="">
+    <div style={{ backgroundColor: publishedTheme.selectedBgColor }}>
       <div className="tabs-container pl-4 overflow-x-auto">
         <div className="flex gap-4">
           <div className="rounded-xl relative inline-block border border-gray-300 shadow-md">
