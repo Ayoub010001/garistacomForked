@@ -1,26 +1,23 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/Mj5KOqUIvF3
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
-import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function Rate() {
   return (
-    <div className="flex flex-col h-screen bg-white dark:bg-gray-950">
-  <main className="flex-1 p-6 md:p-10">
-    <div className="content-container">
-      <h2 className="text-2xl font-bold mb-4">Share Your Feedback</h2>
-      <div className="bg-white dark:bg-gray-900 rounded-lg p-6 space-y-6">
+    <div className="flex flex-col h-screen bg-white">
+      <main className="md:p-10 scrollbar-hide md:pb-20 flex-1 max-w-xl p-6 mx-auto overflow-y-scroll">
+        <div className="content-container">
+          <h2 className="mb-4 text-2xl font-bold text-black">
+            Share Your Feedback
+          </h2>
+          <div className="p-6 space-y-6 bg-white rounded-lg shadow-xl">
             <div className="flex items-center gap-4">
               <span className="text-lg font-semibold">Overall Experience</span>
               <div className="flex items-center gap-2 ml-auto">
-                <SmileIcon className="w-6 h-6 text-primary-500" />
-                <SmileIcon className="w-6 h-6 text-primary-500" />
-                <SmileIcon className="w-6 h-6 text-primary-500" />
+                <SmileIcon className="text-primary-500 w-6 h-6" />
+                <SmileIcon className="text-primary-500 w-6 h-6" />
+                <SmileIcon className="text-primary-500 w-6 h-6" />
                 <SmileIcon className="w-6 h-6 text-gray-400" />
                 <SmileIcon className="w-6 h-6 text-gray-400" />
               </div>
@@ -28,7 +25,7 @@ export default function Rate() {
             <div className="space-y-2">
               <Label htmlFor="food-quality">Food Quality</Label>
               <Slider
-                className="h-2 bg-gray-200 dark:bg-gray-800 rounded-full"
+                className="dark:bg-gray-800 h-2 bg-gray-200 rounded-full"
                 defaultValue={[80]}
                 id="food-quality"
                 max={100}
@@ -39,7 +36,7 @@ export default function Rate() {
             <div className="space-y-2">
               <Label htmlFor="service-quality">Service Quality</Label>
               <Slider
-                className="h-2 bg-gray-200 dark:bg-gray-800 rounded-full"
+                className="dark:bg-gray-800 h-2 bg-gray-200 rounded-full"
                 defaultValue={[90]}
                 id="service-quality"
                 max={100}
@@ -50,7 +47,7 @@ export default function Rate() {
             <div className="space-y-2">
               <Label htmlFor="ambiance">Ambiance</Label>
               <Slider
-                className="h-2 bg-gray-200 dark:bg-gray-800 rounded-full"
+                className="dark:bg-gray-800 h-2 bg-gray-200 rounded-full"
                 defaultValue={[75]}
                 id="ambiance"
                 max={100}
@@ -61,19 +58,23 @@ export default function Rate() {
             <div className="space-y-2">
               <Label htmlFor="comments">Additional Comments</Label>
               <Textarea
-                className="p-4 rounded-lg border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50"
+                className="dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50 p-4 border border-gray-300 rounded-lg"
                 id="comments"
                 placeholder="Share your thoughts..."
               />
             </div>
-            <Button className="w-full bg-primary-500 hover:bg-primary-600 text-white" type="submit">
+            <Button
+              variant="default"
+              className="hover:bg-primary-600 w-full py-3 shadow"
+              type="submit"
+            >
               Submit Feedback
             </Button>
           </div>
         </div>
       </main>
     </div>
-  )
+  );
 }
 
 function MenuIcon(props) {
@@ -94,9 +95,8 @@ function MenuIcon(props) {
       <line x1="4" x2="20" y1="6" y2="6" />
       <line x1="4" x2="20" y1="18" y2="18" />
     </svg>
-  )
+  );
 }
-
 
 function SmileIcon(props) {
   return (
@@ -117,5 +117,5 @@ function SmileIcon(props) {
       <line x1="9" x2="9.01" y1="9" y2="9" />
       <line x1="15" x2="15.01" y1="9" y2="9" />
     </svg>
-  )
+  );
 }

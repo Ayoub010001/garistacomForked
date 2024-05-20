@@ -1,8 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useSelectedPublishedTheme } from "../../hooks/usePublishedTheme";
-import { Button } from "@/components/ui/button";
 import { APIURL } from "../../../lib/ApiKey";
 
 const ThemeGridMenuItem = ({ setSelectedItem, placeholderImage, item }) => {
@@ -20,14 +18,14 @@ const ThemeGridMenuItem = ({ setSelectedItem, placeholderImage, item }) => {
       />
       <div
         style={{ color: selectedSecondaryColor }}
-        className="flex items-center justify-between px-1 py-2 gap-2"
+        className="flex items-center justify-between gap-2 px-1 py-2"
       >
         <div className="flex flex-col gap-1">
           <h2 className="text-base">
             {item.name.length > 20 ? item.name.slice(0, 20) + "..." : item.name}
           </h2>
 
-          <p className="text-sm text-start">{item.price}</p>
+          <p className="text-start text-sm">{item.price}</p>
         </div>
 
         <button

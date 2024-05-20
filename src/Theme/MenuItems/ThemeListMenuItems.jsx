@@ -1,8 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useSelectedPublishedTheme } from "../../hooks/usePublishedTheme";
-import { Button } from "@/components/ui/button";
 import { APIURL } from "../../../lib/ApiKey";
 
 const ThemeListMenuItems = ({ setSelectedItem, placeholderImage, item }) => {
@@ -13,9 +11,9 @@ const ThemeListMenuItems = ({ setSelectedItem, placeholderImage, item }) => {
       onClick={() => setSelectedItem(item)}
       className="group items-center justify-center h-full w-full overflow-hidden p-1.5 text-lg font-semibold rounded-[8px] cursor-pointer transition-colors"
     >
-      <div className="group grid items-start grid-cols-2 place-items-end gap-5 ps-2">
+      <div className="group place-items-end ps-2 grid items-start grid-cols-2 gap-5">
         <div className="w-full">
-          <div className="flex flex-col gap-3 text-start">
+          <div className="text-start flex flex-col gap-3">
             {/* Item Name */}
             <h2
               style={{ color: `${selectedSecondaryColor}` }}
@@ -30,7 +28,7 @@ const ThemeListMenuItems = ({ setSelectedItem, placeholderImage, item }) => {
 
             <p
               style={{ color: `${selectedSecondaryColor}` }}
-              className="text-2xl font-semibold opacity-80"
+              className="opacity-80 text-2xl font-semibold"
             >
               {item.price}
             </p>

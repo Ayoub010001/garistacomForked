@@ -12,20 +12,22 @@ function Tab({ categories, dishes, setSelectedTab, selectedTab, resto }) {
   const handleHoverActive = (e) => {
     e.currentTarget.style.backgroundColor = selectedPrimaryColor;
     e.currentTarget.style.color = selectedBgColor;
+    e.currentTarget.style.border = `1px solid ${selectedPrimaryColor}`;
   };
 
   // Tab Hover Effect
   const handleHoverInactive = (e) => {
     e.currentTarget.style.backgroundColor = "";
     e.currentTarget.style.color = selectedSecondaryColor;
+    e.currentTarget.style.border = "";
   };
 
   return (
     <div style={{ backgroundColor: selectedBgColor }}>
       {/* Categories */}
-      <div className="tabs-container pl-4 overflow-x-auto">
-        <div className="flex gap-3 items-center scrollbar-hide overflow-x-scroll pe-5">
-          <div className="rounded-xl relative inline-block border border-gray-300 shadow-md">
+      <div className="tabs-container flex flex-col items-center pl-4 overflow-x-auto">
+        <div className="scrollbar-hide flex items-center gap-3 px-5 overflow-x-scroll">
+          <div className="relative inline-block border border-gray-300 rounded-full shadow-md">
             <div
               style={{
                 backgroundColor:
@@ -34,21 +36,25 @@ function Tab({ categories, dishes, setSelectedTab, selectedTab, resto }) {
                   selectedTab === "All"
                     ? selectedBgColor
                     : selectedSecondaryColor,
+                border:
+                  selectedTab === "All"
+                    ? `1px solid ${selectedPrimaryColor}`
+                    : "",
               }}
-              className={`flex items-center w-[90px] justify-center h-9 pl-1.5 pr-2.5 font-semibold rounded-[8px] cursor-pointer transition-colors`}
+              className={`flex items-center w-[90px] justify-center h-9 pl-1.5 pr-2.5 font-semibold rounded-full cursor-pointer transition-colors  border border-gray-300 shadow-md`}
               onClick={() => setSelectedTab("All")}
               onMouseOver={selectedTab !== "All" && handleHoverActive}
               onMouseOut={selectedTab !== "All" && handleHoverInactive}
             >
-              <h2 className="text-sm mb-0">All</h2>
+              <h2 className="text-xs font-medium">All</h2>
             </div>
           </div>
           {categories.length > 0 && (
-            <div className="gap-2 flex items-center">
+            <div className="flex items-center gap-2">
               {categories.map((item, idx) => (
                 <div
                   key={idx}
-                  className={`flex items-center w-[90px] justify-center h-9 pl-1.5 pr-2.5 font-semibold rounded-[8px] cursor-pointer transition-colors  border border-gray-300 shadow-md`}
+                  className={`flex items-center w-[90px] justify-center h-9 pl-1.5 pr-2.5 font-semibold rounded-full cursor-pointer transition-colors  border border-gray-300 shadow-md`}
                   style={{
                     backgroundColor:
                       item.name === selectedTab ? selectedPrimaryColor : "",
@@ -56,6 +62,10 @@ function Tab({ categories, dishes, setSelectedTab, selectedTab, resto }) {
                       item.name === selectedTab
                         ? selectedBgColor
                         : selectedSecondaryColor,
+                    border:
+                      selectedTab === item.name
+                        ? `1px solid ${selectedPrimaryColor}`
+                        : "",
                   }}
                   onClick={() => setSelectedTab(item.name)}
                   onMouseOver={item.name !== selectedTab && handleHoverActive}

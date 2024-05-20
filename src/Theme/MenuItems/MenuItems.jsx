@@ -122,6 +122,7 @@ function MenuItems({ dishes, selectedTab, restoId }) {
     tabAchat.length = 0;
     tabAchat.push(...newtab);
   }, [newtab]);
+
   const listAchat = (id) => {
     setNewtab((prevTab) => [...prevTab, Cat[id - 1]]);
     setCartCount((prevCount) => prevCount + 1);
@@ -134,6 +135,7 @@ function MenuItems({ dishes, selectedTab, restoId }) {
     dispatch(addItem({ product, quantity: quantity, resto_id: restoId }));
     setIsModalOpen(!isModalOpen);
   };
+
   const handleRemoveAll = (product) => {
     dispatch(removeAll());
   };
@@ -278,7 +280,9 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                                     size="icon"
                                     variant="outline"
                                     onClick={() =>
-                                      setQuantity((prev) => prev - 1)
+                                      setQuantity((prev) =>
+                                        prev > 1 ? prev - 1 : 1
+                                      )
                                     }
                                   >
                                     <MinusIcon className="w-4 h-4" />
@@ -370,7 +374,7 @@ function MenuItems({ dishes, selectedTab, restoId }) {
 
         {/* Display no items message  */}
         {!(filteredCategories.length > 0) && (
-          <div className="pt-5 w-full text-center">
+          <div className="w-full pt-5 text-center">
             <p
               style={{ color: selectedSecondaryColor }}
               className="text-lg font-semibold"

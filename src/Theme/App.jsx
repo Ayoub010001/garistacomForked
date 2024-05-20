@@ -1,16 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-  useNavigate,
-  useLocation,
-} from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { tabAchat } from "./constant/page";
 import Banner from "./Banner/Banner";
 import Tab from "./Tabs/Tab";
-import MenuItems from "./MenuItems/MenuItems";
 import Info from "./Info/infov2";
 import Footer from "./Footer/Footerv2";
 import Achat from "./Achat/Achatv2";
@@ -22,7 +14,7 @@ import { APIURL } from "../../lib/ApiKey";
 import { useSelectedPublishedTheme } from "../hooks/usePublishedTheme";
 
 function App() {
-  const { selectedBgColor } = useSelectedPublishedTheme();
+  const { selectedBgColor, selectedPrimaryColor } = useSelectedPublishedTheme();
   const [cartCount, setCartCount] = useState(tabAchat.length);
   const [validSlug, setValidSlug] = useState(false); // State to track the validity of the resto slug
   const [restos, setRestos] = useState([]);
@@ -213,10 +205,10 @@ function App() {
       <div className="flex items-center justify-center h-screen">
         <Spinner
           size={100}
-          color={"#28509E"}
+          color={selectedPrimaryColor}
           width={1}
           visible={true}
-          style={{ borderColor: "#28509E", borderWidth: 2 }}
+          style={{ borderColor: selectedPrimaryColor, borderWidth: 2 }}
         />
       </div>
     );
@@ -245,16 +237,11 @@ function App() {
                 selectedTab={selectedTab}
                 setSelectedTab={setSelectedTab}
               />
-              <Footer slug={restoSlug} table_id={extraInfo} />
-            </>
-          }
-        />
-        <Route
-          path={`/theme/:restoSlug/info`}
-          element={
-            <>
-              <Info items={restos} infoRes={resInfo} />
-              <Footer slug={restoSlug} table_id={extraInfo} />
+              <Footer
+                slug={restoSlug}
+                table_id={extraInfo}
+                activePage={"Home"}
+              />
             </>
           }
         />
@@ -263,7 +250,24 @@ function App() {
           element={
             <>
               <Rate />
-              <Footer slug={restoSlug} table_id={extraInfo} />
+              <Footer
+                slug={restoSlug}
+                table_id={extraInfo}
+                activePage={"Rating"}
+              />
+            </>
+          }
+        />
+        <Route
+          path={`/theme/:restoSlug/Claims`}
+          element={
+            <>
+              <Claims items={restos} />
+              <Footer
+                slug={restoSlug}
+                table_id={extraInfo}
+                activePage={"Claims"}
+              />
             </>
           }
         />
@@ -276,16 +280,24 @@ function App() {
                 tabel_id={extraInfo}
                 restoId={restoId}
               />
-              <Footer slug={restoSlug} table_id={extraInfo} />
+              <Footer
+                slug={restoSlug}
+                table_id={extraInfo}
+                activePage={"Cart"}
+              />
             </>
           }
         />
         <Route
-          path={`/theme/:restoSlug/Claims`}
+          path={`/theme/:restoSlug/info`}
           element={
             <>
-              <Claims items={restos} />
-              <Footer slug={restoSlug} table_id={extraInfo} />
+              <Info items={restos} infoRes={resInfo} />
+              <Footer
+                slug={restoSlug}
+                table_id={extraInfo}
+                activePage={"info"}
+              />
             </>
           }
         />
