@@ -20,7 +20,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
+<<<<<<< HEAD
   DropdownMenuLabel,
+=======
+>>>>>>> 93a5acf9 (Init)
 } from "../../components/ui/dropdown-menu";
 import TeamSwitcher from "../../pages/dashboard/components/team-switcher";
 import UserNav from "../../pages/dashboard/components/user-nav";
@@ -31,7 +34,11 @@ import { getRestaurant } from "../../../actions/Restaurant/Restaurant";
 import { useEffect } from "react";
 import { getUserById } from "../../../actions/User/CreateUser";
 import { axiosInstance } from "../../../axiosInstance";
+<<<<<<< HEAD
 import {Link} from 'react-router-dom';
+=======
+
+>>>>>>> 93a5acf9 (Init)
 export default function NavBar({ }) {
   const defaultPageURL = "https://votre-domaine.com/page";
   const [showQRCode, setShowQRCode] = useState(false); // State to control QR code display
@@ -47,7 +54,10 @@ export default function NavBar({ }) {
     const getUserData = async () => {
       try{
         const res = await axiosInstance.get('/api/getResto/'+idUser);
+<<<<<<< HEAD
         console.log("The User Item Resto=> ", res);
+=======
+>>>>>>> 93a5acf9 (Init)
         if(res)
         {
           setRestoInfo(res)
@@ -167,6 +177,7 @@ export default function NavBar({ }) {
             </DialogContent>
           </Dialog>
 
+<<<<<<< HEAD
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="relative" size="icon" variant="ghost">
@@ -207,6 +218,8 @@ export default function NavBar({ }) {
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
+=======
+>>>>>>> 93a5acf9 (Init)
           {/* <TeamSwitcher /> */}
           {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -245,6 +258,7 @@ export default function NavBar({ }) {
     </div>
   );
 }
+<<<<<<< HEAD
 
 function BellIcon(props) {
   return (
@@ -334,3 +348,5 @@ function UsersIcon(props) {
     </svg>
   )
 }
+=======
+>>>>>>> 93a5acf9 (Init)

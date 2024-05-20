@@ -497,7 +497,11 @@ export function DataTable({
             size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
+<<<<<<< HEAD
             className="bg-zinc-600"
+=======
+            className="bg-black text-white hover:bg-black hover:text-white"
+>>>>>>> 93a5acf9 (Init)
           >
             Previous
           </Button>
@@ -506,7 +510,11 @@ export function DataTable({
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
+<<<<<<< HEAD
             className="bg-black"
+=======
+            className="bg-black text-white hover:bg-black hover:text-white"
+>>>>>>> 93a5acf9 (Init)
           >
             Next
           </Button>

@@ -58,7 +58,11 @@ console.log("The Visibility => ", initialData);
       const defaultValues = initialData ? {
           ...initialData,
         // images: null,
+<<<<<<< HEAD
         // visibility : true,
+=======
+        visibility: initialData.visibility ?? true,
+>>>>>>> 93a5acf9 (Init)
       } : {
           name: '',
         // image: null,
@@ -178,7 +182,11 @@ console.log("The Visibility => ", initialData);
                                         <FormControl>
                                             <Switch
                                             checked={field.value}
+<<<<<<< HEAD
                                             onCheckedChange={field.onChange}
+=======
+                                            onCheckedChange={(value) => form.setValue('visibility', value)}
+>>>>>>> 93a5acf9 (Init)
                                             />
                                             
                                         </FormControl>

@@ -55,6 +55,10 @@ function AddQrCode() {
 
     console.log("qr",names)
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+<<<<<<< HEAD
+=======
+    const idUser = sessionStorage.getItem('dataItem');
+>>>>>>> 93a5acf9 (Init)
 
     const handleDialogClose = () => {
       setIsDialogOpen(false);
@@ -135,6 +139,10 @@ function AddQrCode() {
                   "username": data.username,
                   "role_id": parseInt(data.role_id),
                   "resto_id": resotInfo.id,
+<<<<<<< HEAD
+=======
+                  "user_id": idUser
+>>>>>>> 93a5acf9 (Init)
               });
               if(res)
               {
@@ -170,7 +178,10 @@ function AddQrCode() {
                 email : data.email,
                 username : data.username,
                 role_id : parseInt(data.role_id),
+<<<<<<< HEAD
                 resto_id : resotInfo.id,
+=======
+>>>>>>> 93a5acf9 (Init)
              } 
              );
               if(res)

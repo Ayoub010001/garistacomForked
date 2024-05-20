@@ -10,7 +10,21 @@ function Reclamations() {
 
 const getData  =async ()=>{
     try{
+<<<<<<< HEAD
         const respone = await axiosInstance.get("/api/claims")
+=======
+
+        const restoInfo = sessionStorage.getItem('RestoInfo');
+        let Data = [];
+        Data = JSON.parse(restoInfo)
+        let id;
+        Data.map(item => {
+          //  setRestoInfo(item)
+          //  fetchCategories(item.id)
+           id = item.id;
+        })
+        const respone = await axiosInstance.get("/api/claims/"+id)
+>>>>>>> 93a5acf9 (Init)
         console.log("The claims is => ",respone.data);
         if(respone){
             setClaims(respone.data)

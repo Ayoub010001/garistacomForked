@@ -14,13 +14,21 @@ export const cartSlice = createSlice({
   initialState,
   reducers: {
     addItem: (state, action) => {
+<<<<<<< HEAD
       const { product, quantity, volume } = action.payload;
+=======
+      const { product, quantity, resto_id } = action.payload;
+>>>>>>> 93a5acf9 (Init)
       const existingIndex = state.items.findIndex(item => item.id === product.id);
 
       if (existingIndex >= 0) {
         state.items[existingIndex].quantity += quantity;
       } else {
+<<<<<<< HEAD
         state.items.push({ ...product, quantity, volume });
+=======
+        state.items.push({ ...product, quantity, resto_id,  });
+>>>>>>> 93a5acf9 (Init)
       }
 
       localStorage.setItem("cartItems", JSON.stringify(state.items));

@@ -23,6 +23,22 @@ export const  getUserById = async (id) => {
       console.error('Error User:', error);
     }
   }
+<<<<<<< HEAD
+=======
+export const  getStaffById = async (id) => {
+    
+    try {
+      const response = await axiosInstance.get(`${APIURL}/api/staffs/${id}`);
+  
+      if (response.status === 200) {
+        console.log("The Response of User => ", response.data.users);
+      }
+      return response.data;
+    } catch (error) {
+      console.error('Error User:', error);
+    }
+  }
+>>>>>>> 93a5acf9 (Init)
 
 export const updateUser = async ({
   id,

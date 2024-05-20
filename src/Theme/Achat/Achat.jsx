@@ -11,12 +11,22 @@ function Achat({
 }) {
 
     console.log("The Resto Id => ",resto_id);
+<<<<<<< HEAD
   const cartItems = useSelector(state => state.cart.items);
+=======
+    const cartItems = useSelector(state => 
+        state.cart.items.filter(item => item.resto_id === resto_id)
+    );
+>>>>>>> 93a5acf9 (Init)
   const totalCost = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
   async function submitOrder(cartItems, totalCost) {
     let cartItemProduct = cartItems.map(item => {
         return {
+<<<<<<< HEAD
             type: "dish",  // Assuming all items are dishes
+=======
+            type: item.type,  // Assuming all items are dishes
+>>>>>>> 93a5acf9 (Init)
             id: item.id,
             quantity: item.quantity
         };
@@ -52,6 +62,11 @@ function Achat({
         console.error('Failed to submit order:', error.message);
         }
     }
+<<<<<<< HEAD
+=======
+
+    console.log("The Resto Cart => ", cartItems);
+>>>>>>> 93a5acf9 (Init)
   
   return (
       <div className="p-4 bg-white rounded-lg shadow-md">

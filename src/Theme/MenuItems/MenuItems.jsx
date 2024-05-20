@@ -18,9 +18,13 @@ import { addItem, removeAll } from '../../lib/cartSlice';
 
 import Dettaille from './Dettaille';
 import { APIURL } from '../../../lib/ApiKey';
+<<<<<<< HEAD
 // import Logo from './waiter-svgrepo-com.svg';
 import Logo from './servant-outline.svg';
 function MenuItems({dishes, selectedTab }) {
+=======
+function MenuItems({dishes, selectedTab, restoId }) {
+>>>>>>> 93a5acf9 (Init)
   const [selectedProp, setSelectedProp] = useState(0); // initialisation de l'état avec 0
   const [searchTerm, setSearchTerm] = useState(""); // état pour stocker la valeur de la recherche
   const [updateFormState, setUpdateFormState] = useState(false);
@@ -28,8 +32,11 @@ function MenuItems({dishes, selectedTab }) {
   const [newtab, setNewtab] = useState([...tabAchat]);
   const [selectedItem, setSelectedItem ]=useState(null);
   const [quantity, setQuantity] = useState(1)
+<<<<<<< HEAD
   const [credenzaOpen, setCredenzaOpen] = useState(false);
 
+=======
+>>>>>>> 93a5acf9 (Init)
   const Cat = [
     {
       type: "Burgers",
@@ -53,9 +60,13 @@ function MenuItems({dishes, selectedTab }) {
   const toggleModal = (item) => {
     setSelectedItem(item); 
     setIsModalOpen(!isModalOpen);
+<<<<<<< HEAD
     setCredenzaOpen(!credenzaOpen);
   };
   
+=======
+  };
+>>>>>>> 93a5acf9 (Init)
   useEffect(() => {
     tabAchat.length = 0;
     tabAchat.push(...newtab);
@@ -69,7 +80,11 @@ function MenuItems({dishes, selectedTab }) {
   const cartItems = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
   const handleAddItem = (product, quantity) => {
+<<<<<<< HEAD
     dispatch(addItem({ product, quantity: quantity, volume: 'default' }));
+=======
+    dispatch(addItem({ product, quantity: quantity, resto_id: restoId }));
+>>>>>>> 93a5acf9 (Init)
   };
   const handleRemoveAll  = product => {
     dispatch(removeAll());
@@ -182,7 +197,10 @@ function MenuItems({dishes, selectedTab }) {
                               <Button variant="outline bg-black text-white">Close</Button>
                             </CredenzaClose>
                           </CredenzaFooter>
+<<<<<<< HEAD
                           
+=======
+>>>>>>> 93a5acf9 (Init)
                         </>
 
                       )
@@ -210,6 +228,7 @@ function MenuItems({dishes, selectedTab }) {
           ))}
         </div> */}
        {/* <Dettaille updateFormState={updateFormState} setUpdateFormState={setUpdateFormState} /> */}
+<<<<<<< HEAD
        {/* <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-950 py-4 px-6 shadow-lg">
         <Button className="fixed bottom-4 right-4 h-16 w-16 rounded-full bg-green-500 text-white shadow-lg flex items-center justify-center">
           <PhoneIcon className="h-8 w-8" />
@@ -224,10 +243,13 @@ function MenuItems({dishes, selectedTab }) {
 </div>
 
 
+=======
+>>>>>>> 93a5acf9 (Init)
     </>
   );
 }
 
+<<<<<<< HEAD
 function BellIcon(props) {
   return (
     <svg
@@ -247,4 +269,6 @@ function BellIcon(props) {
     </svg>
   )
 }
+=======
+>>>>>>> 93a5acf9 (Init)
 export default MenuItems;

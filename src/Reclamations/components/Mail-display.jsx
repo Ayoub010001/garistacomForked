@@ -39,12 +39,20 @@ function MailDisplay({ mail }) {
             <div className="flex items-start gap-4  text-xl">
               <Avatar>
                 <AvatarImage alt={mail.clamer_name} />
+<<<<<<< HEAD
                 <AvatarFallback>
+=======
+                {/* <AvatarFallback>
+>>>>>>> 93a5acf9 (Init)
                   {mail.clamer_name
                     .split(" ")
                     .map((chunk) => chunk[0])
                     .join("")}
+<<<<<<< HEAD
                 </AvatarFallback>
+=======
+                </AvatarFallback> */}
+>>>>>>> 93a5acf9 (Init)
               </Avatar>
               <div className="grid gap-1">
                 <div className="font-semibold">{mail.clamer_name}</div>

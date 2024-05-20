@@ -224,10 +224,17 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
                     )}
                   /> 
                   }
+<<<<<<< HEAD
               </div>
           </div>
               <div className='max-w-[40%] mx-auto'>
               <FormField
+=======
+                  {initialData && 
+                  <div className='w-72 '>
+
+                    <FormField
+>>>>>>> 93a5acf9 (Init)
                     control={form.control}
                     name="role_id"
                     render={({ field }) => (
@@ -253,7 +260,46 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
                       </FormItem>
                     )}
                     /> 
+<<<<<<< HEAD
               </div>
+=======
+                  </div>
+                  }
+              </div>
+          </div>
+          {!initialData && 
+              <div className='max-w-[40%] mx-auto !space-y-0'>
+              <FormField
+                    control={form.control}
+                    name="role_id"
+                    className={"!space-y-0"}
+                    render={({ field }) => (
+                      <FormItem>
+                              <Select className={"!space-y-0"} disabled={loading}  onValueChange={field.onChange}>
+                                <FormControl>
+                                  <SelectTrigger className={"!space-y-0"} >
+                                    <SelectValue
+                                    defaultValues={selectedRoleId}
+                                      // defaultValue={field.value}
+                                      className={"!space-y-0"} 
+                                      placeholder={initialData ? form.getValues("role")?.name : "Role"} 
+                                      //  placeholder="Role" 
+                                      />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {filteredRoles.map((role) => (
+                                        <SelectItem key={role.id} value={role.id.toString()}>{role.name}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                      </FormItem>
+                    )}
+                    /> 
+              </div>
+          }
+>>>>>>> 93a5acf9 (Init)
               
         
           <Button disabled={loading} type="submit" variant="outline" className="justify-center !flex items-center max-w-max mx-auto w-full bg-black hover:bg-black text-white hover:text-white">

@@ -4,6 +4,7 @@ import {tabAchat} from './constant/page'
 import Banner from "./Banner/Banner";
 import Tab from "./Tabs/Tab";
 import MenuItems from "./MenuItems/MenuItems";
+<<<<<<< HEAD
 import Info from "./Info/infov2";
 import Footer from "./Footer/Footerv2";
 import Achat from "./Achat/Achatv2";
@@ -12,6 +13,16 @@ import Spinner from "react-spinner-material";
 import { axiosInstance } from "../../axiosInstance";
 import { APIURL } from "../../lib/ApiKey";
 import Rate from './Rating/Rate';
+=======
+import Info from "./Info/Info";
+import Footer from "./Footer/Footer";
+import Achat from "./Achat/Achat";
+import Claims from "./Claims/Claims";
+import Spinner from "react-spinner-material";
+import { axiosInstance } from "../../axiosInstance";
+import { APIURL } from "../../lib/ApiKey";
+
+>>>>>>> 93a5acf9 (Init)
 function App() {
   const [cartCount, setCartCount] = useState(tabAchat.length);
   const [validSlug, setValidSlug] = useState(false); // State to track the validity of the resto slug
@@ -36,6 +47,7 @@ function App() {
     try{
       const res = await fetch(`${APIURL}/api/getCategorieByResto/${id}`);
       const data = await res.json();
+<<<<<<< HEAD
       if(data)
       {
         console.log("The Response of The categories => ", data);
@@ -44,6 +56,17 @@ function App() {
 
       return data;
 
+=======
+      if (data && data.length) {
+        const visibleCategories = data.filter(cat => cat.visibility === 1);
+        console.log("The Response of The categories => ", visibleCategories);
+        setCategories(visibleCategories);
+      } else {
+        console.log("No categories found or all categories are not visible");
+        setCategories([]); // Set to empty if no visible categories
+      }
+
+>>>>>>> 93a5acf9 (Init)
     }catch(err)
     {
       console.log("the Error => ", err);
@@ -75,9 +98,25 @@ function App() {
         const drinksData = await (drinksResponse.ok ? drinksResponse.json() : drinksResponse.json().then(data => data));
 
         // Handle possible empty arrays or specific messages like "No Dishes found"
+<<<<<<< HEAD
         let combinedData = [];
         if (dishesData && dishesData.length) combinedData.push(...dishesData);
         if (drinksData && drinksData.length) combinedData.push(...drinksData);
+=======
+
+        // const typedDishes = dishesData.length > 0 && dishesData.map(item => ({ ...item, type: 'dish' }));
+        // const typedDrinks = drinksData.length > 0 &&  drinksData.map(item => ({ ...item, type: 'drink' }));
+
+        let combinedData = [];
+        if (dishesData && dishesData.length) {
+          combinedData.push(...dishesData.map(item => ({ ...item, type: 'dish' })));
+      }
+      
+      // Properly adding 'type' property to each drink
+      if (drinksData && drinksData.length) {
+          combinedData.push(...drinksData.map(item => ({ ...item, type: 'drink' })));
+      }
+>>>>>>> 93a5acf9 (Init)
 
         setDishes(combinedData);
 
@@ -95,7 +134,11 @@ function App() {
 
 
 
+<<<<<<< HEAD
 console.log("The Resto Id => ", restoId);
+=======
+console.log("The Resto Id => ", dishes);
+>>>>>>> 93a5acf9 (Init)
 
 const fetchInfo = async (id) => {
   try{ 
@@ -136,6 +179,7 @@ const fetchInfo = async (id) => {
           fetchCategories(item.id)
           setRestoId(item.id)
           fetchDishes(item.id)
+<<<<<<< HEAD
           // fetchInfo(item.id)
         })
         // setLoading(true)
@@ -149,6 +193,20 @@ const fetchInfo = async (id) => {
               setResInfo(item)
             })
           }
+=======
+          fetchInfo(item.id)
+        })
+        // setLoading(true)
+        // if(res)
+        //   {
+        //     console.log("The data of Info => ", res);
+        //     let Data = [];
+        //     Data = res.data;
+        //     Data.map(item => {
+        //       setResInfo(item)
+        //     })
+        //   }
+>>>>>>> 93a5acf9 (Init)
       }
       // const isValidSlug = useValidateSlug(restoSlug, Data.map(item => item.slug));
 
@@ -211,12 +269,15 @@ useEffect(() => {
                 </>
               }
             />
+<<<<<<< HEAD
              <Route path={`/theme/:restoSlug/Rating`}  element={
               <>
               <Rate/>
               <Footer slug={restoSlug}  table_id={extraInfo}/>
               </>
             } />
+=======
+>>>>>>> 93a5acf9 (Init)
             <Route path={`/theme/:restoSlug/info`} element={
               <>
               <Info items={restos} infoRes={resInfo}/>
@@ -225,7 +286,11 @@ useEffect(() => {
             } />
             <Route path={`/theme/:restoSlug/Achat`}  element={
               <>
+<<<<<<< HEAD
               <Achat resto_id={restoId} tabel_id={extraInfo} />
+=======
+              <Achat resto_id={restoId} tabel_id={extraInfo} restoId={restoId}/>
+>>>>>>> 93a5acf9 (Init)
               <Footer slug={restoSlug}  table_id={extraInfo}/>
               </>
             } />

@@ -6,6 +6,7 @@ function Tab({
   categories,
   dishes,
   setSelectedTab,
+<<<<<<< HEAD
   selectedTab
 }) {
 const menu = [
@@ -16,6 +17,12 @@ const menu = [
         { id: 5, title: 'Sandwich', url: '/Sandwich' },
         { id: 6, title: 'Salades', url: '/Salades' },
       ];
+=======
+  selectedTab,
+  resto
+}) {
+
+>>>>>>> 93a5acf9 (Init)
  
       
 
@@ -54,7 +61,11 @@ const menu = [
         </div>
       </div>
 
+<<<<<<< HEAD
       <MenuItems  dishes={dishes.length > 0 && dishes.filter(dish => selectedTab === 'All' || dish.categorie.name === selectedTab)} selectedTab={selectedTab}/>
+=======
+      <MenuItems  dishes={dishes.length > 0 && dishes.filter(dish => selectedTab === 'All' || dish.categorie.name === selectedTab)} restoId={resto} selectedTab={selectedTab}/>
+>>>>>>> 93a5acf9 (Init)
 
     </div>
   );

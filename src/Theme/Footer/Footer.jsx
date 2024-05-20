@@ -19,11 +19,17 @@ function Footer({
             <FaHome size={20} className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-[#28509E] dark:group-hover:text-[#28509E]"/>
         </button>
     </Link>
+<<<<<<< HEAD
     <Link to={`/theme/${slug}/Rating?table_id=${table_id}`} className='inline-flex '>
         <button type="button" className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
            <GiStarsStack size={20} className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-[#28509E] dark:group-hover:text-[#28509E]"/>
         </button>
     </Link>
+=======
+        <button type="button" className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
+           <GiStarsStack size={20} className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-[#28509E] dark:group-hover:text-[#28509E]"/>
+        </button>
+>>>>>>> 93a5acf9 (Init)
         <Link to={`/theme/${slug}/Claims?table_id=${table_id}`} className='inline-flex'>
         <button type="button" className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
             <RiMessage2Fill size={20} className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-[#28509E] dark:group-hover:text-[#28509E]"/>

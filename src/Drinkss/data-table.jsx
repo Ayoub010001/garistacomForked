@@ -449,6 +449,7 @@ export function DataTable({
         </div>
 
          <div className="flex items-center justify-end space-x-2 py-4">
+<<<<<<< HEAD
         <Button
           variant="outline"
           size="sm"
@@ -467,6 +468,26 @@ export function DataTable({
         >
           Next
         </Button>
+=======
+         <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            className="bg-black text-white hover:bg-black hover:text-white"
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            className="bg-black text-white hover:bg-black hover:text-white"
+          >
+            Next
+          </Button>
+>>>>>>> 93a5acf9 (Init)
       </div>
       </div>
     </div>
