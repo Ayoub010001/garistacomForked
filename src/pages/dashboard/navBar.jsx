@@ -38,7 +38,7 @@ import { axiosInstance } from "../../../axiosInstance";
 import { useToast } from "@/components/ui/use-toast";
 import Logo from "../../../public/Logos/garista.svg";
 const customToastStyle = `
-  bg-yellow-500 text-black
+bg-[#28509E] text-white
 `;
 export default function NavBar() {
   const defaultPageURL = "https://votre-domaine.com/page";

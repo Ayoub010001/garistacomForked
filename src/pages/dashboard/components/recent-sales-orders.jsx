@@ -6,6 +6,7 @@ import {
 } from "../../../components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { axiosInstance } from "../../../../axiosInstance";
+import { APIURL } from "../../../../lib/ApiKey";
 
 export function RecentSalesOrders({orders}) {
  console.log("The Orders SLICE => ", orders.slice(0, 10));
@@ -47,7 +48,7 @@ export function RecentSalesOrders({orders}) {
             return(
             <div key={index} className="flex items-center">
               <img
-                // src={`${APIURL}`}
+                src={`${APIURL}/storage/${item.image}`}
                 className="border border-black rounded-full w-9 h-9 bg-gray-300"
               />
 

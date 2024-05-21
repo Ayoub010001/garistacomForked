@@ -109,26 +109,22 @@ function DashboardPage() {
   }
   const [restos, setRestos] = useState([])
 
-  const getOrders = async (id) => {
-    setLoading(true)
-    try{
-       const res = await axiosInstance.get('/api/order_resto/' + id)
-       if(res)
-       {
-        console.log('The Response of Order Resto => ', res.data);
-        fetchOrderDetails(res.data)
-        setOrders(res.data);
-       }
+const getOrders = async (id) => {
+    setLoading(true);
+    try {
+        const res = await axiosInstance.get('/api/order_resto/' + id);
+        if (res && res.data) {
+            console.log('The Response of Order Resto => ', res.data);
+            fetchOrderDetails(res.data); // Ensure this function does not modify the orders structure
+            setOrders(res.data);
+        }
+    } catch (err) {
+        console.log('The Error => ', err.message);
+    } finally {
+        setLoading(false);
+    }
+};
 
-    } 
-    catch(err)
-    {
-      console.log('the Error => ', err.message);
-    }
-    finally{
-      setLoading(false)
-    }
-  }
 
   const fetchData = async (id) => {
     setLoading(true);
@@ -349,7 +345,7 @@ function DashboardPage() {
                     <CardTitle>Last 30 days Orders</CardTitle>
                   </CardHeader>
                   <CardContent className="pl-2">
-                    <Overview orders={orders.slice(-30)} />
+                    <Overview orders={orders} />
                   </CardContent>
                 </Card>
                 <Card className="col-span-3">
