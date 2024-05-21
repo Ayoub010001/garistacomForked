@@ -52,16 +52,16 @@ const ThemeOne = ({
     if (selectedCategory.id === 0) {
       setFilteredProducts(products);
     } else {
-      const newFilteredProducts = products.filter(
+      const newFilteredProducts = products?.filter(
         (product) => product.category_id === selectedCategory.id
       );
       setFilteredProducts(newFilteredProducts);
     }
-  }, [products, selectedCategory.id]);
+  }, [products, selectedCategory?.id]);
 
   useEffect(() => {
     getFilteredProducts();
-  }, [getFilteredProducts, selectedCategory.id]);
+  }, [getFilteredProducts, selectedCategory?.id]);
 
   return (
     <section
@@ -69,7 +69,7 @@ const ThemeOne = ({
       className="flex flex-col w-full min-h-screen"
     >
       {/* Menu Header */}
-      <div className="py-3 px-2">
+      <div className="px-2 py-3">
         <div className="relative mx-auto h-[170px] max-w-md overflow-hidden rounded-[.5rem] shadow">
           {/* Banner */}
           <div className="bg-secondary-gray overflow-hidden">
@@ -140,7 +140,7 @@ const ThemeOne = ({
         {/* Search & Categories Section */}
         <div className="flex flex-col gap-3 px-2 py-4">
           {/* Categories */}
-          <div className="scrollbar-hide overflow-x-scroll gap-2 flex items-center">
+          <div className="scrollbar-hide flex items-center gap-2 overflow-x-scroll">
             {categories?.map((item, idx) => (
               <div
                 key={idx}
@@ -173,7 +173,7 @@ const ThemeOne = ({
           </div>
 
           {/* Search Input */}
-          <div className="relative rounded-full w-full mx-auto bg-gray-400">
+          <div className="relative w-full mx-auto bg-gray-400 rounded-full">
             <button className="absolute left-2 top-[10px] flex flex-col items-center justify-center pointer-events-none">
               <Search size={13} className="text-gray-500" />
             </button>
@@ -186,7 +186,7 @@ const ThemeOne = ({
         </div>
 
         {/* Products based on the selected category */}
-        <div className="flex-col gap-1 pb-24 mt-2 w-full">
+        <div className="flex-col w-full gap-1 pb-24 mt-2">
           <div className="flex items-center justify-between px-2">
             <h2
               style={{ color: `${selectedSecondaryColor}` }}
@@ -202,7 +202,7 @@ const ThemeOne = ({
           {!(filteredProducts?.length > 0) ? (
             <div
               style={{ color: `${selectedSecondaryColor}` }}
-              className="text-center w-full my-3"
+              className="w-full my-3 text-center"
             >
               No Products Found
             </div>
@@ -227,10 +227,10 @@ const ThemeOne = ({
                         />
                         <div
                           style={{ color: selectedSecondaryColor }}
-                          className="flex items-center justify-between px-1 py-2 gap-2"
+                          className="flex items-center justify-between gap-2 px-1 py-2"
                         >
                           <div className="flex flex-col">
-                            <h2 className="text-xs text-wrap font-normal tracing-wide">
+                            <h2 className="text-wrap tracing-wide text-xs font-normal">
                               {name}
                             </h2>
                             <p className="text-[10px] font-normal opacity-85">
@@ -261,15 +261,15 @@ const ThemeOne = ({
 
               {/* Categories List */}
               {selectedLayout === "theme-list" && (
-                <div className="w-full grid grid-cols-1 gap-4 px-2 py-4">
+                <div className="grid w-full grid-cols-1 gap-4 px-2 py-4">
                   {filteredProducts?.map(({ name, image, id, price }) => (
                     <Link
                       to={"#"}
                       key={id}
-                      className="group grid items-start grid-cols-2 place-items-end gap-5 ps-2"
+                      className="group place-items-end ps-2 grid items-start grid-cols-2 gap-5"
                     >
                       <div className="w-full">
-                        <div className="flex flex-col gap-3 text-start">
+                        <div className="text-start flex flex-col gap-3">
                           {/* Item Name */}
                           <h2
                             style={{ color: `${selectedSecondaryColor}` }}
@@ -283,7 +283,7 @@ const ThemeOne = ({
                           {/* Item Price */}
                           <p
                             style={{ color: `${selectedSecondaryColor}` }}
-                            className="text-xs font-medium opacity-80"
+                            className="opacity-80 text-xs font-medium"
                           >
                             {price} {currentRestaurant.currency ?? "MAD"}
                           </p>
@@ -325,10 +325,10 @@ const ThemeOne = ({
         </div>
 
         {/* Menu Footer Buttons */}
-        <div className="flex flex-col justify-center items-center max-w-full">
+        <div className="flex flex-col items-center justify-center max-w-full">
           <footer
             style={{ backgroundColor: `${selectedBgColor}` }}
-            className="absolute px-1 py-2 flex w-full items-center justify-around mx-auto shadow-lg bottom-0 rounded-b-2xl"
+            className="rounded-b-2xl absolute bottom-0 flex items-center justify-around w-full px-1 py-2 mx-auto shadow-lg"
           >
             {menuButtons.map((item, id) => (
               <Link
@@ -338,7 +338,7 @@ const ThemeOne = ({
               >
                 <item.icon
                   style={{ color: `${selectedSecondaryColor}` }}
-                  className="h-5 w-5"
+                  className="w-5 h-5"
                 />
                 <span
                   style={{ color: `${selectedSecondaryColor}` }}

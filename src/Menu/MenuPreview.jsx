@@ -61,9 +61,9 @@ const MenuPreview = () => {
         "getCategorieByResto",
         restaurantSlug.id
       );
-      const dishes = await getRestaurantInfo("getdishes", restaurantSlug.id);
-      const drinks = await getRestaurantInfo("getdrinks", restaurantSlug.id);
-      const restoInfo = await getRestaurantInfo("infos", restaurantSlug.id);
+      const dishes = await getRestaurantInfo("getdishes", restaurantSlug?.id);
+      const drinks = await getRestaurantInfo("getdrinks", restaurantSlug?.id);
+      const restoInfo = await getRestaurantInfo("infos", restaurantSlug?.id);
 
       setRestaurantInfo({
         categories: [{ name: "All", id: 0 }, ...categories],
@@ -72,7 +72,7 @@ const MenuPreview = () => {
       });
     };
     fetchData();
-  }, [getRestaurantInfo, restaurantSlug.id]);
+  }, [getRestaurantInfo, restaurantSlug?.id]);
 
   return (
     <div className="top-[5%] sticky right-0">
