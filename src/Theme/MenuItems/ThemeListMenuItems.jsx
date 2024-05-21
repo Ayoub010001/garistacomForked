@@ -3,7 +3,12 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { useSelectedPublishedTheme } from "../../hooks/usePublishedTheme";
 import { APIURL } from "../../../lib/ApiKey";
 
-const ThemeListMenuItems = ({ setSelectedItem, placeholderImage, item }) => {
+const ThemeListMenuItems = ({
+  setSelectedItem,
+  placeholderImage,
+  item,
+  currency,
+}) => {
   const { selectedPrimaryColor, selectedSecondaryColor, selectedBgColor } =
     useSelectedPublishedTheme();
   return (
@@ -30,7 +35,7 @@ const ThemeListMenuItems = ({ setSelectedItem, placeholderImage, item }) => {
               style={{ color: `${selectedSecondaryColor}` }}
               className="opacity-80 text-2xl font-semibold"
             >
-              {item.price}
+              {item.price} {currency}
             </p>
 
             {/* Add to cart */}

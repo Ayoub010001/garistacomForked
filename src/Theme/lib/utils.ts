@@ -5,9 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const getCurrentUserId = () => {
-  const userId = localStorage.getItem("dataItem");
-  if (userId) {
-    return parseInt(userId);
-  }
+export const getRestaurantSlug = () => {
+  const restaurantInfoSession = sessionStorage.getItem("RestoInfo");
+  if (!restaurantInfoSession) return;
+
+  const restaurantInfo = JSON.parse(restaurantInfoSession);
+
+  return restaurantInfo[0];
 };

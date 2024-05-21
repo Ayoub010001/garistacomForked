@@ -236,6 +236,7 @@ function App() {
                 dishes={dishes}
                 selectedTab={selectedTab}
                 setSelectedTab={setSelectedTab}
+                infoRes={resInfo}
               />
               <Footer
                 slug={restoSlug}

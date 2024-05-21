@@ -68,7 +68,7 @@ export default function NavBar() {
     const getUserData = async () => {
       try {
         // const res = await axiosInstance.get('/api/getResto/'+idUser);
-        const restore = await sessionStorage.getItem("RestoInfo");
+        const restore = sessionStorage.getItem("RestoInfo");
         if (restore) {
           let DataResto = JSON.parse(restore);
           // setRestoInfo(DataResto)
@@ -77,7 +77,7 @@ export default function NavBar() {
           let Slug = "";
           DataResto.map((item) => {
             Slug = item.slug;
-            console.log("tje item => ", item, item.id);
+            console.log("the item => ", item, item.id);
             setRestoInfo(item);
             fetchNotifications(item.id);
             console.log();
@@ -96,7 +96,7 @@ export default function NavBar() {
     };
 
     getUserData();
-  }, [restoInfo]);
+  }, []);
 
   useEffect(() => {
     // Fetch notifications from the server upon component mount

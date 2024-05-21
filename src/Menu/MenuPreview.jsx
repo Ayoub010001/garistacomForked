@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useMenuTheme } from "../hooks/useMenuTheme";
 import { usePublishedTheme } from "../hooks/usePublishedTheme";
 import ThemeOne from "./themes/ThemeOne";
 import ThemeTwo from "./themes/ThemeTwo";
 import ThemeThree from "./themes/ThemeThree";
 import ThemeFour from "./themes/ThemeFour";
+import { APIURL } from "../../lib/ApiKey";
+import { getRestaurantSlug } from "../Theme/lib/utils";
+import toast from "react-hot-toast";
 
 const MenuPreview = () => {
   const [, setPublishedTheme] = usePublishedTheme();
   const [isPublished, setIsPublished] = useState(false);
+  const [restaurantInfo, setRestaurantInfo] = useState({});
+  const restaurantSlug = getRestaurantSlug();
   // get selected menu themes
   const [
     {
@@ -38,6 +43,37 @@ const MenuPreview = () => {
     }, 1000);
   };
 
+  // fetch restaurant info
+  const getRestaurantInfo = useCallback(async (url, id) => {
+    try {
+      const response = await fetch(`${APIURL}/api/${url}/${id}`);
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const categories = await getRestaurantInfo(
+        "getCategorieByResto",
+        restaurantSlug.id
+      );
+      const dishes = await getRestaurantInfo("getdishes", restaurantSlug.id);
+      const drinks = await getRestaurantInfo("getdrinks", restaurantSlug.id);
+      const restoInfo = await getRestaurantInfo("infos", restaurantSlug.id);
+
+      setRestaurantInfo({
+        categories: [{ name: "All", id: 0 }, ...categories],
+        products: [...dishes, ...drinks],
+        restoInfo: restoInfo[0],
+      });
+    };
+    fetchData();
+  }, [getRestaurantInfo, restaurantSlug.id]);
+
   return (
     <div className="top-[5%] sticky right-0">
       <div className="relative flex flex-col items-center justify-center w-full max-h-screen overflow-hidden">
@@ -49,8 +85,8 @@ const MenuPreview = () => {
             {isPublished ? "Changes published" : "Publish"}
           </button>
 
-          <div className="relative border-black dark:border-black bg-black border-[14px] rounded-[2.5rem] w-[280px] max-w-full">
-            <div className="rounded-[2rem] scrollbar-hide w-full h-[480px] bg-white dark:bg-black overflow-y-scroll">
+          <div className="relative border-black dark:border-black bg-black border-[14px] rounded-[2rem] w-[280px] max-w-full">
+            <div className="rounded-[1rem] scrollbar-hide w-full h-[480px] bg-white dark:bg-black overflow-y-scroll">
               {/* Theme content */}
               {selectedTheme === 1 && (
                 <ThemeOne
@@ -60,6 +96,7 @@ const MenuPreview = () => {
                   selectedPrimaryColor={selectedPrimaryColor}
                   selectedSecondaryColor={selectedSecondaryColor}
                   selectedTheme={selectedTheme}
+                  restaurantInfo={restaurantInfo}
                 />
               )}
 

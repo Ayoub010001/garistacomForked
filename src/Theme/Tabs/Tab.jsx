@@ -3,7 +3,14 @@ import { Link } from "react-router-dom";
 import MenuItems from "../MenuItems/MenuItems";
 import { useSelectedPublishedTheme } from "../../hooks/usePublishedTheme";
 
-function Tab({ categories, dishes, setSelectedTab, selectedTab, resto }) {
+function Tab({
+  categories,
+  dishes,
+  setSelectedTab,
+  selectedTab,
+  resto,
+  infoRes,
+}) {
   // Get the selected published theme
   const { selectedBgColor, selectedPrimaryColor, selectedSecondaryColor } =
     useSelectedPublishedTheme();
@@ -90,6 +97,7 @@ function Tab({ categories, dishes, setSelectedTab, selectedTab, resto }) {
         }
         restoId={resto}
         selectedTab={selectedTab}
+        infoRes={infoRes}
       />
     </div>
   );

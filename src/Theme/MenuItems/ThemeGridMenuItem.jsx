@@ -3,7 +3,12 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { useSelectedPublishedTheme } from "../../hooks/usePublishedTheme";
 import { APIURL } from "../../../lib/ApiKey";
 
-const ThemeGridMenuItem = ({ setSelectedItem, placeholderImage, item }) => {
+const ThemeGridMenuItem = ({
+  setSelectedItem,
+  placeholderImage,
+  item,
+  currency,
+}) => {
   const { selectedPrimaryColor, selectedSecondaryColor, selectedBgColor } =
     useSelectedPublishedTheme();
   return (
@@ -25,7 +30,9 @@ const ThemeGridMenuItem = ({ setSelectedItem, placeholderImage, item }) => {
             {item.name.length > 20 ? item.name.slice(0, 20) + "..." : item.name}
           </h2>
 
-          <p className="text-start text-sm">{item.price}</p>
+          <p className="text-start text-sm">
+            {item.price} {currency}
+          </p>
         </div>
 
         <button

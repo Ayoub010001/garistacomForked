@@ -22,7 +22,8 @@ import ThemeListMenuItems from "./ThemeListMenuItems";
 import Dettaille from "./Dettaille";
 import { APIURL } from "../../../lib/ApiKey";
 import { useSelectedPublishedTheme } from "../../hooks/usePublishedTheme";
-function MenuItems({ dishes, selectedTab, restoId }) {
+
+function MenuItems({ dishes, selectedTab, restoId, infoRes }) {
   // Get the selected published theme
   const {
     selectedBgColor,
@@ -228,12 +229,14 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                                 setSelectedItem={setSelectedItem}
                                 placeholderImage={placeholderImage}
                                 item={item}
+                                currency={infoRes.currency ?? "MAD"}
                               />
                             ) : (
                               <ThemeListMenuItems
                                 setSelectedItem={setSelectedItem}
                                 placeholderImage={placeholderImage}
                                 item={item}
+                                currency={infoRes.currency ?? "MAD"}
                               />
                             )}
                           </div>
@@ -320,7 +323,7 @@ function MenuItems({ dishes, selectedTab, restoId }) {
 
                                 <span style={{ color: selectedSecondaryColor }}>
                                   {(selectedItem.price * quantity).toFixed(2)}{" "}
-                                  MAD
+                                  {infoRes.currency ?? "MAD"}
                                 </span>
                               </div>
                             </CredenzaBody>
@@ -351,7 +354,9 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                                     ? "Added To Your Cart"
                                     : `Add to selected: ${(
                                         selectedItem.price * quantity
-                                      ).toFixed(2)} MAD`}
+                                      ).toFixed(2)} ${
+                                        infoRes.currency ?? "MAD"
+                                      }`}
                                 </div>
                               </button>
 

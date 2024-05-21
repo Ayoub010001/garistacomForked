@@ -171,7 +171,7 @@ const userStaff = sessionStorage.getItem('dataStaff')
     
     // setName(userDat.first_name)
     getUserData();
-  }, []);
+  }, [idUser, role, userStaff]);
   
   async function handleUpdate () {
       try{
@@ -335,7 +335,7 @@ const userStaff = sessionStorage.getItem('dataStaff')
                                 {
                                   userDat.image == null
                                   ?
-                                  <img src="/public/avatar.png" height="100" width="150" alt="Profile" className='object-cover h-full'/>
+                                  <img src="/avatar.png" height="100" width="150" alt="Profile" className='object-cover h-full'/>
                                   :
                                   <img src={Image} height="100" width="150" alt="Profile" className='object-cover h-full' />
                                 }
