@@ -160,7 +160,7 @@ export default function Claims({
           name="infos"
           render={({field}) => (
             <FormItem>
-              <FormLabel>Email or phone(optional)</FormLabel>
+              <FormLabel className='text-nowrap'>Email or phone(optional)</FormLabel>
               <FormControl>
                 <Input placeholder="Email or phone...." disabled={disabled} {...field} />
               </FormControl>

@@ -54,7 +54,7 @@ export const FormAdd = ({ initialData, categories, handleAdded }) => {
 
      <Form {...form}>
        <form onSubmit={form.handleSubmit(onSubmit)}>
-      <div className='flex items-start gap-10 p-10 justify-center'>
+      <div className='flex items-start gap-10 md:p-10 p-5 pt-0 justify-center'>
           <div className='w-full '>
               {/* <div
                   className="h-40 bg-slate-200 flex justify-center items-center rounded cursor-move"

@@ -12,6 +12,7 @@ import Rate from './Rating/Rate';
 import Spinner from "react-spinner-material";
 import { axiosInstance } from "../../axiosInstance";
 import { APIURL } from "../../lib/ApiKey";
+import { Toaster } from "@/components/ui/toaster"
 
 function App() {
   const [cartCount, setCartCount] = useState(tabAchat.length);
@@ -204,7 +205,7 @@ useEffect(() => {
   return (
     // <Router>
       <div className="h-screen">
-
+          <Toaster />
           <Routes>
             <Route
               path={`/`}

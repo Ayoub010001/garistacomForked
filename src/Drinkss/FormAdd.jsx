@@ -79,10 +79,10 @@ export const FormAdd = ({ initialData, categories, selectedCategoryId, handleAdd
   };
     return (
       <>
-     <h2 className="text-2xl font-bold mb-4 text-center">{title}</h2>
+     <h2 className="text-2xl font-bold mb-4 text-center mt-5 md:mt-0">{title}</h2>
      <Form {...form}>
         <form onSubmit={form.handleSubmit((data) => onSubmit(data))}>
-          <div className="flex items-start gap-10 p-10">
+          <div className="flex flex-col md:flex-row items-start gap-2.5 md:gap-10 py-2 md:py-5 p-10">
           <div className='w-full '>
           <FormField
           control={form.control}
@@ -182,8 +182,8 @@ export const FormAdd = ({ initialData, categories, selectedCategoryId, handleAdd
                     />
               </div>
               </div>
-              <div className='float-right flex gap-2 items-center '>
-                <Button type="submit"  className='border px-4 py-2 rounded bg-black text-white hover:bg-zinc-600 duration-1000' >Confirm</Button>
+              <div className='md:float-right justify-center md:justify-normal pb-2 md:pb-0 flex gap-2 items-center '>
+                <Button type="submit"  className='border px-4 md:py-2 rounded bg-black text-white hover:bg-zinc-600 duration-1000' >Confirm</Button>
               </div>
 
           </form>

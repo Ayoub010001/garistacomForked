@@ -44,7 +44,7 @@ export default function Info({ items, infoRes }) {
             <h1 className="text-2xl font-bold mb-2">{items.name}</h1>
             <div className="flex flex-wrap justify-center mb-6">
                 {socialMediaLinks.map((item, index) => (
-                    <div key={index} className="w-10 h-10 rounded-full border border-1 border-grey/50 grid place-content-center mx-2 mb-2">
+                    <div key={index} className="w-10 h-10 rounded-full border border-1 border-grey/50 grid text-[#28509E] place-content-center mx-2 mb-2">
                         <Link to={item.link} target="_blank">
                             <item.icon size={25} className="text-grey/50" color="grey/50" />
                         </Link>
@@ -52,7 +52,7 @@ export default function Info({ items, infoRes }) {
                 ))}
             </div>
             <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 w-full mb-6">
-                <h2 className="text-lg font-bold mb-2">WiFi Password</h2>
+                <h2 className="text-lg  font-bold mb-2">WiFi Password</h2>
                 <div className="flex items-center justify-between">
                     <span className="text-gray-700 dark:text-gray-300 font-medium">{infoRes.wifi_pass}</span>
                     <div className="flex space-x-2">

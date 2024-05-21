@@ -167,9 +167,9 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
 
       <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full max-w-[750px] mx-auto">
-          <h2 className="text-2xl font-bold mb-2 text-center">{title}</h2>
-          <div className="flex flex-col gap-3 items-center justify-center pt-4">
-              <div className="flex gap-3">
+          <h2 className="text-2xl font-bold md:mb-2 mb-1 text-center">{title}</h2>
+          <div className="flex flex-col gap-3 items-center justify-center pt-2 md:pt-4">
+              <div className="flex md:flex-row  flex-col gap-3">
                 <FormField
                     control={form.control}
                     name="first_name"
@@ -195,7 +195,7 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
                     )}
                   />
               </div>
-              <div className="flex gap-3">
+              <div className="flex md:flex-row  flex-col gap-3">
                 
               <FormField
                     control={form.control}
@@ -222,7 +222,7 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
                     )}
                   />
               </div>
-              <div className="flex gap-3">
+              <div className="flex md:flex-row  flex-col gap-3">
               <FormField
                     control={form.control}
                     name="email"
@@ -250,7 +250,7 @@ export const FormAdd = ({ initialData, roles, selectedRoleId , handleData, loadi
                   /> 
                   }
                   {initialData && 
-                  <div className='w-72 '>
+                  <div className='md:w-72 max-w-72 '>
 
                     <FormField
                     control={form.control}

@@ -1,7 +1,5 @@
-import React, { useContext, useState } from "react";
-
+import React, { useContext, useState, useEffect, useCallback, useMemo } from "react";
 import { Button } from "../../components/ui/button";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,7 +33,7 @@ import {
 } from "../../components/ui/tabs";
 import Overview from "./components/overview";
 import { RecentSales } from "./components/recent-sales";
-import {RecentSalesOrders} from "./components/recent-sales-orders"
+import { RecentSalesOrders } from "./components/recent-sales-orders";
 import TeamSwitcher from "./components/team-switcher";
 import { RiListUnordered } from "react-icons/ri";
 import UserNav from "./components/user-nav";
@@ -49,12 +47,12 @@ import {
   DialogFooter,
 } from "../../components/ui/dialog";
 import LineChartpage from "./components/lineChart";
-import { useEffect } from "react";
 import { getRoles } from "../../../actions/Role/getRoles";
 import { axiosInstance } from "../../../axiosInstance";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useLogin } from "../../../actions/Authentification/LoginProvider";
 import Spinner from "react-spinner-material";
+
 function DashboardPage() {
   const [qrValue, setQrValue] = useState();
   const navigate = useNavigate();
@@ -62,29 +60,27 @@ function DashboardPage() {
   const [drinks, setDrinks] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [qrcodeLength, setQrcodeLength] = useState(0);
-  const [userDat, setUserDat] = useState([])
+  const [userDat, setUserDat] = useState([]);
   const idUser = sessionStorage.getItem('dataItem');
   const [isLoggedIn, setIsLoggedIn] = useState("not login");
-  const [loading, setLoading] = useState(false)
-  const [orders, setOrders] = useState([]); // State to hold orders data
+  const [loading, setLoading] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [items, setItems] = useState([]);
+  const [restos, setRestos] = useState([]);
 
-  // Check if user is logged in by verifying session storage
-  // You may customize this based on how you handle authentication
-  const checkLoginStatus = () => {
+  const checkLoginStatus = useCallback(() => {
     const userLoggedIn = sessionStorage.getItem('isLoggedIn');
     setIsLoggedIn(userLoggedIn);
-  };  
-  
-  async function fetchOrderDetails(orders) {
-    setLoading(true)
+  }, []);
 
+  const fetchOrderDetails = useCallback(async (orders) => {
+    setLoading(true);
     const itemCounts = {};
 
-    for (const order of orders) {
+    const fetchOrder = async (order) => {
       try {
         const response = await axiosInstance.get(`/api/order/${order.id}`);
         const { dishes } = response.data;
-
         dishes.forEach(dish => {
           if (itemCounts[dish.name]) {
             itemCounts[dish.name].count += dish.quantity;
@@ -99,115 +95,79 @@ function DashboardPage() {
       } catch (error) {
         console.error(`Error fetching details for order ${order.id}:`, error);
       }
-      finally{
-        setLoading(false)
-      }
-    }
+    };
+
+    await Promise.all(orders.map(fetchOrder));
 
     const sortedItems = Object.values(itemCounts).sort((a, b) => b.count - a.count);
     setItems(sortedItems);
-  }
-  const [restos, setRestos] = useState([])
+    setLoading(false);
+  }, []);
 
-const getOrders = async (id) => {
+  const getOrders = useCallback(async (id) => {
     setLoading(true);
     try {
-        const res = await axiosInstance.get('/api/order_resto/' + id);
-        if (res && res.data) {
-            console.log('The Response of Order Resto => ', res.data);
-            fetchOrderDetails(res.data); // Ensure this function does not modify the orders structure
-            setOrders(res.data);
-        }
-    } catch (err) {
-        console.log('The Error => ', err.message);
-    } finally {
-        setLoading(false);
-    }
-};
-
-
-  const fetchData = async (id) => {
-    setLoading(true);
-    try {
-
-      const dishesResponse = await axiosInstance.get('/api/dishes/'+id);
-      const drinksResponse = await axiosInstance.get('/api/drinks/'+id);
-      const qrCodeResponse = await axiosInstance.get('/api/qrcodes/'+id);
-      console.log("The Response Dishes => ", dishesResponse.data.length );
-      
-      // const [dishesData, drinksData] = await Promise.all([dishesResponse, drinksResponse, qrCodeResponse]);
-      
-      // setDishes(dishesData.data);
-      // setDrinks(drinksData.data);
-      if(dishesResponse)
-      {
-        let Dataes = dishesResponse.data;
-        let DateDrink = drinksResponse.data
-        setTotalItems(Dataes.length + DateDrink.length);
-        setQrcodeLength(qrCodeResponse.data.length)
+      const res = await axiosInstance.get(`/api/order_resto/${id}`);
+      if (res && res.data) {
+        fetchOrderDetails(res.data);
+        setOrders(res.data);
       }
+    } catch (err) {
+      console.log('The Error => ', err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchOrderDetails]);
+
+  const fetchData = useCallback(async (id) => {
+    setLoading(true);
+    try {
+      const [dishesResponse, drinksResponse, qrCodeResponse] = await Promise.all([
+        axiosInstance.get(`/api/dishes/${id}`),
+        axiosInstance.get(`/api/drinks/${id}`),
+        axiosInstance.get(`/api/qrcodes/${id}`),
+      ]);
+      setTotalItems(dishesResponse.data.length + drinksResponse.data.length);
+      setQrcodeLength(qrCodeResponse.data.length);
     } catch (error) {
       console.error('Error fetching data:', error.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     const getUserData = async () => {
-      try{
-                
+      try {
         const restoInfoses = sessionStorage.getItem('RestoInfo');
-        let Data = [];
-        Data = JSON.parse(restoInfoses)
-        let id;
-        Data.map(item => {
-            // setRestoInfo(item)
-            setRestos(item)
-            id = item.id
-          })
-          getOrders(id)
-          fetchData(id)
-          
-      }
-      catch(err)
-      {
+        const Data = JSON.parse(restoInfoses) || [];
+        const id = Data[0]?.id;
+        setRestos(Data);
+        if (id) {
+          getOrders(id);
+          fetchData(id);
+        }
+      } catch (err) {
         console.log("The Error => ", err);
       }
-      // if(userItem)
-      // {
-        // userItem.map(obj =>  {
-        //   console.log("The Items => ", obj);
-        //   setUserDat(obj)
-        // })
     };
-  
-
     getUserData();
-  }, []);
-  const [items, setItems] = useState([]);
+  }, [fetchData, getOrders]);
 
-
-  // useEffect(() => {
-    
-
-  // }, []);
-  // Call checkLoginStatus on initial render
   useEffect(() => {
     checkLoginStatus();
+  }, [checkLoginStatus]);
 
-  }, []);
+  const orderCount = useMemo(() => orders.length > 0 ? orders.length : 0, [orders]);
 
-  const orderCount = orders.length > 0 ? orders.length : 0;
-
-  if(loading)
-  {
-    return(
+  if (loading) {
+    return (
       <div className='justify-center items-center flex  h-[50vh]'>
-      <Spinner size={100} spinnerColor={"#28509E"} spinnerWidth={1} visible={true} style={{borderColor: "#28509E", borderWidth: 2}}/>
-    </div>
-    )
+        <Spinner size={100} spinnerColor={"#28509E"} spinnerWidth={1} visible={true} style={{ borderColor: "#28509E", borderWidth: 2 }} />
+      </div>
+    );
   }
+
   return (
     <div className="">
       <div className="md:hidden">
@@ -224,11 +184,9 @@ const getOrders = async (id) => {
       </div>
 
       <div className="hidden flex-col md:flex">
-
         <div className="flex-1 space-y-4 p-8 pt-20">
           <div className="flex items-center justify-between space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-
             <div
               className="flex items-center space-x-2 "
               style={{
@@ -237,26 +195,12 @@ const getOrders = async (id) => {
                 borderRadius: ".5rem",
               }}
             >
-              {/* <Button>Download</Button> */}
             </div>
-
           </div>
           <p className="pl-2 text-lg text-muted-foreground">
-                    Overview 30 days
-                    </p>
+            Overview 30 days
+          </p>
           <Tabs defaultValue="overview" className="space-y-4">
-            {/* <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics" disabled>
-                Analytics
-              </TabsTrigger>
-              <TabsTrigger value="reports" disabled>
-                Reports
-              </TabsTrigger>
-              <TabsTrigger value="notifications" disabled>
-                Notifications
-              </TabsTrigger>
-            </TabsList> */}
             <TabsContent value="overview" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
@@ -281,28 +225,20 @@ const getOrders = async (id) => {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">45231</div>
-                    {/* <p className="text-xs text-muted-foreground">
-                      +20.1% from last month
-                    </p> */}
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">Orders</CardTitle>
-                    <RiListUnordered className="h-4 w-4 text-muted-foreground"/>
+                    <RiListUnordered className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">{orderCount}</div>
-                    {/* <p className="text-xs text-muted-foreground">
-                      +180.1% from last month
-                    </p> */}
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Total Items
-                    </CardTitle>
+                    <CardTitle className="text-sm font-medium">Total Items</CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -319,23 +255,15 @@ const getOrders = async (id) => {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">{totalItems}</div>
-                    {/* <p className="text-xs text-muted-foreground">
-                      +19% from last month
-                    </p> */}
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      QR Codes
-                    </CardTitle>
-                    <IoQrCodeOutline className="h-4 w-4 text-muted-foreground"/>
-                    </CardHeader>
+                    <CardTitle className="text-sm font-medium">QR Codes</CardTitle>
+                    <IoQrCodeOutline className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">{qrcodeLength}</div>
-                    {/* <p className="text-xs text-muted-foreground">
-                      +201 since last hour
-                    </p> */}
                   </CardContent>
                 </Card>
               </div>
@@ -344,40 +272,32 @@ const getOrders = async (id) => {
                   <CardHeader>
                     <CardTitle>Last 30 days Orders</CardTitle>
                   </CardHeader>
-                  <CardContent className="pl-2">
+                  <CardContent className="pl-2 pb-0 pt-6">
                     <Overview orders={orders} />
                   </CardContent>
                 </Card>
                 <Card className="col-span-3">
                   <CardHeader>
                     <CardTitle>Best seller items</CardTitle>
-                    {/* <CardDescription>
-                      You made 265 sales this month.
-                    </CardDescription> */}
                   </CardHeader>
                   <CardContent>
-                    <RecentSales items={items}/>
+                    <RecentSales items={items} loading={loading} />
                   </CardContent>
                 </Card>
               </div>
             </TabsContent>
           </Tabs>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-
-          <Card className="col-span-3">
-                  <CardHeader>
-                    <CardTitle>Last 10 Orders</CardTitle>
-
-                  </CardHeader>
-                  <CardContent>
-
-                    <RecentSalesOrders orders={orders} />
-
-
-                  </CardContent>
-                </Card>
-                <LineChartpage />
-            </div>
+            <Card className="col-span-3">
+              <CardHeader>
+                <CardTitle>Last 10 Orders</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <RecentSalesOrders orders={orders} />
+              </CardContent>
+            </Card>
+            <LineChartpage />
+          </div>
         </div>
       </div>
     </div>

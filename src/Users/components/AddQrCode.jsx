@@ -3,6 +3,17 @@ import { Link, useLocation } from 'react-router-dom';
 import { MdAddBox } from 'react-icons/md';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { FormAdd } from './FormAdd';
 import {
     Dialog,
@@ -52,17 +63,19 @@ function AddQrCode() {
     const { state } = useLocation();
     const [isLoading, setIsLoading] = useState(false)
     const { names } = state == null ? "tes" : state.value;
+    const isDesktop = useMediaQuery("(min-width: 860px)")
+    const [open, setOpen] = React.useState(false)
 
     console.log("qr",names)
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const idUser = sessionStorage.getItem('dataItem');
 
     const handleDialogClose = () => {
-      setIsDialogOpen(false);
+        setOpen(false);
     };
     
     const handleDialogOpen = () => {
-      setIsDialogOpen(true);
+        setOpen(true);
     };
     const [user, setUser] = useState([]);
     const [role,setRole] = useState("");
@@ -258,18 +271,36 @@ function AddQrCode() {
                                     </UserContext.Provider>
                                 </CardContent>
                     </Card>
-                    <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
-                        {/* <DialogTrigger>
-
-                        </DialogTrigger> */}
-                        <DialogContent className="max-w-[50rem]">
-                        <DialogHeader>
-                                <FormAdd loading={isLoading} roles={roles} handleData={handleData}/>
-                        </DialogHeader>
-
-                        </DialogContent>
-                    </Dialog>
                     </div>
+                    {isDesktop ? 
+                
+          <Dialog
+           open={open} onOpenChange={setOpen}
+           >
+            {/* <DialogTrigger>
+
+            </DialogTrigger> */}
+              <DialogContent className="max-w-[50rem]">
+              <DialogHeader>
+                      <FormAdd loading={isLoading} roles={roles} handleData={handleData}/>
+              </DialogHeader>
+
+              </DialogContent>
+          </Dialog>
+                :
+                <Drawer open={open} onOpenChange={setOpen}>
+                    {/* <DrawerTrigger>
+
+                    </DrawerTrigger> */}
+      <DrawerContent >
+      <DrawerHeader>
+
+      <FormAdd loading={isLoading} roles={roles} handleData={handleData}/>
+      </DrawerHeader>
+      </DrawerContent>
+                </Drawer>
+                
+                }
                 </>
             }
         </>

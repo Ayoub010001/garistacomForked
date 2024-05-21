@@ -10,8 +10,15 @@ import { APIURL } from "../../../../lib/ApiKey";
 import { BarChartIcon } from "lucide-react";
 
 export function RecentSales({
-  items
+  items, loading
 }) {
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Spinner size={60} spinnerColor={"#333"} spinnerWidth={2} visible={true} />
+      </div>
+    );
+  }
 
   if (items?.length === 0) {
     return (
@@ -29,7 +36,7 @@ export function RecentSales({
 
   return (
     <div className="space-y-8">
-      { items?.map((item, index) => (
+      { items?.slice(0, 6).map((item, index) => (
         <div key={index} className="flex items-center">
           <img src={`${APIURL}/storage/${item.image}`} className="rounded-full w-9 h-9 bg-slate-500"  />
           <div className="ml-4 space-y-1">

@@ -17,6 +17,17 @@ import { Controller } from "react-hook-form"
 import { DialogClose } from "../components/ui/dialog"
 import { useEffect } from "react"
 import { FormAdd } from "./FormAdd"
+import { useMediaQuery } from "@/hooks/use-media-query"
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
 export const AddPromo = ({
     onSubmit,
     handleSubmit,
@@ -29,10 +40,11 @@ export const AddPromo = ({
     handleDelete
 }) => {
 
-
+  const isDesktop = useMediaQuery("(min-width: 860px)")
+  const [open, setOpen] = React.useState(false)
+if (isDesktop){
   return (
-    
-    <Dialog  className=" p-8 shadow-lg h-[45rem] w-[65rem] rounded-xl">
+    <Dialog open={open} onOpenChange={setOpen} className=" p-8 shadow-lg h-[45rem] w-[65rem] rounded-xl">
     <DialogTrigger className="flex justify-center">
             <Button variant="ghost" className="relative  rounded-md bg-black text-white">
           Add Promo
@@ -108,6 +120,24 @@ export const AddPromo = ({
         </DialogFooter>
     </DialogContent>
 </Dialog>
+  )
+}
+  return (
+    <Drawer open={open} onOpenChange={setOpen}>
+    <DrawerTrigger asChild>
+    <Button variant="ghost" className="relative  rounded-md bg-black text-white">
+          Add Promo
+            </Button>
+    </DrawerTrigger>
+    <DrawerContent>
+      <DrawerHeader>
+
+    <FormAdd handleAdded={handleSubmit}/>
+      </DrawerHeader>
+      <DrawerFooter className="flex justify-center items-center">
+        </DrawerFooter>
+    </DrawerContent>
+              </Drawer>
   )
 }
 

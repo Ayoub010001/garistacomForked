@@ -35,7 +35,7 @@ function Uploader({ onChange, getValue,initalData }) {
 
   const imageData = image == null ? `${APIURL}/storage/${getValue}` : image;
   return (
-    <main className="w-[590px]">
+    <main className="md:w-[590px] w-[320px]">
       <form className="form-drag" onClick={() => document.querySelector('.input-field').click()}>
         <input type="file" accept="image/*" className="input-field" hidden onChange={handleFileChange} />
          

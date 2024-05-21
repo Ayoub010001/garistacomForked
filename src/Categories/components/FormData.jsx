@@ -137,7 +137,7 @@ console.log("The Visibility => ", initialData);
     };
   return (
     <>
-         <DialogTitle>{title}</DialogTitle>
+         <DialogTitle className="text-center mt-6 md:mt-0">{title}</DialogTitle>
             <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)}>
                                     <div className="flex flex-col gap-3 items-center justify-center pt-4">
@@ -147,7 +147,7 @@ console.log("The Visibility => ", initialData);
                     render={({ field }) => (
                         <FormItem>
                         <FormControl>
-                            <Input type="text" placeholder="Name" disabled={loading}  className="w-[37rem] p-2 border border-gray-300 rounded-md"  {...field} />
+                            <Input type="text" placeholder="Name" disabled={loading}  className="md:w-[37rem] w-[320px]  p-2 border border-gray-300 rounded-md"  {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -180,7 +180,7 @@ console.log("The Visibility => ", initialData);
                                     name="visibility"
                                     render={({ field, formState }) => (
                                         <FormItem>
-                                        <div className="flex gap-3 mt-5">
+                                        <div className="flex gap-3 items-center justify-center mt-5">
                                             <FormLabel style={{fontSize:"20px"}}>
                                             Visibilty
                                             </FormLabel>
@@ -200,7 +200,7 @@ console.log("The Visibility => ", initialData);
                                     )}
                                     />
                                   }
-                                <Button type="submit" variant="outline" className="justify-end items-end bg-black hover:bg-black text-white hover:text-white" 
+                                <Button type="submit" variant="outline" className="justify-end my-6 md:my-0 items-end bg-black hover:bg-black text-white hover:text-white" 
                                 // onClick={handleAddUser}
                                 >{action}</Button>
                             

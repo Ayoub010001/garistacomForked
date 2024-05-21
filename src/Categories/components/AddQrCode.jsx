@@ -27,6 +27,17 @@ import './uploader.css';
 import Spinner from 'react-spinner-material';
 import FormAdd from './FormData';
 import { toast } from "react-hot-toast";
+import { useMediaQuery } from "@/hooks/use-media-query"
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
 
 
 
@@ -37,6 +48,8 @@ function AddQrCode({props}) {
     const { control, handleSubmit, register, formState: { errors }, setError } = useForm();
     const [loading, setLoading] = useState(false)
     const [resotInfo, setRestoInfo] = useState([]) 
+    const isDesktop = useMediaQuery("(min-width: 860px)")
+    const [open, setOpen] = React.useState(false)
 
     const fetchCat = async (id) =>{
         // const result = await fetchCategorie();
@@ -212,7 +225,9 @@ function AddQrCode({props}) {
                 ))
                }
 
-                <Dialog >
+
+                {isDesktop ? 
+                <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger>
                         <Card className="w-[250px] h-[280px] border-dashed grid place-content-center">
                             <CardHeader className="text-center">
@@ -245,6 +260,43 @@ function AddQrCode({props}) {
                         <FormAdd categories={Categories} handleAddUser={handleAddUser}/>
                     </DialogContent>
                 </Dialog>
+                :
+
+                <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
+      <Card className="w-[250px] h-[280px] border-dashed grid place-content-center">
+                            <CardHeader className="text-center">
+                                <CardTitle className="text-lg">Add Categories to sort your dishes and drinks type</CardTitle>
+
+
+                            </CardHeader>
+                            <CardContent>
+                                    <button
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            backgroundColor: '#ffffff',
+                                            width: '100%',
+                                            height: '100%',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                        }}
+                                        onClick={() => {
+                                            console.log('Icon clicked');
+                                        }}
+                                    >
+                                        <MdAddBox size={50} style={{ color: '#000' }} />
+                                    </button>
+                            </CardContent>
+                        </Card>
+      </DrawerTrigger>
+      <DrawerContent>
+       <FormAdd categories={Categories} handleAddUser={handleAddUser}/>
+      </DrawerContent>
+                </Drawer>
+                
+                }
                </div>
              </>
             }

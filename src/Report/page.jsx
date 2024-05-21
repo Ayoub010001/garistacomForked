@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-
+import React, { useContext, useState, useCallback, useEffect, useMemo } from "react";
+import Spinner from "react-spinner-material";
 import { Button } from "./../components/ui/button";
 import {
   DropdownMenu,
@@ -56,10 +56,122 @@ import {
   } from "@/components/ui/select"
 import SelectDate from "./components/SelectDate";
 import DonutChartHero from "./components/CircleChart"
+import { axiosInstance } from "../../axiosInstance";
+import { useNavigate } from "react-router-dom";
 function Report() {
   const [qrValue, setQrValue] = useState();
+  const navigate = useNavigate();
+  const [dishes, setDishes] = useState([]);
+  const [drinks, setDrinks] = useState([]);
+  const [totalItems, setTotalItems] = useState(0);
+  const [qrcodeLength, setQrcodeLength] = useState(0);
+  const [userDat, setUserDat] = useState([]);
+  const idUser = sessionStorage.getItem('dataItem');
+  const [isLoggedIn, setIsLoggedIn] = useState("not login");
+  const [loading, setLoading] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [items, setItems] = useState([]);
+  const [restos, setRestos] = useState([]);
 
-  const defaultPageURL = "https://votre-domaine.com/page-par-defaut";
+  const checkLoginStatus = useCallback(() => {
+    const userLoggedIn = sessionStorage.getItem('isLoggedIn');
+    setIsLoggedIn(userLoggedIn);
+  }, []);
+
+  const fetchOrderDetails = useCallback(async (orders) => {
+    setLoading(true);
+    const itemCounts = {};
+
+    const fetchOrder = async (order) => {
+      try {
+        const response = await axiosInstance.get(`/api/order/${order.id}`);
+        const { dishes } = response.data;
+        dishes.forEach(dish => {
+          if (itemCounts[dish.name]) {
+            itemCounts[dish.name].count += dish.quantity;
+          } else {
+            itemCounts[dish.name] = {
+              name: dish.name,
+              image: dish.image,
+              count: dish.quantity,
+            };
+          }
+        });
+      } catch (error) {
+        console.error(`Error fetching details for order ${order.id}:`, error);
+      }
+    };
+
+    await Promise.all(orders.map(fetchOrder));
+
+    const sortedItems = Object.values(itemCounts).sort((a, b) => b.count - a.count);
+    setItems(sortedItems);
+    setLoading(false);
+  }, []);
+
+  const getOrders = useCallback(async (id) => {
+    setLoading(true);
+    try {
+      const res = await axiosInstance.get(`/api/order_resto/${id}`);
+      if (res && res.data) {
+        fetchOrderDetails(res.data);
+        setOrders(res.data);
+      }
+    } catch (err) {
+      console.log('The Error => ', err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchOrderDetails]);
+
+  const fetchData = useCallback(async (id) => {
+    setLoading(true);
+    try {
+      const [dishesResponse, drinksResponse, qrCodeResponse] = await Promise.all([
+        axiosInstance.get(`/api/dishes/${id}`),
+        axiosInstance.get(`/api/drinks/${id}`),
+        axiosInstance.get(`/api/qrcodes/${id}`),
+      ]);
+      setTotalItems(dishesResponse.data.length + drinksResponse.data.length);
+      setQrcodeLength(qrCodeResponse.data.length);
+    } catch (error) {
+      console.error('Error fetching data:', error.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const restoInfoses = sessionStorage.getItem('RestoInfo');
+        const Data = JSON.parse(restoInfoses) || [];
+        const id = Data[0]?.id;
+        setRestos(Data);
+        if (id) {
+          getOrders(id);
+          fetchData(id);
+        }
+      } catch (err) {
+        console.log("The Error => ", err);
+      }
+    };
+    getUserData();
+  }, [fetchData, getOrders]);
+
+  useEffect(() => {
+    checkLoginStatus();
+  }, [checkLoginStatus]);
+
+  const orderCount = useMemo(() => orders.length > 0 ? orders.length : 0, [orders]);
+
+  if (loading) {
+    return (
+      <div className='justify-center items-center flex  h-[50vh]'>
+        <Spinner size={100} spinnerColor={"#28509E"} spinnerWidth={1} visible={true} style={{ borderColor: "#28509E", borderWidth: 2 }} />
+      </div>
+    );
+  }
   return (
     <div className="">
       <div className="md:hidden">
@@ -138,7 +250,7 @@ function Report() {
                   <AiOutlineUnorderedList  className="text-black size-11"/>
                   <div>
                      <CardTitle className="text-xl font-medium">Orders</CardTitle>
-                    <CardDescription className="text-black text-lg text-end">2350</CardDescription>
+                    <CardDescription className="text-black text-lg text-end">{orderCount}</CardDescription>
                   </div>
 
 
@@ -202,7 +314,7 @@ function Report() {
                     <CardTitle>Last 30 days Orders</CardTitle>
                   </CardHeader>
                   <CardContent className="pl-2">
-                    <Overview />
+                  <Overview orders={orders} />
                   </CardContent>
                 </Card>
 

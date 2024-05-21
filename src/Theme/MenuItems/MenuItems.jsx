@@ -16,11 +16,22 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { addItem, removeAll } from '../../lib/cartSlice';
 import Logo from './waiter-svgrepo-com.svg';
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import Dettaille from './Dettaille';
 import { APIURL } from '../../../lib/ApiKey';
-
+import { useToast } from "@/components/ui/use-toast"
 function MenuItems({ dishes, selectedTab, restoId }) {
+  const { toast } = useToast()
   const [selectedProp, setSelectedProp] = useState(0); // initialisation de l'état avec 0
   const [searchTerm, setSearchTerm] = useState(""); // état pour stocker la valeur de la recherche
   const [updateFormState, setUpdateFormState] = useState(false);
@@ -82,9 +93,7 @@ function MenuItems({ dishes, selectedTab, restoId }) {
 
   const handleAddItem = (product, quantity) => {
     dispatch(addItem({ product, quantity: quantity, resto_id: restoId }));
-    setIsModalOpen(false); // Close the credenza after adding the item
-  setCredenzaOpen(false);
-  // setIsModalOpen(!isModalOpen);
+  setIsModalOpen(false);
   };
 
   const handleRemoveAll = product => {
@@ -114,9 +123,7 @@ function MenuItems({ dishes, selectedTab, restoId }) {
             {filteredCategories.length > 0 && filteredCategories.map((item, index) => (
               <div className="tabs-container overflow-x-auto" key={index}>
                 <div className="flex gap-4">
-                  <Credenza key={item.id} className={"!bg-white !py-0"} open={isModalOpen} onOpenChange={setIsModalOpen}>
-                    <CredenzaTrigger asChild className="h-auto w-full !py-0 !bg-white">
-                      <Button className=" px-0">
+                      <Button onClick={() => setIsModalOpen(!isModalOpen)} className="h-auto w-full !py-0 !bg-white px-0">
                         <div key={item.id} className="relative shadow-md rounded-[10px] w-full border-gray-300 border inline-block">
                           <div
                             onClick={() => setSelectedItem(item)}
@@ -127,16 +134,34 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                               <div>
                                 <h2 className="text-[12px] mb-0 ">{item.name.slice(0, 12)}</h2>
                                 <p className='text-[12px] text-left'>{item.price}</p>
-                              </div>
-                              
-                              <button type="button" onClick={() => handleAddItem(item, 1)} className="text-white leading-0 bg-[#28509E] hover:bg-[#28509E] w-[30px] h-[30px] flex items-center justify-center rounded-[8px]">
-                                <AiOutlinePlus style={{ color: "#ffffff" }} />
+                              </div> 
+                              <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation(); // Prevent the parent button from being clicked
+                                      handleAddItem(item, 1);
+                                      toast({
+                                        title: `${item.name} added to cart successfully!`,
+                                        description: "You can confirm your order in checkout"
+                                      })
+                                    }}
+                                    className="text-white leading-0 bg-[#28509E] hover:bg-[#28509E] w-[30px] h-[30px] flex items-center justify-center rounded-[8px]">
+                                    <AiOutlinePlus style={{ color: "#ffffff" }} />
                               </button>
                             </div>
                           </div>
                         </div>
                       </Button>
-                    </CredenzaTrigger>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+                  <Credenza className={"!bg-white !py-0"} open={isModalOpen} onOpenChange={setIsModalOpen}>
+                    {/* <CredenzaTrigger asChild className="h-auto w-full !py-0 !bg-white">
+                    </CredenzaTrigger> */}
                     <CredenzaContent className="flex max-h-screen bg-white">
                       {selectedItem != null && (
                         <>
@@ -174,19 +199,29 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                           </CredenzaFooter>
                         </>
                       )}
+
                     </CredenzaContent>
                   </Credenza>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className={`mb-1 fixed bottom-16 right-2 flex items-center justify-center ${credenzaOpen ? 'hidden' : ''}`}>
-        <Button className="h-16 w-16 rounded-full bg-[#28509E] text-white shadow-lg flex items-center justify-center" size="icon" variant="outline">
-          <img src={Logo} alt="Waiter Icon" className="h-8 w-8 text-white fill-[#fff]" />
-        </Button>
-      </div>
+      <AlertDialog>
+      <AlertDialogTrigger asChild className={`mb-1 fixed bottom-16 right-2 flex-col flex items-end justify-center ${credenzaOpen ? 'hidden' : ''}`}>
+      <Button className="h-16 w-16 rounded-full bg-[#28509E] shadow-lg flex items-center justify-center" size="icon" >
+      <img src={Logo} alt="Waiter Icon" className="h-12 w-11" />
+    </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent className="w-[80%] rounded-lg">
+        <AlertDialogHeader>
+          <AlertDialogTitle>Call waiter?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete your
+            account and remove your data from our servers.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogAction>Ok</AlertDialogAction>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
     </>
   );
 }

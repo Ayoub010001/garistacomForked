@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import MenuItems from '../MenuItems/MenuItems';
-
+import "./tab.css"
 function Tab({
   categories,
   dishes,
