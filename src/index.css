@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 @font-face {
-    font-family: "THICCCBOI-BOLD";
-    src: url("../public/fonts/Webfont/THICCCBOI-Medium.woff2");
-    font-style: normal;
+  font-family: "THICCCBOI-BOLD";
+  src: url("../fonts/Webfont/THICCCBOI-Medium.woff2");
+  font-style: normal;
 }
 @layer base {
   :root {
@@ -79,125 +79,122 @@
     @apply bg-background text-foreground;
   }
 }
-body{
-    background-color: #FBFBFB;
-    font-family: "THICCCBOI-BOLD",sans-serif;
+body {
+  background-color: #fbfbfb;
+  font-family: "THICCCBOI-BOLD", sans-serif;
 }
 
 .customWidth {
   width: calc(100% - 4rem);
 }
 
-.grid__content{
-    grid-template-columns: 2.5fr 1fr;
+.grid__content {
+  grid-template-columns: 2.5fr 1fr;
 }
-.grid__content__Profile{
-    grid-template-columns: 0fr .97fr;
-
+.grid__content__Profile {
+  grid-template-columns: 0fr 0.97fr;
 }
-
 
 #qrcode-id-unique {
-    width: 246px !important;
-    height: 139px !important;
-    max-width: -moz-max-content;
-    max-width: max-content;
-    margin-inline: auto;
+  width: 246px !important;
+  height: 139px !important;
+  max-width: -moz-max-content;
+  max-width: max-content;
+  margin-inline: auto;
 }
-#qrcode-id-unique-nav{
-    width: 210px !important;
-    height: 210px !important;
-    max-width: -moz-max-content;
-    max-width: max-content;
-    margin-inline: auto;
+#qrcode-id-unique-nav {
+  width: 210px !important;
+  height: 210px !important;
+  max-width: -moz-max-content;
+  max-width: max-content;
+  margin-inline: auto;
 }
-#qrcode-id-unique-custom{
-    width: 260px !important;
-    height: 200px !important;
-    max-width: -moz-max-content;
-    max-width: max-content;
-    margin-inline: auto;
-
+#qrcode-id-unique-custom {
+  width: 260px !important;
+  height: 200px !important;
+  max-width: -moz-max-content;
+  max-width: max-content;
+  margin-inline: auto;
 }
 
 #CustomQR {
-    background: linear-gradient(
+  background: linear-gradient(
     to bottom,
     #3b82f6 0%,
     #3b82f6 50%,
     white 50%,
     white 100%
   );
-  border-radius: .5rem;
+  border-radius: 0.5rem;
 }
 
 #CustomQR-1 {
-    background: linear-gradient(
-        to bottom,
-        white 0%,
-        white 50%,
-        #3b82f6 50%,
-        #3b82f6 100%
-      );
-      border-radius: .5rem;
+  background: linear-gradient(
+    to bottom,
+    white 0%,
+    white 50%,
+    #3b82f6 50%,
+    #3b82f6 100%
+  );
+  border-radius: 0.5rem;
 }
 
 #CustomQR-2 {
-    background: linear-gradient(
-        to bottom,
-        #3b82f6 0%,
-        #3b82f6 50%,
-        #3b82f6 50%,
-        #3b82f6 100%
-      );
-      border-radius: .5rem;
+  background: linear-gradient(
+    to bottom,
+    #3b82f6 0%,
+    #3b82f6 50%,
+    #3b82f6 50%,
+    #3b82f6 100%
+  );
+  border-radius: 0.5rem;
 }
 
 #CustomQR-3 {
-    border: 1px solid #3b82f6;
-      border-radius: .5rem;
+  border: 1px solid #3b82f6;
+  border-radius: 0.5rem;
 }
 
 #CustomQR-4 {
-    background: linear-gradient(
-        to bottom,
-        white 0%,
-        white 50%,
-        #3b82f6 50%,
-        #3b82f6 100%
-      );
-      border-radius: .5rem;
+  background: linear-gradient(
+    to bottom,
+    white 0%,
+    white 50%,
+    #3b82f6 50%,
+    #3b82f6 100%
+  );
+  border-radius: 0.5rem;
 }
-.form-drag{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border: 2px dashed #1475cf;
-    height: 150px;
-    width: 380px;
-    cursor: pointer;
-    border-radius: 5px;
-  }
+.form-drag {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 2px dashed #1475cf;
+  height: 150px;
+  width: 380px;
+  cursor: pointer;
+  border-radius: 5px;
+}
 
-  .uploaded-row{
-    margin: 10px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    border-radius: 5px;
-    background-color: #e9f0ff;
-  }
+.uploaded-row {
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-radius: 5px;
+  background-color: #e9f0ff;
+}
 
-  .upload-content{
-    display: flex;
-    align-items: center;
-  }
-  .bar-chart .recharts-bar-rectangle {
-    transition: fill 3s;
+.upload-content {
+  display: flex;
+  align-items: center;
+}
+.bar-chart .recharts-bar-rectangle {
+  transition: fill 3s;
 }
 
 .bar-chart .recharts-bar-rectangle:hover {
-    fill: #28509E;
+  fill: #28509e;
 }

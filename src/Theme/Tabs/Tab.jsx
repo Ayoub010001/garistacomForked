@@ -25,9 +25,9 @@ function Tab({ categories, dishes, setSelectedTab, selectedTab, resto }) {
   return (
     <div style={{ backgroundColor: selectedBgColor }}>
       {/* Categories */}
-      <div className="tabs-container flex flex-col items-center pl-4 overflow-x-auto">
-        <div className="scrollbar-hide flex items-center gap-3 px-5 overflow-x-scroll">
-          <div className="relative inline-block border border-gray-300 rounded-full shadow-md">
+      <div className="tabs-container">
+        <div className="scrollbar-hide md:justify-center flex items-center gap-3 px-5 overflow-x-scroll">
+          <div className="relative inline-block rounded-[0.5em] shadow-md">
             <div
               style={{
                 backgroundColor:
@@ -41,7 +41,7 @@ function Tab({ categories, dishes, setSelectedTab, selectedTab, resto }) {
                     ? `1px solid ${selectedPrimaryColor}`
                     : "",
               }}
-              className={`flex items-center w-[90px] justify-center h-9 pl-1.5 pr-2.5 font-semibold rounded-full cursor-pointer transition-colors  border border-gray-300 shadow-md`}
+              className={`flex items-center w-[90px] justify-center h-9 pl-1.5 pr-2.5 font-semibold rounded-[0.5em] cursor-pointer transition-colors border border-gray-300 shadow-md`}
               onClick={() => setSelectedTab("All")}
               onMouseOver={selectedTab !== "All" && handleHoverActive}
               onMouseOut={selectedTab !== "All" && handleHoverInactive}
@@ -54,7 +54,7 @@ function Tab({ categories, dishes, setSelectedTab, selectedTab, resto }) {
               {categories.map((item, idx) => (
                 <div
                   key={idx}
-                  className={`flex items-center w-[90px] justify-center h-9 pl-1.5 pr-2.5 font-semibold rounded-full cursor-pointer transition-colors  border border-gray-300 shadow-md`}
+                  className={`flex items-center w-[90px] justify-center h-9 pl-1.5 pr-2.5 font-semibold rounded-[0.5em] cursor-pointer transition-colors  border border-gray-300 shadow-md`}
                   style={{
                     backgroundColor:
                       item.name === selectedTab ? selectedPrimaryColor : "",

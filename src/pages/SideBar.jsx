@@ -2,8 +2,8 @@ import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import "./SideBar.css";
 import { createContext, useContext, useState, useEffect } from "react";
 import { SidebarContext } from "../layouts/Layout";
-import Logo from "../../public/Logos/garista.svg";
-import LogoBig from "../../public/Logos/ompic.svg";
+import Logo from "/Logos/garista.svg";
+import LogoBig from "/Logos/ompic.svg";
 // Fonction pour récupérer l'élément sélectionné du stockage local
 const getSelectedFromLocalStorage = () => {
   const storedItem = localStorage.getItem("selectedItem");

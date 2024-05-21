@@ -55,7 +55,7 @@ const ThemeListMenuItems = ({ setSelectedItem, placeholderImage, item }) => {
           <img
             src={`${APIURL}/storage/${item.image}` || placeholderImage}
             alt="Category"
-            className="group-hover:scale-105 object-cover w-full h-full transition rounded-lg"
+            className="group-hover:scale-[1.02] object-cover w-full h-full transition rounded-lg"
           />
         </div>
       </div>

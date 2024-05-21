@@ -1,15 +1,7 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
-import {
-  incrementQuantity,
-  decrementQuantity,
-  removeItem,
-  removeAll,
-} from "../../lib/cartSlice";
-import { APIURL } from "../../../lib/ApiKey";
-import "./Achat.css";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,10 +11,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useSelectedPublishedTheme } from "../../hooks/usePublishedTheme";
+import {
+  incrementQuantity,
+  decrementQuantity,
+  removeItem,
+  removeAll,
+} from "../../lib/cartSlice";
+import { APIURL } from "../../../lib/ApiKey";
+import "./Achat.css";
+import cartEmpty from "/assets/cart-empty.png";
+
 export default function Achat({ tabel_id, resto_id }) {
-  const { selectedBgColor, selectedSecondaryColor, selectedPrimaryColor } =
-    useSelectedPublishedTheme();
   const cartItems = useSelector((state) => state.cart.items);
   const totalCost = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -47,7 +46,7 @@ export default function Achat({ tabel_id, resto_id }) {
     };
 
     try {
-      const response = await fetch(`https://backend.garista.com/api/order`, {
+      const response = await fetch(`${APIURL}/api/order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -73,7 +72,7 @@ export default function Achat({ tabel_id, resto_id }) {
         formData.append("status", "Order");
         formData.append("resto_id", resto_id);
         const responseNotification = await fetch(
-          `https://backend.garista.com/api/notifications`,
+          `${APIURL}/api/notifications`,
           {
             method: "POST",
             headers: {
@@ -94,8 +93,8 @@ export default function Achat({ tabel_id, resto_id }) {
   }
 
   return (
-    <div className="flex flex-col h-screen mx-auto bg-white">
-      <div className="scrollbar-hide md:pb-20 flex flex-col h-full gap-4 p-4 mx-auto overflow-y-scroll bg-white rounded-lg shadow-lg">
+    <div className="flex flex-col w-full h-screen mx-auto bg-white">
+      <div className="scrollbar-hide md:pb-20 flex flex-col w-full h-full max-w-md gap-4 p-4 mx-auto overflow-y-scroll bg-white rounded-lg shadow-lg">
         <div className="flex items-center justify-between">
           <h2 className="dark:text-gray-50 text-lg font-semibold text-gray-900">
             Shopping Cart
@@ -103,30 +102,51 @@ export default function Achat({ tabel_id, resto_id }) {
           <Link
             className="text-primary hover:underline dark:text-primary-400"
             to="#"
+            onClick={() => dispatch(removeAll())}
           >
             Clear Cart
           </Link>
         </div>
-        {cartItems.map((item) => (
-          <CartItem key={item.id} item={item} />
-        ))}
-        <div className="flex items-center justify-between">
-          <p className="dark:text-gray-400 text-sm text-gray-500">
-            Total:
-            <span className="dark:text-gray-50 font-medium text-gray-900">
-              {" "}
-              ${totalCost.toFixed(2)}
-            </span>
-          </p>
-          <Button
-            onClick={() => setOrderSuccessModalOpen(!orderSuccessModalOpen)}
-            className="bg-primary px-4 py-2 text-white rounded-lg"
-            size="lg"
-          >
-            Checkout
-          </Button>
-        </div>
+
+        {cartItems.length > 0 ? (
+          <div className="flex flex-col gap-2">
+            {cartItems.map((item) => (
+              <CartItem key={item.id} item={item} />
+            ))}
+            <div className="flex items-center justify-between py-3">
+              <p className="dark:text-gray-400 text-sm text-gray-500">
+                Total:
+                <span className="dark:text-gray-50 font-medium text-gray-900">
+                  {" "}
+                  ${totalCost.toFixed(2)}
+                </span>
+              </p>
+              <Button
+                onClick={() => setOrderSuccessModalOpen(!orderSuccessModalOpen)}
+                className="bg-primary px-4 py-2 text-white rounded-lg"
+                size="lg"
+              >
+                Checkout
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center">
+            <img
+              src={cartEmpty}
+              alt="Cart Empty"
+              width={300}
+              height={300}
+              loading="lazy"
+              className="object-contain w-48 h-48 mx-auto"
+            />
+            <p className="dark:text-gray-300 text-base font-medium text-center text-gray-600">
+              Your Cart Is Empty
+            </p>
+          </div>
+        )}
       </div>
+
       <AlertDialog
         open={orderSuccessModalOpen}
         onOpenChange={setOrderSuccessModalOpen}

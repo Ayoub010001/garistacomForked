@@ -14,7 +14,7 @@ const ThemeGridMenuItem = ({ setSelectedItem, placeholderImage, item }) => {
       <img
         src={`${APIURL}/storage/${item.image}` || placeholderImage}
         alt="Menu Icon"
-        className="w-full group-hover:scale-105 transition object-cover rounded-[10px] h-32"
+        className="w-full group-hover:scale-[1.02] transition object-cover rounded-[10px] h-32"
       />
       <div
         style={{ color: selectedSecondaryColor }}

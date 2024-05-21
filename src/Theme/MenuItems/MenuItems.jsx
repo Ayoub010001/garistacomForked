@@ -176,7 +176,7 @@ function MenuItems({ dishes, selectedTab, restoId }) {
             <input
               type="search"
               id="default-search"
-              className="block w-full px-2 py-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-[.5rem] bg-gray-50 input-height-small"
+              className="block w-full px-2 py-[9px] ps-10 text-sm text-gray-900 border border-gray-300 rounded-[.5rem] bg-gray-50 input-height-small"
               placeholder="Search menu..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -243,7 +243,7 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                       {/* Item Content Modal */}
                       <CredenzaContent
                         style={{ backgroundColor: selectedBgColor }}
-                        className=" flex max-h-screen"
+                        className="md:flex-col md:items-center md:max-w-sm md:scrollbar-hide md:overflow-y-scroll flex w-full max-h-screen mx-auto"
                       >
                         {selectedItem != null && (
                           <>
@@ -257,7 +257,7 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                             ></CredenzaHeader>
 
                             {/* Modal Content Body */}
-                            <CredenzaBody className="sm:pb-0 sm:text-left mt-5 space-y-4 text-sm text-center">
+                            <CredenzaBody className="sm:pb-0 mt-5 space-y-4 text-sm text-center">
                               <CredenzaTitle
                                 style={{ color: selectedSecondaryColor }}
                               >
@@ -268,13 +268,13 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                                   color: selectedSecondaryColor,
                                   opacity: 0.7,
                                 }}
-                                className=" m-0"
+                                className="m-0"
                               >
                                 {selectedItem.desc.length > 20
                                   ? selectedItem.desc.slice(0, 30) + "..."
                                   : selectedItem.desc}
                               </p>
-                              <div className="flex items-center justify-center">
+                              <div className="flex items-center justify-center text-center">
                                 <div className="flex items-center gap-2">
                                   <Button
                                     size="icon"
@@ -319,12 +319,13 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                                 </svg>
 
                                 <span style={{ color: selectedSecondaryColor }}>
-                                  {(selectedItem.price * quantity).toFixed(2)}
+                                  {(selectedItem.price * quantity).toFixed(2)}{" "}
+                                  MAD
                                 </span>
                               </div>
                             </CredenzaBody>
 
-                            <CredenzaFooter>
+                            <CredenzaFooter className="grid grid-cols-1 gap-2">
                               <button
                                 type="button"
                                 onClick={() => {
@@ -336,7 +337,7 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                                     : selectedPrimaryColor,
                                 }}
                                 // onClick={()=>{setIsClicked(!isClicked)}}
-                                className={`rounded-[1rem] p-2 transition-all duration-300 border border-primary font-medium text-xs md:text-sm flex items-center justify-center gap-1 `}
+                                className={`rounded-[0.5em] py-2 px-4 transition-all duration-300 border border-primary font-medium text-xs md:text-sm flex items-center justify-center gap-1 w-full`}
                               >
                                 <div
                                   style={{
@@ -350,13 +351,15 @@ function MenuItems({ dishes, selectedTab, restoId }) {
                                     ? "Added To Your Cart"
                                     : `Add to selected: ${(
                                         selectedItem.price * quantity
-                                      ).toFixed(2)}`}
+                                      ).toFixed(2)} MAD`}
                                 </div>
                               </button>
+
                               <CredenzaClose asChild>
                                 <Button
                                   style={{ color: selectedSecondaryColor }}
-                                  variant="outline bg-black text-white"
+                                  variant="outline"
+                                  className="hover:bg-transparent hover:border-none block bg-transparent border-none"
                                 >
                                   Close
                                 </Button>
@@ -379,7 +382,9 @@ function MenuItems({ dishes, selectedTab, restoId }) {
               style={{ color: selectedSecondaryColor }}
               className="text-lg font-semibold"
             >
-              No items available for this category
+              {searchTerm.length > 0
+                ? `No items found for ${searchTerm}`
+                : "No items available for this category"}
             </p>
           </div>
         )}
