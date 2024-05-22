@@ -97,7 +97,7 @@ export const FormAdd = ({ initialData, categories, handleAdded }) => {
           </div>
 
       </div>
-      <div className='float-right flex gap-2 justify-center'>
+      <div className='md:float-right flex gap-2 justify-center'>
           <Button type="submit" >Save</Button>
       </div>
       </form>

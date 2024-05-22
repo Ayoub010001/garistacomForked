@@ -70,14 +70,18 @@ function Layout() {
   }, []);
 
   useEffect(() => {
-    // Check if user is authenticated on component mount
-    const isUserAuthenticated = localStorage.getItem("AUTHENTICATED");
-    if (isUserAuthenticated === "true") {
-      setAuthenticated(true);
-    } else {
-      setAuthenticated(false);
-      navigate('/login'); // Redirect to login page if not authenticated
-    }
+    const checkAuth = () => {
+      const isUserAuthenticated = localStorage.getItem("AUTHENTICATED") === "true";
+      const isUserLoggedIn = sessionStorage.getItem('isLoggedIn') === 'loggin';
+      if (isUserAuthenticated && isUserLoggedIn) {
+        setAuthenticated(true);
+        getUserById(idUser).then(user => setUserDat(user));
+      } else {
+        setAuthenticated(false);
+        navigate('/login');
+      }
+    };
+    checkAuth();
   }, [navigate]);
   // useEffect(() => {
   //   // Vérifiez si l'utilisateur est déjà authentifié lors du chargement de la page

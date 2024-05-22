@@ -34,7 +34,7 @@ function App() {
   const fetchCategories = async (id) => 
   {
     if (!id) return;
-    setLoading(true)
+    // setLoading(true)
     try{
       const res = await fetch(`${APIURL}/api/getCategorieByResto/${id}`);
       const data = await res.json();
@@ -123,53 +123,84 @@ const fetchInfo = async (id) => {
   }
 
 }
-  const fetchRestosbyslug = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch(`${APIURL}/api/getRestoBySlug/${restoSlug}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const data = await response.json();
+  // const fetchRestosbyslug = async () => {
+  //   setLoading(true)
+  //   try {
+  //     const response = await fetch(`${APIURL}/api/getRestoBySlug/${restoSlug}`);
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! Status: ${response.status}`);
+  //     }
+  //     const data = await response.json();
       
-      console.log("The Response => ",data);
-      let Data = [];
-      Data = data;
-      const res = await axiosInstance.get('/api/infos/'+Data[0].id)
-      if(data)
-      {
-        Data.map((item) => {
-          setRestos(item);
-          fetchCategories(item.id)
-          setRestoId(item.id)
-          fetchDishes(item.id)
-          fetchInfo(item.id)
-        })
-        // setLoading(true)
-        // if(res)
-        //   {
-        //     console.log("The data of Info => ", res);
-        //     let Data = [];
-        //     Data = res.data;
-        //     Data.map(item => {
-        //       setResInfo(item)
-        //     })
-        //   }
-      }
-      // const isValidSlug = useValidateSlug(restoSlug, Data.map(item => item.slug));
+  //     console.log("The Response => ",data);
+  //     let Data = [];
+  //     Data = data;
+  //     const res = await axiosInstance.get('/api/infos/'+Data[0].id)
+  //     if(data)
+  //     {
+  //       Data.map((item) => {
+  //         setRestos(item);
+  //         fetchCategories(item.id)
+  //         setRestoId(item.id)
+  //         fetchDishes(item.id)
+  //         fetchInfo(item.id)
+  //       })
+  //       // setLoading(true)
+  //       // if(res)
+  //       //   {
+  //       //     console.log("The data of Info => ", res);
+  //       //     let Data = [];
+  //       //     Data = res.data;
+  //       //     Data.map(item => {
+  //       //       setResInfo(item)
+  //       //     })
+  //       //   }
+  //     }
+  //     // const isValidSlug = useValidateSlug(restoSlug, Data.map(item => item.slug));
 
-      // console.log("The IsValide => ", isValidSlug);
-      // if(!isValidSlug)
-      // {
-      //   return <Navigate to="/not-found" replace />;
-      // }
+  //     // console.log("The IsValide => ", isValidSlug);
+  //     // if(!isValidSlug)
+  //     // {
+  //     //   return <Navigate to="/not-found" replace />;
+  //     // }
+  //   } catch (error) {
+  //     console.error("Error fetching restos:", error.message);
+  //   }
+  //   finally{
+  //     setLoading(false)
+  //   }
+  // };
+
+  const fetchRestosbyslug = async () => {
+    // setLoading(true);
+    try {
+        const response = await fetch(`${APIURL}/api/getRestoBySlug/${restoSlug}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        if (data && data.length > 0) {
+            const resto = data[0];
+            setRestos(resto);
+            setRestoId(resto.id);
+
+            // Fetch categories, dishes, and info concurrently
+            await Promise.all([
+                fetchCategories(resto.id),
+                fetchDishes(resto.id),
+                fetchInfo(resto.id)
+            ]);
+        } else {
+            setMessage('No restaurant found with the provided slug.');
+        }
     } catch (error) {
-      console.error("Error fetching restos:", error.message);
+        console.error("Error fetching restos:", error.message);
+        setMessage('Failed to fetch restaurant data. Please try again.');
+    } finally {
+        setLoading(false);
     }
-    finally{
-      setLoading(false)
-    }
-  };
+};
 
   console.log('The Selected => ', selectedTab);
 

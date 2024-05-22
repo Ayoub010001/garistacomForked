@@ -105,8 +105,8 @@ export const LoginProvider = ({ children }) => {
       // const response = await axiosInstance.post(`${APIURL}/api/auth/logout`);
   
         console.log("The Response of Logout => ", response.data);
-        localStorage.setItem("AUTHENTICATED",false);
-        sessionStorage.setItem('isLoggedIn', "not loggin");
+        localStorage.removeItem("AUTHENTICATED");
+        sessionStorage.clear();
         navigate('/Login')
       // } else {
       //   setIsLoggedIn(false);
