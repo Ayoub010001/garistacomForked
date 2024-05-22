@@ -20,6 +20,17 @@ import { getRoles } from "../../../actions/Role/getRoles";
 import { FormAdd } from "./FormAdd";
 import { axiosInstance } from "../../../axiosInstance";
 import Spinner from "react-spinner-material";
+import { useMediaQuery } from "@/hooks/use-media-query"
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
 
 export default function UpdateForm({isDialogOpen, setIsDialogOpen, id, handleUpdate}) {
 
@@ -32,7 +43,8 @@ export default function UpdateForm({isDialogOpen, setIsDialogOpen, id, handleUpd
     };
 
     const [tableNames, setTableNames] = useState([]);
-    const [roles, setRoles] = useState([])
+    const [roles, setRoles] = useState([]);
+    const isDesktop = useMediaQuery("(min-width: 860px)")
 
     
     useEffect(() => {
@@ -79,8 +91,9 @@ export default function UpdateForm({isDialogOpen, setIsDialogOpen, id, handleUpd
     }, [])
 
     console.log("The Table Name => ",tableNames);
+    if(isDesktop){
   return (
-    <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 
         <DialogContent className="max-w-[50rem]">
         <DialogHeader>
@@ -98,4 +111,22 @@ export default function UpdateForm({isDialogOpen, setIsDialogOpen, id, handleUpd
         </DialogContent>
     </Dialog>
   )
+}
+return (
+  <Drawer open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <DrawerContent className="max-w-[50rem]">
+      <DrawerHeader>
+      {
+                !isLoading
+                ?
+                <FormAdd initialData={tableNames} selectedRoleId={String(tableNames.role_id)} roles={roles} handleUpdate={handleUpdate}/>
+                :
+                <div className='justify-center items-center flex'>
+                <Spinner size={100} spinnerColor={"#28509E"} spinnerWidth={1} visible={true} style={{borderColor: "#28509E", borderWidth: 2}}/>
+               </div>
+            }
+      </DrawerHeader>
+      </DrawerContent>
+  </Drawer>
+)
 }

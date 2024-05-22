@@ -27,7 +27,7 @@ function DeleteForm({deleteFormState, setDeleteFormState, id, handleDelete}) {
                 <Button variant="outline" className="bg-black text-white hover:text-white hover:bg-black"><BiSolidTrash size={20}/></Button>
                 </DialogTrigger>
 
-                <DialogContent className="sm:max-w-[425px] items-center justify-center ">
+                <DialogContent className="md:max-w-[425px] max-w-[250px] mx-auto rounded-md items-center justify-center ">
                     <DialogHeader className="items-center justify-center ">
                         <DialogTitle className="flex items-center text-[1.7rem]"> Are you sure ?</DialogTitle>
                     </DialogHeader>

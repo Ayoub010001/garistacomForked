@@ -19,6 +19,17 @@ import { useEffect } from "react";
 import Spinner from 'react-spinner-material';
 import { APIURL } from "../../lib/ApiKey";
 import { axiosInstance } from "../../axiosInstance";
+import { useMediaQuery } from "@/hooks/use-media-query"
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
 
 export default function UpdateForm({updateFormState, setUpdateFormState, id, handleUpdate,}) {
 
@@ -32,6 +43,7 @@ export default function UpdateForm({updateFormState, setUpdateFormState, id, han
         const maxNumber = 3;
         const [name, setName] = useState()
         const toastMessage =  'Banner updated.';
+        const isDesktop = useMediaQuery("(min-width: 860px)")
 
 
 
@@ -84,6 +96,7 @@ export default function UpdateForm({updateFormState, setUpdateFormState, id, han
       };
 
       console.log("The Selected File => ",file);
+      if(isDesktop){
   return (
     <Dialog open={updateFormState} onOpenChange={setUpdateFormState} className=" p-8 shadow-lg h-[45rem] w-[65rem] rounded-xl">
           <DialogContent style={{ padding: '2rem', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', height: '45rem', width: '35rem', maxWidth: '80rem', borderRadius: '1rem' }}>
@@ -148,9 +161,79 @@ export default function UpdateForm({updateFormState, setUpdateFormState, id, han
                           })}>Save</Button>
                     </div>
                 </DialogHeader>
-                <DialogFooter className="flex justify-center items-center">
-            </DialogFooter>
+                {/* <DialogFooter className="flex justify-center items-center">
+            </DialogFooter> */}
         </DialogContent>
     </Dialog>
   )
+}
+return (
+  <Drawer open={updateFormState} onOpenChange={setUpdateFormState}>
+      <DrawerContent className="max-w-[50rem]">
+      <DrawerHeader>
+      <h2 className="text-2xl font-bold mb-4 text-center">Update Promotions</h2>
+                    {
+                      loading
+                      ?
+                      <div className='justify-center items-center flex h-[50vh]'>
+                      <Spinner size={100} spinnerColor={"#28509E"} spinnerWidth={1} visible={true} style={{borderColor: "#28509E", borderWidth: 2}}/>
+                    </div>
+                      :
+                    <div className='flex items-start gap-10 p-10 justify-center'>
+                        <div className='w-full '>
+                        <div className={`flex flex-col justify-center items-center border-[2px] border-dashed h-[250px] cursor-pointer rounded-[5px] w-full ${errors.file  ? 'border-red-500 ' : 'border-black'}`} onClick={() => document.querySelector(".input-field").click()}>
+                        <input
+                              type="file"
+                              accept='image/*'
+                              // className={`input-field`}
+                              className='input-field h-full w-full'
+                              {...register('image', { required: 'Please select a file.' })}
+                              onChange={(e) => handleImageUpdate(e.target.files[0])}
+                              hidden
+                          />
+
+                          {file ? (
+                              <img src={URL.createObjectURL(file)} width={150} height={150} alt={fileName} />
+                          ) : (
+                              <>
+                                <img src={`${APIURL}/storage/${banner.image}`} className="row-span-3 h-[13rem] w-[15rem]  object-cover" />
+                              </>
+                          )}
+
+                      </div>
+
+                      {
+                          file ?
+                          <section className='uploaded-row'>
+                              <AiFillFileImage color='black' />
+                              <span className='upload-content'>
+                              {fileName} -
+                              <MdDelete onClick={handleDelete} />
+                              </span>
+                          </section>
+                          :
+                          <></>
+                      }
+
+                            <div className=''>
+                                <Input value={name} onChange={(e) => setName(e.target.value)}  type="text" placeholder="Title" className='mt-5 mb-5' />
+
+                            </div>
+                        </div>
+
+                    </div>
+                    }
+                    <div className='float-right flex gap-2 md:justify-end justify-center'>
+                        <Button type="submit" onClick={() => handleUpdate({
+                          id: id,
+                          title: name,
+                          toastMessage
+                          })}>Save</Button>
+                    </div>
+      </DrawerHeader>
+      <DrawerFooter className="flex justify-center items-center">
+            </DrawerFooter>
+      </DrawerContent>
+  </Drawer>
+)
 }

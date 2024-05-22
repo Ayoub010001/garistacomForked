@@ -57,8 +57,8 @@ function App() {
   }
 
   const fetchDishes = async (restoId) => {
-    if (!restoId) return;
-    setLoading(true);
+    // if (!restoId) return;
+    // setLoading(true);
     try {
       // Fetch visible categories first
       const categoryResponse = await fetch(`${APIURL}/api/getCategorieByResto/${restoId}`);

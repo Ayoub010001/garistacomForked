@@ -434,11 +434,8 @@ const userStaff = sessionStorage.getItem('dataStaff')
 
               </div>
             </div>
-            <div className="flex items-center justify-center gap-2 md:hidden">
-              <Button variant="outline" size="sm">
-                Discard
-              </Button>
-              <Button size="sm">Save Product</Button>
+            <div className="flex items-center justify-end gap-2 md:hidden">
+              <Button size="sm" onClick={handleToggle}>Save</Button>
             </div>
 
           </div>

@@ -116,8 +116,8 @@ if (isDesktop){
                 </form> */}
                 <FormAdd handleAdded={handleSubmit}/>
             </DialogHeader>
-            <DialogFooter className="flex justify-center items-center">
-        </DialogFooter>
+            {/* <DialogFooter className="flex justify-center items-center">
+        </DialogFooter> */}
     </DialogContent>
 </Dialog>
   )

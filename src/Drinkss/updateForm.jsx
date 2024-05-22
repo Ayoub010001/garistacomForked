@@ -18,11 +18,23 @@ import Uploader from "./uploader";
 import { Button } from "@/components/ui/button"
 import { FormAdd } from "./FormAdd";
 import { axiosInstance } from "../../axiosInstance";
-
 import Spinner from "react-spinner-material";
+import { useMediaQuery } from "@/hooks/use-media-query"
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
+
 export default function UpdateForm({isDialogOpen, setIsDialogOpen, id, handleUpdate,handleImageUpdate}) {
     const [isLoading, setIsLoading] = useState(false)
     const [categories, setCategories] = useState([]);
+    const isDesktop = useMediaQuery("(min-width: 860px)")
 
     console.log("The Id => ", id);
     const handleDialogClose = () => {
@@ -73,6 +85,7 @@ export default function UpdateForm({isDialogOpen, setIsDialogOpen, id, handleUpd
         fetchUpdate()
     }, [])
     console.log("The Table Name => ",tableNames);
+    if(isDesktop){
   return (
     <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
         <DialogContent className="max-w-[50rem]">
@@ -90,4 +103,22 @@ export default function UpdateForm({isDialogOpen, setIsDialogOpen, id, handleUpd
         </DialogContent>
     </Dialog>
   )
+}
+return (
+  <Drawer open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <DrawerContent className="max-w-[50rem]">
+      <DrawerHeader>
+          {
+              !isLoading
+              ?
+<FormAdd initialData={tableNames} categories={categories} handleImageUpdate={handleImageUpdate} selectedCategoryId={String(tableNames.category_id)} handleUpdate={handleUpdate} />
+              :
+              <div className='justify-center items-center flex'>
+              <Spinner size={100} spinnerColor={"#28509E"} spinnerWidth={1} visible={true} style={{borderColor: "#28509E", borderWidth: 2}}/>
+             </div>
+          }
+      </DrawerHeader>
+      </DrawerContent>
+  </Drawer>
+)
 }
