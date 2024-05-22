@@ -1,5 +1,5 @@
 'use client'
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { Input } from "../components/ui/input"
 import { Button } from '../components/ui/button'
 import { Label } from '../components/ui/label'
@@ -16,6 +16,7 @@ import {
 
 
 function AddCategory({restInfo,handleChange,handleDelete}) {
+    const [tempInput,setTempInput] = useState("");
  const categoryInput = useRef(null);
  return (
     <div className='grid '>
@@ -25,13 +26,16 @@ function AddCategory({restInfo,handleChange,handleDelete}) {
         <div className="mt-2">
             <div>
                 <Label htmlFor="category">Category Creation</Label>
-                <Input id="categories" type="text" placeholder="Add Category" 
+                <Input id="categories" type="text" placeholder="Add Category"
+                    value={tempInput} 
+                    onChange={(e)=>setTempInput(e.target.value)}
                     ref={categoryInput}/>
                 <div className="flex justify-end py-2">
                     <Button onClick={
                         ()=>{
                             if (categoryInput.current) {
                                 handleChange(categoryInput.current.value, categoryInput.current.id)
+                                setTempInput("");
                             }
                         }
                     }>Add</Button>
